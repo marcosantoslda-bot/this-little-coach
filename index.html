@@ -171,7 +171,7 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v9';
+var APPV='v10';
 var CFGDEF = {kcal:2600, prot:195, steps:10000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
@@ -662,7 +662,9 @@ function applyProfile(){
   DB.cfg.kcal = p.goal==='perder' ? Math.round((estT-500)/50)*50
               : p.goal==='ganhar' ? Math.round((estT+250)/50)*50
               : Math.round((estT-100)/50)*50;
-  DB.cfg.prot = Math.round((p.goal==='ganhar'?1.8:2.2)*p.w);
+  // proteína: com %MG usa massa magra (Helms 2,3–3,1 g/kg MM); sem %MG usa peso total
+  if(p.bf){ var mm=p.w*(1-p.bf/100); DB.cfg.prot=Math.round((p.goal==='ganhar'?2.2:2.6)*mm); }
+  else DB.cfg.prot = Math.round((p.goal==='ganhar'?1.8:2.2)*p.w);
   DB.cfg.water = Math.round((0.03*p.w+0.7)*4)/4;
   if(p.goalWeight) DB.cfg.target=p.goalWeight;
   if(!DB.cfg.startW) DB.cfg.startW=p.w; // ponto de partida da jornada (fixa na 1ª vez)
