@@ -136,6 +136,28 @@ details .in{margin-top:8px;font-size:13.5px;color:var(--ink2)}
 .photogrid .ph{position:relative}
 .photogrid img{width:100%;border-radius:8px;display:block}
 .photogrid .pd{font-size:10px;color:var(--muted);text-align:center}
+.player{position:fixed;inset:0;z-index:300;background:#17181A;color:#F2EFE9;display:flex;flex-direction:column;padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+.player .ptop{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#96918A}
+.player .pbar{height:6px;border-radius:3px;background:#2C2C2A;margin:10px 0 4px;overflow:hidden}
+.player .pbar i{display:block;height:100%;background:linear-gradient(90deg,#E490C0,#90C090);transition:width .4s}
+.player .pmain{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow-y:auto}
+.player .ppict{width:130px;height:100px;color:#E490C0;background:rgba(228,144,192,.12);border-radius:20px;padding:8px;margin-bottom:14px}
+.player .ppict line,.player .ppict path,.player .ppict polyline,.player .ppict rect,.player .ppict circle{stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.player .ppict .f{fill:currentColor;stroke:none}
+.player .ppict .eq{opacity:.5}
+.player .pname{font-size:24px;font-weight:400;line-height:1.2}
+.player .ptarget{font-size:16px;color:#E4CC6C;margin:6px 0}
+.player .pmusc{font-size:12.5px;color:#96918A;margin-bottom:10px}
+.player .psets{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.player .pset{background:#2C2C2A;border-radius:999px;padding:6px 12px;font-size:13px}
+.player .pin{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:8px}
+.player .pin input{width:86px;padding:14px 8px;font-size:20px;text-align:center;background:#242526;border:1px solid #3A3833;border-radius:12px;color:#fff}
+.player .pgo{background:linear-gradient(90deg,#E490C0,#C9679E);color:#fff;border:none;border-radius:999px;padding:15px 30px;font-size:16px;font-family:inherit;margin-top:12px}
+.player .pnav{display:flex;gap:10px;margin-top:12px}
+.player .pnav button{flex:1;padding:15px;border-radius:14px;border:none;font-size:15px;font-family:inherit}
+.player .pprev{background:#2C2C2A;color:#C9C4BB}
+.player .pnext{background:#90C090;color:#17181A;font-weight:700}
+.player .prest{font-size:88px;font-weight:400;color:#90C090}
 .photogrid .px{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.55);color:#fff;border-radius:6px;
   padding:1px 6px;font-size:11px;border:none}
 </style>
@@ -171,7 +193,7 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v10';
+var APPV='v15';
 var CFGDEF = {kcal:2600, prot:195, steps:10000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
@@ -800,6 +822,13 @@ function coachWeek(){
     s:'Garrafa de 750 ml sempre à vista: uma de manhã, uma à tarde, + copos às refeições.'});
   if(weighs<3) issues.push({e:'Só '+weighs+' pesagens esta semana',
     s:'Pesa-te 3-4× (manhã, jejum) — a média semanal é o instrumento de navegação; sem ela o auto-ajuste voa às cegas.'});
+  // avaliações de treino: fadiga acumulada
+  var hard=0,easy=0;
+  for(var ri=1;ri<=7;ri++){ var rw=DB.workouts[dateOffset(-ri)]; if(rw&&rw.rate==='dificil') hard++; if(rw&&rw.rate==='facil') easy++; }
+  if(hard>=3) issues.push({e:hard+' treinos avaliados como "difícil" esta semana',
+    s:'Fadiga a acumular: revê o sono, confirma que comes o alvo (não menos), e considera uma semana de Pausa ou deload (metade das séries, mesma carga).'});
+  if(easy>=3) issues.push({e:easy+' treinos avaliados como "fácil"',
+    s:'Estás a deixar ganhos na mesa: aproxima as séries da falha (RIR 0–2 a sério) e aceita as subidas de carga que o coach sugere.'});
   // carga vs semana anterior
   var tonPrev=0;
   for(var j=8;j<=14;j++){ var dt2=dateOffset(-j); if(DB.workouts[dt2]) tonPrev+=tonnage(dt2); }
@@ -1259,6 +1288,108 @@ function render(){
   else v.innerHTML=vGuia();
 }
 
+/* ============ MODO GUIADO (player estilo coach) ============ */
+var PL={wk:null,idx:0,rest:0,timer:null};
+function startSession(wkKey){
+  if(!WK[wkKey]) return;
+  DB.workouts[curDate]=DB.workouts[curDate]||{type:wkKey,sets:{}};
+  DB.workouts[curDate].type=wkKey; save();
+  PL={wk:wkKey,idx:0,rest:0,timer:null};
+  var d=document.createElement('div'); d.className='player'; d.id='player';
+  document.body.appendChild(d);
+  renderPlayer();
+}
+function endSession(){
+  if(PL.timer) clearInterval(PL.timer);
+  var p=document.getElementById('player'); if(p) p.remove();
+  PL.wk=null; render();
+}
+function plExs(){ return WK[PL.wk].ex.filter(function(e){return e.t!=='—';}); }
+function renderPlayer(){
+  var p=document.getElementById('player'); if(!p) return;
+  var exs=plExs();
+  if(PL.idx>=exs.length){
+    var tn=tonnage(curDate), ns=0;
+    var wsets=DB.workouts[curDate].sets;
+    for(var k in wsets) ns+=(wsets[k]||[]).filter(function(x){return x.w&&x.r;}).length;
+    var rate=DB.workouts[curDate].rate;
+    p.innerHTML='<div class="pmain"><div style="font-size:70px">🎉</div>'+
+      '<div class="pname">Treino feito!</div>'+
+      '<div style="margin:14px 0;font-size:15px;color:#C9C4BB">'+WK[PL.wk].name+'<br><b style="color:#fff">'+ns+' séries · '+tn.toLocaleString('pt-PT')+' kg movidos · ~'+trainBurn(PL.wk)+' kcal</b></div>'+
+      (rate?'<div style="font-size:15px;margin-bottom:6px">'+(rate==='facil'?'😴 Fácil — para a próxima o coach aperta':rate==='dificil'?'😮‍💨 Difícil — anotado, vou vigiar a fadiga':'💪 No ponto — é assim mesmo')+'</div>'
+           :'<div style="font-size:14px;color:#C9C4BB;margin-bottom:6px">Como foi o treino?</div>'+
+            '<div style="display:flex;gap:8px;justify-content:center">'+
+            '<button class="pgo" style="margin-top:0;padding:12px 16px;background:#2C2C2A" onclick="plRate(\'facil\')">😴 fácil</button>'+
+            '<button class="pgo" style="margin-top:0;padding:12px 16px" onclick="plRate(\'certo\')">💪 no ponto</button>'+
+            '<button class="pgo" style="margin-top:0;padding:12px 16px;background:#2C2C2A" onclick="plRate(\'dificil\')">😮‍💨 difícil</button></div>')+
+      '<div style="font-size:13px;color:#96918A;margin-top:8px">Já está contado no teu défice e na semana.</div>'+
+      '<button class="pgo" onclick="endSession()">Terminar 💪</button></div>';
+    buzz(); return;
+  }
+  var ex=exs[PL.idx];
+  var mySets=(DB.workouts[curDate].sets[ex.id]||[]).filter(function(x){return x.w&&x.r;});
+  var last=lastPerf(ex.id);
+  var sug=suggest(ex.id,ex.t);
+  var st0=(!last&&STDW[ex.id])?stdStart(ex.id):null;
+  var preW=(PL.rec&&PL.recEx===ex.id)?PL.rec.w:(sug?sug.w:(mySets.length?mySets[mySets.length-1].w:(st0?st0.inter:'')));
+  var body='';
+  if(PL.rest>0){
+    body='<div class="pmain"><div style="font-size:14px;color:#96918A">descansa</div>'+
+      '<div class="prest">'+PL.rest+'</div>'+
+      (PL.rec&&PL.recEx===ex.id?
+        '<div style="margin:4px 0 2px;font-size:26px;color:#fff">'+PL.rec.a+' próxima: <b>'+String(PL.rec.w).replace('.',',')+' kg</b></div>'+
+        '<div style="font-size:13px;color:#E4CC6C">'+PL.rec.txt+'</div>'
+        :'<div style="font-size:13px;color:#96918A;margin-top:6px">próxima série: '+esc(ex.n)+'</div>')+
+      '<button class="pgo" style="background:#2C2C2A" onclick="PL.rest=0;if(PL.timer)clearInterval(PL.timer);renderPlayer()">saltar descanso ▸</button></div>';
+  } else {
+    body='<div class="pmain">'+
+      (exPic(ex.id)?exPic(ex.id).replace('class="pict"','class="ppict"'):'')+
+      '<div class="pname">'+esc(ex.n)+'</div>'+
+      '<div class="ptarget">'+ex.t+' · RIR 0–2</div>'+
+      '<div class="pmusc">'+ex.m+(last?'<br>última vez: '+last.s.map(function(x){return x.w+'kg×'+x.r;}).join(' · '):'')+
+      (function(){var xs=exStats(ex.id);return xs?'<br>🏆 recorde: '+String(xs.best.w).replace('.',',')+' kg × '+xs.best.r+' ('+fmtDataPt(xs.best.d)+')':'';})()+
+      (sug?'<br>'+sug.txt.replace(/<[^>]+>/g,''):'')+'</div>'+
+      '<div class="psets">'+mySets.map(function(x){return '<span class="pset">✓ '+x.w+' kg × '+x.r+'</span>';}).join('')+'</div>'+
+      '<div class="pin"><input id="plW" type="number" step="0.5" inputmode="decimal" placeholder="kg" value="'+preW+'">'+
+      '<span style="color:#96918A">×</span><input id="plR" type="number" inputmode="numeric" placeholder="reps"></div>'+
+      '<button class="pgo" onclick="plLogSet()">✓ Série feita</button></div>';
+  }
+  p.innerHTML='<div class="ptop"><span>'+WK[PL.wk].name+'</span><span>'+(PL.idx+1)+' / '+exs.length+'</span>'+
+    '<span style="cursor:pointer" onclick="endSession()">✕ sair</span></div>'+
+    '<div class="pbar"><i style="width:'+Math.round(PL.idx/exs.length*100)+'%"></i></div>'+
+    body+
+    '<div class="pnav">'+
+    (PL.idx>0?'<button class="pprev" onclick="PL.rest=0;if(PL.timer)clearInterval(PL.timer);PL.idx--;PL.rec=null;renderPlayer()">← anterior</button>':'')+
+    '<button class="pnext" onclick="PL.rest=0;if(PL.timer)clearInterval(PL.timer);PL.idx++;PL.rec=null;renderPlayer()">'+(PL.idx>=exs.length-1?'terminar ✔':'próximo →')+'</button></div>';
+}
+function plRate(r){ DB.workouts[curDate].rate=r; buzz(); save(); renderPlayer(); }
+function plLogSet(){
+  var w=parseFloat(document.getElementById('plW').value)||null;
+  var r=parseInt(document.getElementById('plR').value)||null;
+  if(!w||!r) return;
+  var ex=plExs()[PL.idx];
+  var wk=DB.workouts[curDate]; wk.sets[ex.id]=wk.sets[ex.id]||[];
+  wk.sets[ex.id].push({w:w,r:r}); buzz(); save();
+  // autorregulação: recomendar a carga da PRÓXIMA série com base na que acabaste
+  PL.rec=null; PL.recEx=ex.id;
+  var mm=ex.t.match(/×(\d+)–(\d+)/);
+  if(mm){
+    var lo=parseInt(mm[1]), hi=parseInt(mm[2]);
+    var inc=w>=60?2.5:(w>=20?2:1);
+    if(r>=hi+3)      PL.rec={w:roundW(Math.max(w+inc*2,w*1.05)), a:'⬆️⬆️', txt:r+' reps — demasiado fácil, sobe a sério'};
+    else if(r>hi)    PL.rec={w:roundW(Math.max(w+inc,w*1.025)), a:'⬆️', txt:r+' reps — passaste o alvo ('+lo+'–'+hi+'), sobe'};
+    else if(r<lo)    PL.rec={w:Math.max(1,roundW(w*0.92)), a:'⬇️', txt:'só '+r+' reps (alvo '+lo+'–'+hi+') — baixa e salva a próxima'};
+    else             PL.rec={w:w, a:'➡️', txt:r+' reps — em cheio no alvo, repete o peso'};
+  }
+  PL.rest=/×[56]–|×8–12/.test(ex.t)?120:75;
+  if(PL.timer) clearInterval(PL.timer);
+  PL.timer=setInterval(function(){
+    PL.rest--;
+    if(PL.rest<=0){ clearInterval(PL.timer); PL.rest=0; buzz(); }
+    renderPlayer();
+  },1000);
+  renderPlayer();
+}
 /* ============ VIEW: HOJE ============ */
 function vHoje(){
   var d=day(curDate), s=sumFoods(curDate), a7=avg7(curDate);
@@ -1272,9 +1403,16 @@ function vHoje(){
   h+=journeyCard();
   h+='<div class="datebar"><input type="date" value="'+curDate+'" onchange="curDate=this.value;render()">'+
      (curDate!==today()?'<button class="mini ghost" onclick="curDate=today();render()">Hoje</button>':'')+'</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px">'+
+   '<button class="ghost" style="padding:11px 2px" onclick="go(\'comida\')">🍽️<br><span style="font-size:11px">comida</span></button>'+
+   '<button class="ghost" style="padding:11px 2px" onclick="addWater(0.25)">💧<br><span style="font-size:11px">+250 ml</span></button>'+
+   '<button class="ghost" style="padding:11px 2px" onclick="go(\'treino\')">🏋️<br><span style="font-size:11px">treino</span></button>'+
+   ((s.k&&!d.closed)?'<button style="padding:11px 2px" onclick="closeDay()">🌙<br><span style="font-size:11px">fechar dia</span></button>'
+                    :'<button class="ghost" style="padding:11px 2px" onclick="go(\'prog\')">📈<br><span style="font-size:11px">progresso</span></button>')+
+   '</div>';
   // Modo de vida
   var MODES={normal:'Normal',ferias:'🏖️ Férias / sem ginásio',pausa:'⏸️ Pausa da dieta',doente:'🤒 Doente'};
-  h+='<div class="card"><h2>Modo</h2><div>';
+  h+='<details class="card"'+(mode!=='normal'?' open':'')+'><summary style="font-weight:700">⚙️ Modo: '+MODES[mode]+'</summary><div style="margin-top:8px">';
   for(var mk in MODES) h+='<button class="modechip'+(mode===mk?' on':'')+'" onclick="setMode(\''+mk+'\')">'+MODES[mk]+'</button>';
   h+='</div>';
   if(mode==='ferias') h+='<div class="note">Alvo automático = manutenção (<b>'+KT+' kcal</b>). Missão: <b>não ganhar</b>, não perder. '+
@@ -1284,7 +1422,7 @@ function vHoje(){
     'Reduz a fadiga da dieta e o cortisol; o peso pode subir ~0,5–1 kg de água/glicogénio — não é gordura.</div>';
   else if(mode==='doente') h+='<div class="note">Prioridade: recuperar. Manutenção (<b>'+KT+' kcal</b>), proteína alta, sem treino até estares 24h sem sintomas. '+
     'Défice + doença = perder músculo.</div>';
-  h+='</div>';
+  h+='</div></details>';
   // Streak + aviso de pausa
   var streak=0, di=0;
   while(di<60){ var dd=dateOffset(-di); var dy=DB.days[dd];
@@ -1351,9 +1489,7 @@ function vHoje(){
    ((day(curDate).cardio&&day(curDate).cardio.length)?'<div class="note">🏃 Cardio: '+cardioSum(curDate)+' kcal em '+day(curDate).cardio.reduce(function(a,c){return a+c.min;},0)+' min — já no défice.</div>':'')+
    alert+
    '<div class="note">O défice é estimado (gasto ≈ BMR ×1,15 + passos + treino). A prova real é a média da balança — o auto-ajuste calibra por ela a cada 2 semanas.</div></div>';
-  if(!d.closed){
-    if(s.k) h+='<button class="big" style="width:100%;margin-bottom:12px" onclick="closeDay()">🌙 Fechar o dia</button>';
-  } else {
+  if(d.closed){
     var imp=dayImpact(), recs=dayRecs();
     h+='<div class="card" style="border:2px solid var(--accent)"><h2>📋 Dia fechado</h2>';
     var checks=[
@@ -1371,7 +1507,7 @@ function vHoje(){
       recs.slice(0,2).forEach(function(r){ h+='<div class="note" style="margin:2px 0">→ '+r+'</div>'; }); }
     h+='<div class="note" style="margin-top:8px"><span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="day(curDate).closed=false;save();render()">reabrir o dia</span></div></div>';
   }
-  h+='<div class="card"><h2>💧 Água</h2><div class="row">'+
+  h+='<details class="card"><summary style="font-weight:700">💧 Água — '+fmt(d.water||0,2).replace(',00','')+' de '+fmt(DB.cfg.water)+' L</summary><div class="row" style="margin-top:8px">'+
    '<button class="ghost" onclick="addWater(0.25)">+ copo 250ml</button>'+
    '<button class="ghost" onclick="addWater(0.5)">+ garrafa 500ml</button>'+
    '<button class="ghost" onclick="addWater(0.33)">+ 33cl</button>'+
@@ -1379,9 +1515,10 @@ function vHoje(){
    '</div><div class="row" style="margin-top:8px">'+
    '<button class="mini '+(DB.cfg.waterRem?'':'ghost')+'" onclick="toggleWaterRem()">'+(DB.cfg.waterRem?'🔔 Lembrete ligado (app aberta)':'🔕 Ligar lembrete de água')+'</button>'+
    '</div><div class="note">Alvo científico: <b>3–3,5 L/dia</b> (EFSA + treino + creatina) — 5 L é mito, sem benefício extra. '+
-   'Truque com evidência: 500 ml antes de cada refeição principal aumenta a saciedade. Para lembretes fiáveis, cria alarmes de água no Galaxy Watch (Samsung Health → Water).</div></div>';
+   'Truque com evidência: 500 ml antes de cada refeição principal aumenta a saciedade. Para lembretes fiáveis, cria alarmes de água no Galaxy Watch (Samsung Health → Water).</div></details>';
   h+='<div class="card"><h2>🚶 Chegar aos 10 000 (base atual: ~3 000)</h2>'+
    '<div class="note" style="margin:0 0 8px">Faltam ~7 000. Menu de soluções — combina até fechar o dia:</div>'+
+   '<details><summary style="font-size:13.5px;font-weight:700">📋 Menu de soluções + receitas de dia</summary>'+
    '<table class="tbl"><tr><th>Solução</th><th>Passos</th><th>Tempo</th></tr>'+
    '<tr><td>15 min passadeira inclinada 10–12% no fim do treino</td><td>+1 700</td><td>já estás lá</td></tr>'+
    '<tr><td>Andar no ginásio entre séries (descansos a pé)</td><td>+800</td><td>0 min extra</td></tr>'+
@@ -1399,7 +1536,7 @@ function vHoje(){
    '<b>Dia sem treino:</b> base 3 000 + pós-refeições 2 400 + chamadas a andar 1 500 + pausas por hora 2 000 + estacionar longe 1 200 = <b>≈ 10 100</b><br>'+
    '<b>Fim de semana:</b> base 3 000 + caminhada 60 min 6 500 + resto do dia = <b>≈ 10 500</b><br><br>'+
    'O truque não é "arranjar 70 min" — é converter tempo que já gastas (chamadas, estacionar, descansos entre séries) em passos. '+
-   'Se um dia falhares, conta à semana: alvo 70 000.</div>'+
+   'Se um dia falhares, conta à semana: alvo 70 000.</div></details>'+
    '<h3 class="sec">🧭 Volta ao bairro à medida (ida-e-volta)</h3>'+
    '<div class="row">'+
    '<button class="ghost" onclick="walkRoute(1000)">1 000 passos<br><span style="font-size:10px;color:var(--muted)">~8 min</span></button>'+
@@ -1571,7 +1708,7 @@ function vComida(){
   if(ps) h+='<div class="note" style="color:var(--warn)">💡 Faltam <b>'+ps.miss+' g de proteína</b>. Fecho rápido: <b>'+ps.txt+'</b> (≈ +'+ps.p+' g · '+ps.k+' kcal).</div>';
   else if(s.p>=DB.cfg.prot*0.95&&s.k) h+='<div class="note" style="color:var(--good)">🟢 Proteína do dia fechada.</div>';
   h+='</div>';
-  h+='<div class="card"><h2>🧺 Montar prato — ingredientes à unidade</h2>'+
+  h+='<details class="card"><summary style="font-weight:700">🧺 Montar prato (ingredientes à unidade)</summary><div style="margin-top:8px">'+
    '<div style="margin-bottom:6px">'+
    '<button class="mini ghost" onclick="ingQ=\'\';document.getElementById(\'ingQ\').value=\'\';refreshIng()">todos</button> '+
    '<button class="mini ghost" onclick="ingQ=\'festa\';document.getElementById(\'ingQ\').value=\'festa\';refreshIng()">🎉 festa</button> '+
@@ -1580,7 +1717,7 @@ function vComida(){
    '<div id="ingList" style="max-height:280px;overflow-y:auto;margin-top:8px;border:1px solid var(--grid);border-radius:10px;padding:0 8px">'+ingListHTML()+'</div>'+
    '<div id="ingTotal">'+ingTotalHTML()+'</div>'+
    '<div class="note">Sem balança? Referências: abacate barrado fino = ¼ · 1 c.s. bem cheia = 1,5 c.s. · '+
-   'na dúvida escolhe a opção maior (as pessoas subestimam ~20%).</div></div>';
+   'na dúvida escolhe a opção maior (as pessoas subestimam ~20%).</div></div></details>';
   h+='<details><summary>📷 Prato por foto + mãos (quando não dá para medir)</summary><div class="in">'+
    'Comida de outra pessoa, buffet, restaurante desconhecido? <b>Tira a foto ao prato</b> (fica na tua galeria como memória) '+
    'e traduz o que vês em medidas de mão — o método validado da Precision Nutrition, já ajustado ao teu sexo:'+
@@ -1603,13 +1740,15 @@ function vComida(){
    (goalC==='ganhar'?'<b>Nota (ganhar):</b> concentra mais hidratos à volta do treino — dobra o arroz na refeição pós-treino.':'')+
    (goalC==='perder'?'<b>Regra de ouro:</b> se a fome apertar, o primeiro reforço é sempre legumes + proteína, nunca cortar a proteína para "poupar".':'')+
    '</div></details>';
+  var hrNow=new Date().getHours();
+  var openG=hrNow<11?0:(hrNow>=21?2:1);
   FOODS.forEach(function(g,gi){
-    h+='<div class="card"><h2>'+g.g+'</h2>';
+    h+='<details class="card"'+(gi===openG?' open':'')+'><summary style="font-weight:700">'+g.g+'</summary><div style="margin-top:8px">';
     g.items.forEach(function(it,ii){
       var kk=it.k!=null?it.k:it.c.reduce(function(a,c){return a+c.k;},0);
       h+='<button class="chip" onclick="addFood('+gi+','+ii+')">'+esc(it.n)+' · '+kk+(it.c?' 🧩':'')+'</button>';
     });
-    h+='</div>';
+    h+='</div></details>';
   });
   if(DB.custom.length){
     h+='<div class="card"><h2>⭐ Os meus alimentos</h2>';
@@ -1758,7 +1897,7 @@ function vTreino(){
   // seletor de programa — sempre visível
   var PROGS={SIM:'💚 Simples',UL:'Upper/Lower',PPL:'Push/Pull/Legs',FB:'Full Body',ELA:'🎗️ Elásticos'};
   var curProg=progOf(DB.cfg.profile);
-  h+='<div class="card"><h2>Programa</h2><div>';
+  h+='<details class="card"><summary style="font-weight:700">📋 Programa: '+PROGS[curProg]+'</summary><div style="margin-top:8px">';
   for(var pk in PROGS) h+='<button class="modechip'+(curProg===pk?' on':'')+'" onclick="setProg(\''+pk+'\')">'+PROGS[pk]+'</button>';
   if(DB.cfg.progSel) h+='<button class="modechip" onclick="setProg(null)">↩︎ voltar ao do perfil</button>';
   h+='</div><div class="note">Troca quando quiseres — o histórico de cada exercício mantém-se. '+
@@ -1766,9 +1905,25 @@ function vTreino(){
       curProg==='FB'?'Full Body: alterna A e B, 3x/semana.':
       curProg==='ELA'?'Elásticos: alterna A e B, em casa ou de férias. Guia de compra no separador Guia.':
       'Upper/Lower: U-L-U-L, 4 dias.')+
-     ' Os treinos 🏖️ (férias) e Sessão Mínima estão sempre disponíveis no fim.</div></div>';
+     ' Os treinos 🏖️ (férias) e Sessão Mínima estão sempre disponíveis no fim.</div></div></details>';
   var isFem=DB.cfg.profile&&DB.cfg.profile.sex==='F';
   var isRest=wkToday&&wkToday.type==='REST';
+  // sugestão automática pela rotação do programa
+  var PROG_SEQ={UL:['UA','LA','UB','LB'],PPL:['PUSH','PULL','LEGS'],FB:['FBA','FBB'],SIM:['SIMA','SIMB'],ELA:['BA','BB']};
+  var seqP=PROG_SEQ[progOf(DB.cfg.profile)]||[];
+  var nextWK=seqP[0]||null;
+  for(var bi=1;bi<=14;bi++){
+    var bw=DB.workouts[dateOffset(-bi)];
+    if(bw&&seqP.indexOf(bw.type)>=0){ nextWK=seqP[(seqP.indexOf(bw.type)+1)%seqP.length]; break; }
+  }
+  if(nextWK&&WK[nextWK]){
+    if(wkToday&&seqP.indexOf(wkToday.type)>=0)
+      h+='<div class="card journey" style="padding:12px 14px"><div style="font-size:15px">✅ Treino de hoje: <b>'+WK[wkToday.type].name+'</b> — bora lá.</div></div>';
+    else if(!isRest)
+      h+='<div class="card journey" style="padding:12px 14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'+
+        '<div style="font-size:15px">🎯 Hoje toca: <b>'+WK[nextWK].name+'</b><br><span style="font-size:11.5px;opacity:.8">~'+trainBurn(nextWK)+' kcal · pela rotação do teu programa</span></div>'+
+        '<button style="background:#484848;color:#fff;white-space:nowrap" onclick="startSession(\''+nextWK+'\')">▶ Começar</button></div></div>';
+  }
   h+='<div class="card"><h2>Treino de '+(curDate===today()?'hoje':curDate)+'</h2>';
   if(isRest){
     h+='<div class="note" style="margin:0 0 8px">😴 <b>Dia de descanso marcado</b> — é no descanso que o músculo cresce. '+
@@ -1791,7 +1946,7 @@ function vTreino(){
   var wkMin=0; for(var ci7=0;ci7<7;ci7++){ var dc=DB.days[dateOffset(-ci7)]; if(dc&&dc.cardio) dc.cardio.forEach(function(c){wkMin+=c.min;}); }
   var goalC2=DB.cfg.profile?DB.cfg.profile.goal:'perder';
   var tgtLo=goalC2==='ganhar'?30:60, tgtHi=goalC2==='ganhar'?60:(goalC2==='manter'?90:120);
-  h+='<div class="card"><h2>🏃 Cardio (conta no défice)</h2>';
+  h+='<details class="card"'+(cds.length?' open':'')+'><summary style="font-weight:700">🏃 Cardio'+(cds.length?' — '+cardioSum(curDate)+' kcal hoje':'')+'</summary><div style="margin-top:6px">';
   cds.forEach(function(c,ci){
     h+='<div class="foodline"><span class="fi">'+CARDIO[c.t].lb+' · nível '+String(c.lvl).replace('.',',')+' · '+c.min+' min</span>'+
        '<span class="fk"><b>'+c.k+' kcal</b></span>'+
@@ -1808,9 +1963,10 @@ function vTreino(){
    (wkMin<tgtLo?'📈 Sobe: acrescenta 1–2 sessões de 15–20 min (a inclinada pós-treino é a mais barata em tempo).':
     wkMin>tgtHi?'📉 Chega: mais cardio que isto começa a roubar recuperação ao músculo — investe em passos e sono.':
     '🎯 Na zona certa — mantém.')+
-   ' Estimativa standard (MET × peso × tempo); a passadeira a 10–12% de inclinação vale quase o dobro da caminhada plana.</div></div>';
+   ' Estimativa standard (MET × peso × tempo); a passadeira a 10–12% de inclinação vale quase o dobro da caminhada plana.</div></div></details>';
   if(curWK){
     var w=WK[curWK];
+    h+='<button class="big" style="width:100%;margin-bottom:10px;background:linear-gradient(90deg,#E490C0,#C9679E);color:#fff;border-radius:14px" onclick="startSession(\''+curWK+'\')">▶ Modo guiado (estilo coach)</button>';
     DB.workouts[curDate]=DB.workouts[curDate]||{type:curWK,sets:{}};
     DB.workouts[curDate].type=curWK;
     var sets=DB.workouts[curDate].sets;
@@ -1835,7 +1991,9 @@ function vTreino(){
         if(altn[ex.id]) h+='<button class="chip" style="margin:4px 4px 0 0;background:var(--grid);color:var(--ink2)" onclick="pickAlt(\''+ex.id+'\',null)">↩︎ original</button>';
         h+='</span></div>';
       }
-      h+=(last?'<span class="last">Última vez ('+last.d.slice(5)+'): '+last.s.map(function(s){return s.w+'kg×'+s.r;}).join(' · ')+'</span>':'');
+      var xst=exStats(ex.id);
+      h+=(last?'<span class="last">Última vez ('+last.d.slice(5)+'): '+last.s.map(function(s){return s.w+'kg×'+s.r;}).join(' · ')+
+          (xst?' · 🏆 '+String(xst.best.w).replace('.',',')+' kg':'')+'</span>':'');
       var sug=suggest(ex.id, ex.t);
       if(sug) h+='<div class="note" style="margin:0 0 6px;color:'+(sug.t==='up'?'var(--good)':'var(--ink2)')+'">'+sug.txt+'</div>';
       if(!last && STDW[ex.id]){
@@ -1863,12 +2021,64 @@ function vTreino(){
   }
   return h;
 }
+/* identidade canónica: o mesmo movimento partilha histórico entre todos os programas/avulsos */
+var CANON=[
+ ['la1','lg1','fba1','gla1'],            // agachamento
+ ['la2','lg2','gla2','fbb1'],            // peso morto romeno (barra)
+ ['la3','lg3','fbb4','sma1'],            // prensa
+ ['la4','lg4','gla5','sma4','lb2'],      // leg curl
+ ['la5','fba6','smb5'],                  // gémeos em pé
+ ['lb5','fbb6'],                         // gémeos sentado
+ ['ua1','pu1'],                          // supino inclinado halteres
+ ['ub3','pu3','sma2'],                   // supino plano / chest press
+ ['ua3','pu2','ub1','fbb2','smb2'],      // press de ombros
+ ['ua2','pl2','fba3','sma3'],            // remada barra/máquina
+ ['ub4','pl3'],                          // remada cabo
+ ['ua4','pl1','ub2','fbb3','smb3'],      // puxada/pull-up
+ ['ua5','pl5'],                          // curl inclinado
+ ['pl6','d52'],                          // curl cabo/martelo
+ ['ua6','pu6'],                          // tríceps overhead
+ ['d53','pu5','d5t3'],                   // tríceps corda
+ ['ub5','pu4','d51','d5t4'],             // elevações laterais
+ ['pl4','d54','d5t5','xom1'],            // face pull / posterior
+ ['lb3','gla3','glb2','smb4'],           // hip thrust
+ ['gla4','glb5'],                        // abdução
+ ['la6','lg6']                           // abs com carga
+];
+var CANONMAP={};
+CANON.forEach(function(g){ g.forEach(function(id){ CANONMAP[id]=g; }); });
+function canonList(id){ return CANONMAP[id]||[id]; }
+var MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function fmtDataPt(dt){ var d=new Date(dt+'T12:00:00'); return d.getDate()+' '+MESES[d.getMonth()]+' '+d.getFullYear(); }
+function exStats(exId){
+  var ids=canonList(exId), best=null, bestRM=null, lastD=null, nSes=0;
+  Object.keys(DB.workouts).sort().forEach(function(dt){
+    var found=false;
+    ids.forEach(function(id){
+      var sets=DB.workouts[dt].sets&&DB.workouts[dt].sets[id];
+      if(!sets) return;
+      sets.forEach(function(x){
+        if(!x.w||!x.r) return;
+        found=true;
+        if(!best||x.w>best.w||(x.w===best.w&&x.r>best.r)) best={w:x.w,r:x.r,d:dt};
+        var rm=x.w*(1+x.r/30);
+        if(!bestRM||rm>bestRM.rm) bestRM={rm:Math.round(rm*10)/10,d:dt};
+      });
+    });
+    if(found){ nSes++; lastD=dt; }
+  });
+  if(!best) return null;
+  return {best:best,bestRM:bestRM,lastD:lastD,nSes:nSes};
+}
 function lastPerf(exId){
   var dates=Object.keys(DB.workouts).sort().reverse();
   for(var i=0;i<dates.length;i++){
     if(dates[i]>=curDate) continue;
-    var s=DB.workouts[dates[i]].sets[exId];
-    if(s&&s.length&&s.some(function(x){return x.w&&x.r;})) return {d:dates[i],s:s.filter(function(x){return x.w&&x.r;})};
+    var ids=canonList(exId);
+    for(var ci=0;ci<ids.length;ci++){
+      var s=DB.workouts[dates[i]].sets[ids[ci]];
+      if(s&&s.length&&s.some(function(x){return x.w&&x.r;})) return {d:dates[i],s:s.filter(function(x){return x.w&&x.r;})};
+    }
   }
   return null;
 }
@@ -1966,7 +2176,7 @@ function vProg(){
   var opts=[];
   for(var k in WK){ WK[k].ex.forEach(function(e){ if(e.t!=='—') opts.push(e); }); }
   opts.forEach(function(e,i){ h+='<option value="'+e.id+'"'+(i===0?' selected':'')+'>'+e.n+'</option>'; });
-  h+='</select><div id="chS"></div><div class="note">Fórmula de Epley: carga×(1+reps/30). A linha manter-se ou subir durante o corte = músculo protegido.</div></div>';
+  h+='</select><div id="exStatBox"></div><div id="chS"></div><div class="note">Fórmula de Epley: carga×(1+reps/30). A linha manter-se ou subir durante o corte = músculo protegido.</div></div>';
   // Cintura
   var wpts=[]; for(var wd in DB.days){ if(DB.days[wd].waist) wpts.push([wd,DB.days[wd].waist]); }
   wpts.sort(function(a,b){return a[0]<b[0]?-1:1;});
@@ -1993,10 +2203,7 @@ function vProg(){
   }
   h+='<div class="note">Mesma luz, mesma pose, frente e lado. Guardadas comprimidas no telemóvel (máx. 12 — as antigas saem). '+
    'O espelho diário mente; a foto mensal não.</div></div>';
-  h+='<div class="card"><h2>Backup</h2><div class="row">'+
-   '<button class="ghost" onclick="expData()">⬇️ Exportar dados</button>'+
-   '<label style="flex:1"><input type="file" accept=".json" style="display:none" id="impF" onchange="impData(this)"><button class="ghost" style="width:100%" onclick="document.getElementById(\'impF\').click()">⬆️ Importar</button></label>'+
-   '</div><div class="note">Exporta 1x/semana. Se limpares os dados do Chrome, o backup é o que te salva.</div></div>';
+
   return h;
 }
 function expData(){
@@ -2127,11 +2334,24 @@ function drawCharts(){
   // strength
   var sel=document.getElementById('exSel'); if(!sel) return;
   var exId=sel.value;
-  var pts=[];
+  var stb=document.getElementById('exStatBox');
+  if(stb){
+    var st=exStats(exId);
+    stb.innerHTML = st
+      ? '<div class="grid3" style="margin:8px 0">'+
+        '<div class="stat"><span class="lb">🏆 Carga máxima</span><span class="vl" style="font-size:17px">'+String(st.best.w).replace('.',',')+' kg × '+st.best.r+'</span><span class="dl">'+fmtDataPt(st.best.d)+'</span></div>'+
+        '<div class="stat"><span class="lb">1RM estimado</span><span class="vl" style="font-size:17px">'+String(st.bestRM.rm).replace('.',',')+' kg</span><span class="dl">'+fmtDataPt(st.bestRM.d)+'</span></div>'+
+        '<div class="stat"><span class="lb">Sessões</span><span class="vl" style="font-size:17px">'+st.nSes+'</span><span class="dl">última: '+fmtDataPt(st.lastD)+'</span></div>'+
+        '</div>'
+      : '<div class="note">Ainda sem registos deste exercício.</div>';
+  }
+  var pts=[], cIds=canonList(exId);
   Object.keys(DB.workouts).sort().forEach(function(dt){
-    var s=DB.workouts[dt].sets[exId]; if(!s) return;
     var best=0;
-    s.forEach(function(x){ if(x.w&&x.r){ var rm=x.w*(1+x.r/30); if(rm>best) best=rm; } });
+    cIds.forEach(function(cid){
+      var s=DB.workouts[dt].sets&&DB.workouts[dt].sets[cid]; if(!s) return;
+      s.forEach(function(x){ if(x.w&&x.r){ var rm=x.w*(1+x.r/30); if(rm>best) best=rm; } });
+    });
     if(best) pts.push([dt,Math.round(best*10)/10]);
   });
   var el=document.getElementById('chS');
@@ -2249,6 +2469,10 @@ function vGuia(){
    '☑️ Whey para fechar os 195 g<br>'+
    '⬜ Cafeína ~200 mg pré-treino (opcional; nunca depois das 15h)<br>'+
    '❌ Ashwagandha — parada. Zinco — só se comeres pouca carne.</div></details>';
+  h+='<details class="card"><summary style="font-weight:700">💾 Backup dos dados</summary><div style="margin-top:8px"><div class="row">'+
+   '<button class="ghost" onclick="expData()">⬇️ Exportar dados</button>'+
+   '<label style="flex:1"><input type="file" accept=".json" style="display:none" id="impF" onchange="impData(this)"><button class="ghost" style="width:100%" onclick="document.getElementById(\'impF\').click()">⬆️ Importar</button></label>'+
+   '</div><div class="note">Exporta 1x/semana. Se limpares os dados do Chrome, o backup é o que te salva.</div></div></details>';
   h+='<div class="note" style="text-align:center">This Little Coach · versão <b>'+APPV+'</b></div>';
   h+='<details><summary>⚙️ Alvos</summary><div class="in"><div class="grid2">'+
    '<div><label>kcal/dia</label><input type="number" value="'+DB.cfg.kcal+'" onchange="DB.cfg.kcal=parseInt(this.value)||2600;save();render()"></div>'+
