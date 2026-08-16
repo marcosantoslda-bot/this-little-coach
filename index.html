@@ -171,7 +171,7 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v7';
+var APPV='v8';
 var CFGDEF = {kcal:2600, prot:195, steps:10000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
@@ -289,6 +289,37 @@ function avg7(dt){ // 7-day avg of weights up to dt
 }
 /* Gasto estimado (TDEE): BMR ~2000 (Katch-McArdle, MM 75,6 kg) ×1,15 vida basal
    + passos ×0,045 kcal + treino registado. Estimativa — calibra com a balança. */
+var CARDIO={
+ passadeira:{lb:'Passadeira inclinada',ll:'inclinação %',def:10,met:function(l){return 3.5+0.55*l;}},
+ caminhada:{lb:'Caminhada (rua)',ll:'ritmo km/h (4 calmo · 6 rápido)',def:5,met:function(l){return 0.95*l;}},
+ eliptica:{lb:'Elíptica',ll:'resistência (1–20)',def:8,met:function(l){return 4+0.35*l;}},
+ bicicleta:{lb:'Bicicleta estática',ll:'resistência (1–20)',def:8,met:function(l){return 3.5+0.45*l;}},
+ remo:{lb:'Remo',ll:'resistência (1–10)',def:5,met:function(l){return 6+0.4*l;}},
+ corrida:{lb:'Corrida',ll:'velocidade km/h',def:9,met:function(l){return 1.0*l;}}
+};
+var cardioT='passadeira';
+function cardioKcal(t,lvl,min){
+  var pw=DB.cfg.profile?DB.cfg.profile.w:94;
+  var met=Math.min(13,Math.max(2,CARDIO[t].met(lvl)));
+  return Math.round(met*3.5*pw/200*min);
+}
+function cardioSum(dt){
+  var d=DB.days[dt]; if(!d||!d.cardio) return 0;
+  return d.cardio.reduce(function(a,c){return a+c.k;},0);
+}
+function addCardio(){
+  var t=document.getElementById('cdT').value;
+  var lvl=parseFloat(document.getElementById('cdL').value)||CARDIO[t].def;
+  var min=parseInt(document.getElementById('cdM').value)||0;
+  if(!min) return;
+  var k=cardioKcal(t,lvl,min);
+  var d=day(curDate); d.cardio=d.cardio||[];
+  d.cardio.push({t:t,lvl:lvl,min:min,k:k});
+  buzz(); save(); render();
+}
+function trainBurn(k){
+  return Math.round((WKCAL[k]||280)*((DB.cfg.profile?DB.cfg.profile.w:94)/94));
+}
 var WKCAL = {UA:300,LA:320,UB:300,LB:320,D5:220,MIN:130,FER1:220,FER2:110,PUSH:300,PULL:300,LEGS:320,FBA:310,FBB:310,BA:190,BB:190,SIMA:250,SIMB:250,XPERNA:320,XGLUTE:300,XBRACO:200,XPEITO:250,XCOSTA:260,XOMBRO:200,XCORE:150,REST:0};
 function tdee(dt){
   var bmr=DB.cfg.bmr||2000;
@@ -297,7 +328,7 @@ function tdee(dt){
   var wk=DB.workouts[dt], tr=(wk&&wk.type&&wk.type!=='REST')?Math.round((WKCAL[wk.type]||280)*((DB.cfg.profile?DB.cfg.profile.w:94)/94)):0;
   var hasSets = wk && Object.keys(wk.sets||{}).some(function(k){return (wk.sets[k]||[]).some(function(s){return s.w&&s.r;});});
   if(wk && !hasSets && wk.type!=='D5') tr=(WKCAL[wk.type]||280); // conta mesmo sem séries preenchidas
-  return Math.round(base+st+tr);
+  return Math.round(base+st+tr+cardioSum(dt));
 }
 function deficit(dt){
   var s=sumFoods(dt);
@@ -1290,6 +1321,7 @@ function vHoje(){
    '<div class="stat"><span class="lb">Passos</span><span class="vl">'+(d.steps? d.steps.toLocaleString('pt-PT'):'—')+'</span><span class="dl">piso '+DB.cfg.steps.toLocaleString('pt-PT')+'</span><div class="meter"><i style="width:'+stepsPct+'%"></i></div></div>'+
    '<div class="stat"><span class="lb">Água</span><span class="vl">'+fmt(d.water||0,2).replace(',00','')+' L</span><span class="dl">alvo '+fmt(DB.cfg.water)+' L</span><div class="meter"><i style="width:'+Math.min(100,(d.water||0)/DB.cfg.water*100)+'%"></i></div></div>'+
    '</div>'+(wkToday?(wkToday.type==='REST'?'<div class="note">😴 Hoje é descanso — marcado de propósito, conta como plano cumprido.</div>':'<div class="note">✅ Treino de hoje: <b>'+(WK[wkToday.type]?WK[wkToday.type].name:wkToday.type)+'</b>'+(tonnage(curDate)?' · '+tonnage(curDate).toLocaleString('pt-PT')+' kg movidos':'')+'</div>'):'<div class="note">Ainda sem treino registado hoje.</div>')+
+   ((day(curDate).cardio&&day(curDate).cardio.length)?'<div class="note">🏃 Cardio: '+cardioSum(curDate)+' kcal em '+day(curDate).cardio.reduce(function(a,c){return a+c.min;},0)+' min — já no défice.</div>':'')+
    alert+
    '<div class="note">O défice é estimado (gasto ≈ BMR ×1,15 + passos + treino). A prova real é a média da balança — o auto-ajuste calibra por ela a cada 2 semanas.</div></div>';
   if(!d.closed){
@@ -1726,7 +1758,30 @@ function vTreino(){
   ['MIN','FER1','FER2'].forEach(function(mk){
     h+='<button class="chip" style="'+(curWK===mk?'outline:2px solid var(--accent)':'')+'" onclick="curWK=\''+mk+'\';render()">'+WK[mk].name+'</button>'; });
   h+='<button class="chip" style="background:var(--grid);color:var(--ink2)" onclick="DB.workouts[curDate]={type:\'REST\',sets:{}};curWK=null;save();render()">😴 Sem treino hoje</button>';
-  h+='</div>'+(curWK&&WKNOTES[curWK]?'<div class="note" style="margin-top:6px">'+WKNOTES[curWK]+'</div>':'')+'</div>';
+  h+='</div>'+(curWK&&curWK!=='REST'?'<div class="note" style="margin-top:6px">🔥 Gasto estimado deste treino: <b>~'+trainBurn(curWK)+' kcal</b> — entra no teu défice ao marcares o treino.'+(WKNOTES[curWK]?'<br>'+WKNOTES[curWK]:'')+'</div>':'')+'</div>';
+  // cartão de cardio
+  var cds=day(curDate).cardio||[];
+  var wkMin=0; for(var ci7=0;ci7<7;ci7++){ var dc=DB.days[dateOffset(-ci7)]; if(dc&&dc.cardio) dc.cardio.forEach(function(c){wkMin+=c.min;}); }
+  var goalC2=DB.cfg.profile?DB.cfg.profile.goal:'perder';
+  var tgtLo=goalC2==='ganhar'?30:60, tgtHi=goalC2==='ganhar'?60:(goalC2==='manter'?90:120);
+  h+='<div class="card"><h2>🏃 Cardio (conta no défice)</h2>';
+  cds.forEach(function(c,ci){
+    h+='<div class="foodline"><span class="fi">'+CARDIO[c.t].lb+' · nível '+String(c.lvl).replace('.',',')+' · '+c.min+' min</span>'+
+       '<span class="fk"><b>'+c.k+' kcal</b></span>'+
+       '<button class="mini danger" onclick="day(curDate).cardio.splice('+ci+',1);save();render()">✕</button></div>';
+  });
+  h+='<div class="grid3" style="margin-top:6px">'+
+   '<div style="grid-column:span 3"><label>Tipo</label><select id="cdT" onchange="cardioT=this.value;render()">';
+  for(var ck2 in CARDIO) h+='<option value="'+ck2+'"'+(cardioT===ck2?' selected':'')+'>'+CARDIO[ck2].lb+'</option>';
+  h+='</select></div>'+
+   '<div style="grid-column:span 2"><label>'+CARDIO[cardioT].ll+'</label><input id="cdL" type="number" step="0.5" inputmode="decimal" value="'+CARDIO[cardioT].def+'"></div>'+
+   '<div><label>Minutos</label><input id="cdM" type="number" inputmode="numeric" placeholder="15"></div>'+
+   '</div><button class="ghost" style="width:100%;margin-top:8px" onclick="addCardio()">＋ Adicionar cardio</button>'+
+   '<div class="note">Esta semana: <b>'+wkMin+' min</b> · alvo para o teu objetivo: '+tgtLo+'–'+tgtHi+' min. '+
+   (wkMin<tgtLo?'📈 Sobe: acrescenta 1–2 sessões de 15–20 min (a inclinada pós-treino é a mais barata em tempo).':
+    wkMin>tgtHi?'📉 Chega: mais cardio que isto começa a roubar recuperação ao músculo — investe em passos e sono.':
+    '🎯 Na zona certa — mantém.')+
+   ' Estimativa standard (MET × peso × tempo); a passadeira a 10–12% de inclinação vale quase o dobro da caminhada plana.</div></div>';
   if(curWK){
     var w=WK[curWK];
     DB.workouts[curDate]=DB.workouts[curDate]||{type:curWK,sets:{}};
