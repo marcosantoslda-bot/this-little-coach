@@ -171,7 +171,7 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v4';
+var APPV='v7';
 var CFGDEF = {kcal:2600, prot:195, steps:10000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
@@ -289,12 +289,12 @@ function avg7(dt){ // 7-day avg of weights up to dt
 }
 /* Gasto estimado (TDEE): BMR ~2000 (Katch-McArdle, MM 75,6 kg) ×1,15 vida basal
    + passos ×0,045 kcal + treino registado. Estimativa — calibra com a balança. */
-var WKCAL = {UA:300,LA:320,UB:300,LB:320,D5:220,MIN:130,FER1:220,FER2:110,PUSH:300,PULL:300,LEGS:320,FBA:310,FBB:310,BA:190,BB:190,SIMA:250,SIMB:250};
+var WKCAL = {UA:300,LA:320,UB:300,LB:320,D5:220,MIN:130,FER1:220,FER2:110,PUSH:300,PULL:300,LEGS:320,FBA:310,FBB:310,BA:190,BB:190,SIMA:250,SIMB:250,XPERNA:320,XGLUTE:300,XBRACO:200,XPEITO:250,XCOSTA:260,XOMBRO:200,XCORE:150,REST:0};
 function tdee(dt){
   var bmr=DB.cfg.bmr||2000;
   var pw=DB.cfg.profile?DB.cfg.profile.w:94;
   var d=DB.days[dt]||{}, base=bmr*1.15, st=(d.steps||0)*0.00048*pw;
-  var wk=DB.workouts[dt], tr=(wk&&wk.type)?Math.round((WKCAL[wk.type]||280)*((DB.cfg.profile?DB.cfg.profile.w:94)/94)):0;
+  var wk=DB.workouts[dt], tr=(wk&&wk.type&&wk.type!=='REST')?Math.round((WKCAL[wk.type]||280)*((DB.cfg.profile?DB.cfg.profile.w:94)/94)):0;
   var hasSets = wk && Object.keys(wk.sets||{}).some(function(k){return (wk.sets[k]||[]).some(function(s){return s.w&&s.r;});});
   if(wk && !hasSets && wk.type!=='D5') tr=(WKCAL[wk.type]||280); // conta mesmo sem séries preenchidas
   return Math.round(base+st+tr);
@@ -322,7 +322,7 @@ function weeklySummary(nWeeks){
     if(d.steps) o.st.push(d.steps);
     if(d.water) o.wa.push(d.water);
   }
-  for(var dt2 in DB.workouts){ var o2=W(dt2); var tn=tonnage(dt2); if(tn||DB.workouts[dt2].type){ o2.tr++; o2.ton+=tn; } }
+  for(var dt2 in DB.workouts){ if(DB.workouts[dt2].type==='REST') continue; var o2=W(dt2); var tn=tonnage(dt2); if(tn||DB.workouts[dt2].type){ o2.tr++; o2.ton+=tn; } }
   function m(a){ if(!a.length) return null; var s=0; a.forEach(function(x){s+=x;}); return s/a.length; }
   var keys=Object.keys(wkMap).sort().slice(-nWeeks);
   return keys.map(function(k){
@@ -468,6 +468,48 @@ var WK_SIM = {
   {id:'smb4',n:'Hip thrust na máquina (ou glute bridge)',t:'2×10–15',m:'Glúteos',a:['Coice no cabo','Abdução máquina']},
   {id:'smb5',n:'Gémeos (em pé ou prensa)',t:'2×12–15',m:'Gémeos',a:['No degrau c/ haltere']}]}
 };
+var WK_EXTRA = {
+ XPERNA:{name:'🦵 Pernas', ex:[
+  {id:'la1',n:'Agachamento',t:'3×5–8',m:'Quadríceps · glúteos',a:['Hack squat','Prensa de pernas (pesada)','Goblet squat c/ haltere']},
+  {id:'la2',n:'Peso morto romeno',t:'3×6–10',m:'Isquios · glúteos · lombar',a:['RDL c/ halteres','Good morning','Leg curl + hiperextensões']},
+  {id:'la3',n:'Prensa de pernas',t:'2×10–15',m:'Quadríceps · glúteos',a:['Hack squat','Agachamento búlgaro','Step-ups c/ halteres']},
+  {id:'la4',n:'Leg curl sentado',t:'2×10–15',m:'Isquiotibiais',a:['Leg curl deitado','Nordic curl assistido']},
+  {id:'lb4',n:'Extensão de pernas',t:'2×12–20',m:'Quadríceps',a:['Sissy squat','Prensa pés baixos']},
+  {id:'la5',n:'Gémeos em pé (pausa em baixo)',t:'3×10–15',m:'Gémeos',a:['Gémeos na prensa']}]},
+ XGLUTE:{name:'🍑 Glúteos & pernas', ex:[
+  {id:'gla1',n:'Agachamento profundo',t:'3×6–10',m:'Glúteos · quadríceps',a:['Hack squat profundo','Prensa pés altos','Goblet profundo']},
+  {id:'gla2',n:'Peso morto romeno',t:'3×8–12',m:'Glúteos · isquios',a:['RDL c/ halteres','Good morning']},
+  {id:'gla3',n:'Hip thrust',t:'3×8–12',m:'Glúteos (pico)',a:['Glute bridge c/ barra','Hiperextensões c/ peso']},
+  {id:'glb4',n:'Coice no cabo (kickback)',t:'2×12–20',m:'Glúteo máximo',a:['Extensão quadril máquina','Step-ups']},
+  {id:'gla4',n:'Abdução (máquina, tronco à frente)',t:'2×15–20',m:'Glúteo médio',a:['Abdução cabo','Mini band']},
+  {id:'gla5',n:'Leg curl sentado',t:'2×10–15',m:'Isquiotibiais',a:['Leg curl deitado']}]},
+ XBRACO:{name:'💪 Braços — bíceps & tríceps', ex:[
+  {id:'ua5',n:'Curl inclinado',t:'3×8–12',m:'Bíceps (alongado — cresce mais)',a:['Curl cabo atrás do corpo','Curl halteres em pé']},
+  {id:'pl6',n:'Curl martelo / cabo',t:'2×10–15',m:'Bíceps · antebraço',a:['Curl barra EZ']},
+  {id:'ua6',n:'Ext. tríceps acima da cabeça',t:'3×10–15',m:'Tríceps (cabeça longa — 2/3 do volume do braço)',a:['Overhead haltere','Skullcrusher']},
+  {id:'d53',n:'Tríceps corda',t:'2×10–15',m:'Tríceps',a:['Pushdown barra','Fundos banco']},
+  {id:'d54',n:'Face pulls',t:'2×15–20',m:'Ombro posterior (saúde)',a:['Reverse fly halteres']}]},
+ XPEITO:{name:'🏋️ Peito', ex:[
+  {id:'pu1',n:'Supino inclinado halteres',t:'3×6–10',m:'Peito superior',a:['Máquina/Smith inclinado','Chest press']},
+  {id:'pu3',n:'Supino plano',t:'3×8–12',m:'Peito',a:['Chest press máquina','Supino halteres','Fundos']},
+  {id:'xpe1',n:'Aberturas (peck-deck ou halteres)',t:'2×12–15',m:'Peito (alongamento)',a:['Crossover no cabo baixo']},
+  {id:'pu5',n:'Tríceps corda',t:'2×10–15',m:'Tríceps (sinergista)',a:['Pushdown barra']}]},
+ XCOSTA:{name:'🔙 Costas', ex:[
+  {id:'pl1',n:'Puxada vertical / pull-ups',t:'3×6–10',m:'Dorsal (largura)',a:['Pull-ups assistidas','Puxada neutra']},
+  {id:'pl2',n:'Remada barra/máquina',t:'3×8–12',m:'Costas (espessura)',a:['Remada T-bar','Remada haltere']},
+  {id:'pl3',n:'Remada no cabo sentado',t:'2×10–15',m:'Costas (meio)',a:['Remada máquina']},
+  {id:'pl4',n:'Face pulls',t:'2×15–20',m:'Ombro posterior · postura',a:['Reverse fly']},
+  {id:'pl5',n:'Curl inclinado',t:'2×8–12',m:'Bíceps',a:['Curl cabo']}]},
+ XOMBRO:{name:'🎯 Ombros', ex:[
+  {id:'pu2',n:'Press de ombros',t:'3×8–12',m:'Ombro (anterior/lateral)',a:['Máquina de ombros','Press halteres sentado']},
+  {id:'pu4',n:'Elevações laterais',t:'3×12–20',m:'Ombro lateral (largura)',a:['Cabo unilateral','Máquina']},
+  {id:'xom1',n:'Elevações posteriores (reverse fly)',t:'2×12–20',m:'Ombro posterior',a:['Peck-deck invertido','Face pull']},
+  {id:'d54',n:'Face pulls',t:'2×15–20',m:'Saúde do ombro',a:['Pull-apart c/ banda']}]},
+ XCORE:{name:'🧱 Core', ex:[
+  {id:'la6',n:'Abdominal com carga',t:'3×10–15',m:'Reto abdominal',a:['Cabo ajoelhado','Máquina']},
+  {id:'lb6',n:'Prancha + prancha lateral',t:'3×45s',m:'Core profundo · oblíquos',a:['Hollow hold','Pallof press']},
+  {id:'xco1',n:'Dead bug',t:'2×10/lado',m:'Estabilidade lombo-pélvica',a:['Bird dog']}]}
+};
 function progOf(p){
   if(typeof DB!=='undefined'&&DB.cfg&&DB.cfg.progSel) return DB.cfg.progSel; // troca rápida no separador Treino
   if(!p) return 'UL';
@@ -541,6 +583,8 @@ function buildWK(profile){
     if(focus==='gluteos'){ w.LA=JSON.parse(JSON.stringify(FOCUS_LA_GLUTE)); w.LB=JSON.parse(JSON.stringify(FOCUS_LB_GLUTE)); }
     else if(focus==='tronco'){ w.D5=JSON.parse(JSON.stringify(FOCUS_D5_TRONCO)); }
   }
+  var xt=JSON.parse(JSON.stringify(WK_EXTRA));
+  for(var xk in xt) w[xk]=xt[xk];
   w.MIN=base.MIN; w.FER1=base.FER1; w.FER2=base.FER2;
   if(profile) for(var wk2 in w){ w[wk2].ex=w[wk2].ex.map(function(e){ return adaptEx(e, profile); }); }
   return w;
@@ -566,6 +610,7 @@ function applyProfile(){
   DB.cfg.water = Math.round((0.03*p.w+0.7)*4)/4;
   if(p.goalWeight) DB.cfg.target=p.goalWeight;
   if(!DB.cfg.startW) DB.cfg.startW=p.w; // ponto de partida da jornada (fixa na 1ª vez)
+  DB.cfg.progSel=null; // o programa do perfil volta a mandar
   WK = buildWK(p);
   curWK=null;
   DB.cfg.lastTune=null;
@@ -620,6 +665,7 @@ var STDW = {
  gla4:[0.35,'l','na máquina'], gla5:[0.35,'l','na máquina'], gla6:[0.90,'l','na máquina'],
  glb1:[0.12,'l','por haltere'], glb2:[1.00,'l','na barra'], glb3:[0.15,'l','por haltere'],
  glb4:[0.10,'l','no cabo (tornozeleira)'], glb5:[0.30,'l','na máquina'],
+ xpe1:[0.10,'u','por haltere'], xom1:[0.06,'u','por haltere'],
  sma1:[1.10,'l','na máquina'], sma2:[0.45,'u','na máquina'], sma3:[0.50,'u','na máquina'], sma4:[0.35,'l','na máquina'], sma5:[0.30,'u','na máquina'],
  smb1:[0.25,'l','o haltere'], smb2:[0.30,'u','na máquina'], smb3:[0.50,'u','na torre'], smb4:[0.80,'l','na máquina'], smb5:[0.80,'l','na máquina'],
  pu1:[0.20,'u','por haltere'], pu2:[0.15,'u','por haltere'], pu3:[0.60,'u','na barra'], pu4:[0.07,'u','por haltere'], pu5:[0.20,'u','no cabo'], pu6:[0.20,'u','no cabo'],
@@ -659,7 +705,7 @@ function coachWeek(){
   var kAll=[],kWknd=[],kWkd=[],prots=[],steps=[],sleeps=[],waters=[],weighs=0,logged=0,trainings=0,ton=0;
   for(var i=1;i<=7;i++){
     var dt=dateOffset(-i), d=DB.days[dt];
-    if(DB.workouts[dt]){ trainings++; ton+=tonnage(dt); }
+    if(DB.workouts[dt]&&DB.workouts[dt].type!=='REST'){ trainings++; ton+=tonnage(dt); }
     if(!d) continue;
     var s=sumFoods(dt);
     if(s.k){ logged++; kAll.push(s.k); prots.push(s.p);
@@ -1063,6 +1109,7 @@ var EXPIC={
  f1:'pushup',f2:'seatedrow',f3:'lunge',f4:'hipthrust',f5:'pike',f6:'plank',
  g1:'pushup',g2:'lunge',g3:'seatedrow',
  m1:'flatpress',m2:'seatedrow',m3:'legpress',
+ xpe1:'flatpress', xom1:'facepull', xco1:'plank',
  sma1:'legpress',sma2:'flatpress',sma3:'seatedrow',sma4:'legcurl',sma5:'abscrunch',
  smb1:'squat',smb2:'ohp',smb3:'pulldown',smb4:'hipthrust',smb5:'calf',
  ba1:'band',ba2:'flatpress',ba3:'seatedrow',ba4:'ohp',ba5:'curl',ba6:'pushdownT',
@@ -1242,9 +1289,29 @@ function vHoje(){
    '<div class="stat"><span class="lb">Média 7 dias</span><span class="vl">'+fmt(a7)+'</span><span class="dl">alvo '+fmt(DB.cfg.target)+' kg</span></div>'+
    '<div class="stat"><span class="lb">Passos</span><span class="vl">'+(d.steps? d.steps.toLocaleString('pt-PT'):'—')+'</span><span class="dl">piso '+DB.cfg.steps.toLocaleString('pt-PT')+'</span><div class="meter"><i style="width:'+stepsPct+'%"></i></div></div>'+
    '<div class="stat"><span class="lb">Água</span><span class="vl">'+fmt(d.water||0,2).replace(',00','')+' L</span><span class="dl">alvo '+fmt(DB.cfg.water)+' L</span><div class="meter"><i style="width:'+Math.min(100,(d.water||0)/DB.cfg.water*100)+'%"></i></div></div>'+
-   '</div>'+(wkToday?'<div class="note">✅ Treino de hoje: <b>'+(WK[wkToday.type]?WK[wkToday.type].name:wkToday.type)+'</b>'+(tonnage(curDate)?' · '+tonnage(curDate).toLocaleString('pt-PT')+' kg movidos':'')+'</div>':'<div class="note">Ainda sem treino registado hoje.</div>')+
+   '</div>'+(wkToday?(wkToday.type==='REST'?'<div class="note">😴 Hoje é descanso — marcado de propósito, conta como plano cumprido.</div>':'<div class="note">✅ Treino de hoje: <b>'+(WK[wkToday.type]?WK[wkToday.type].name:wkToday.type)+'</b>'+(tonnage(curDate)?' · '+tonnage(curDate).toLocaleString('pt-PT')+' kg movidos':'')+'</div>'):'<div class="note">Ainda sem treino registado hoje.</div>')+
    alert+
    '<div class="note">O défice é estimado (gasto ≈ BMR ×1,15 + passos + treino). A prova real é a média da balança — o auto-ajuste calibra por ela a cada 2 semanas.</div></div>';
+  if(!d.closed){
+    if(s.k) h+='<button class="big" style="width:100%;margin-bottom:12px" onclick="closeDay()">🌙 Fechar o dia</button>';
+  } else {
+    var imp=dayImpact(), recs=dayRecs();
+    h+='<div class="card" style="border:2px solid var(--accent)"><h2>📋 Dia fechado</h2>';
+    var checks=[
+      [s.k<=effKcal()*1.05&&s.k>=effKcal()*0.8,'Calorias '+Math.round(s.k)+' / '+effKcal()],
+      [s.p>=DB.cfg.prot*0.9,'Proteína '+Math.round(s.p)+' g / '+DB.cfg.prot],
+      [(d.steps||0)>=DB.cfg.steps*0.8,'Passos '+((d.steps||0).toLocaleString('pt-PT'))],
+      [(d.water||0)>=DB.cfg.water*0.7,'Água '+fmt(d.water||0)+' L'],
+      [!!DB.workouts[curDate],'Treino/descanso marcado']
+    ];
+    var score=checks.filter(function(c){return c[0];}).length;
+    h+='<div class="note" style="margin:0 0 6px;font-size:15px"><b>'+score+'/5</b> '+(score>=4?'🟢 dia ganho':score>=3?'🟡 dia razoável':'🔴 dia a esquecer — amanhã recomeça')+'</div>';
+    checks.forEach(function(c){ h+='<div class="note" style="margin:2px 0">'+(c[0]?'✅':'▫️')+' '+c[1]+'</div>'; });
+    if(imp) h+='<div class="note" style="margin-top:8px;font-weight:700;color:'+(imp.t==='ok'?'var(--good)':imp.t==='atraso'?'var(--warn)':'var(--ink2)')+'">'+imp.txt+'</div>';
+    if(recs.length){ h+='<div class="note" style="margin-top:8px"><b>Para amanhã:</b></div>';
+      recs.slice(0,2).forEach(function(r){ h+='<div class="note" style="margin:2px 0">→ '+r+'</div>'; }); }
+    h+='<div class="note" style="margin-top:8px"><span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="day(curDate).closed=false;save();render()">reabrir o dia</span></div></div>';
+  }
   h+='<div class="card"><h2>💧 Água</h2><div class="row">'+
    '<button class="ghost" onclick="addWater(0.25)">+ copo 250ml</button>'+
    '<button class="ghost" onclick="addWater(0.5)">+ garrafa 500ml</button>'+
@@ -1325,6 +1392,40 @@ function walkRoute(steps){
       {timeout:7000});
   } else if(DB.cfg.home){ go(DB.cfg.home.lat, DB.cfg.home.lng); }
   else alert('Define um ponto de partida fixo (opção abaixo dos botões de passos).');
+}
+function dayRecs(){
+  var d=day(curDate), s2=sumFoods(curDate), KT=effKcal(), recs=[];
+  var pR=s2.p/DB.cfg.prot, kR=s2.k/KT;
+  if(kR>1.10) recs.push('Calorias +'+Math.round(s2.k-KT)+': amanhã aplica o banco — pequeno-almoço e almoço de proteína+legumes.');
+  if(pR<0.90){ var ps=protSuggest(); recs.push('Proteína ficou a '+Math.round(DB.cfg.prot-s2.p)+' g'+(ps?' — amanhã garante cedo: '+ps.txt:'')+'. Põe alarme da 4.ª dose às 21h30.'); }
+  if((d.steps||0)<DB.cfg.steps*0.8) recs.push('Passos a '+Math.round((d.steps||0)/1000)+'k: amanhã cola 10 min de caminhada ao almoço E ao jantar.');
+  if((d.water||0)<DB.cfg.water*0.7) recs.push('Água ficou curta: garrafa de 750 ml em cima da secretária logo de manhã.');
+  var wk=DB.workouts[curDate];
+  if(!wk&&DB.cfg.mode==='normal') recs.push('Dia sem treino nem descanso marcado: amanhã, Sessão Mínima no mínimo — nunca dois dias seguidos.');
+  if((d.sleep||0)&&d.sleep<6.8) recs.push('Sono '+fmt(d.sleep)+' h: hoje deita-te 30 min mais cedo — o défice sem sono queima músculo.');
+  return recs;
+}
+function dayImpact(){
+  var goal=DB.cfg.profile?DB.cfg.profile.goal:'perder';
+  var df=deficit(curDate);
+  if(df==null||DB.cfg.mode!=='normal'||goal==='manter') return null;
+  var planned=goal==='ganhar'?250:500;
+  var actual=goal==='ganhar'?df:-df;
+  var ratio=actual/planned;
+  if(ratio>=0.8&&ratio<=1.4) return {t:'ok', txt:'🎯 Dia no ritmo — a data da meta mantém-se.'};
+  if(ratio<0.8){
+    var atraso=Math.max(0.1,Math.round((planned-actual)/planned*10)/10);
+    return {t:'atraso', txt:'📅 Este dia empurra a meta ~'+String(atraso).replace('.',',')+' dia'+(atraso>=1.5?'s':'')+' para a frente. Um dia não é nada — dois seguidos é tendência.'};
+  }
+  return {t:'frente', txt:'⚡ À frente do plano (défice '+Math.round(actual)+'). Ganhas ~'+String(Math.round((actual-planned)/planned*10)/10).replace('.',',')+' dia — mas défices muito grandes comem músculo; não faças disto hábito.'};
+}
+function closeDay(){
+  var s2=sumFoods(curDate), miss=DB.cfg.prot-s2.p;
+  if(miss>15){
+    var ps=protSuggest();
+    if(!confirm('Ainda faltam '+Math.round(miss)+' g de proteína.'+(ps?'\n\nAinda vais a tempo: '+ps.txt+' (+'+ps.p+' g, '+ps.k+' kcal).':'')+'\n\nFechar o dia mesmo assim?')) return;
+  }
+  day(curDate).closed=true; buzz(); save(); render();
 }
 function toggleWaterRem(){
   if(DB.cfg.waterRem){ DB.cfg.waterRem=false; save(); render(); return; }
@@ -1585,6 +1686,7 @@ function vTreino(){
   var pd=new Date(curDate+'T12:00:00'); pd.setDate(pd.getDate()-7);
   var prevWk=getWeek(pd);
   for(var dt in DB.workouts){
+    if(DB.workouts[dt].type==='REST') continue;
     var t=tonnage(dt); var w=weekOf(dt);
     if(w===thisWk){ if(t){tonThis+=t;nThis++;} }
     else if(w===prevWk){ if(t){tonPrev+=t;nPrev++;} }
@@ -1599,15 +1701,31 @@ function vTreino(){
   var curProg=progOf(DB.cfg.profile);
   h+='<div class="card"><h2>Programa</h2><div>';
   for(var pk in PROGS) h+='<button class="modechip'+(curProg===pk?' on':'')+'" onclick="setProg(\''+pk+'\')">'+PROGS[pk]+'</button>';
-  if(DB.cfg.progSel) h+='<button class="modechip" onclick="setProg(null)">↩︎ auto</button>';
+  if(DB.cfg.progSel) h+='<button class="modechip" onclick="setProg(null)">↩︎ voltar ao do perfil</button>';
   h+='</div><div class="note">Troca quando quiseres — o histórico de cada exercício mantém-se. '+
      (curProg==='SIM'?'Simples: 2 treinos alternados (A/B), só máquinas, 5 exercícios, 30-40 min — perfeito para começar ou para quem não gosta de complicar. Igual para homem e mulher.':curProg==='PPL'?'PPL: roda Push→Pull→Legs; com 5-6 dias repete o ciclo.':
       curProg==='FB'?'Full Body: alterna A e B, 3x/semana.':
       curProg==='ELA'?'Elásticos: alterna A e B, em casa ou de férias. Guia de compra no separador Guia.':
       'Upper/Lower: U-L-U-L, 4 dias.')+
      ' Os treinos 🏖️ (férias) e Sessão Mínima estão sempre disponíveis no fim.</div></div>';
-  h+='<div class="card"><h2>Treino de '+(curDate===today()?'hoje':curDate)+'</h2><div class="row">';
-  for(var k in WK){ h+='<button class="chip" style="'+(curWK===k?'outline:2px solid var(--accent)':'')+'" onclick="curWK=\''+k+'\';render()">'+WK[k].name+'</button>'; }
+  var isFem=DB.cfg.profile&&DB.cfg.profile.sex==='F';
+  var isRest=wkToday&&wkToday.type==='REST';
+  h+='<div class="card"><h2>Treino de '+(curDate===today()?'hoje':curDate)+'</h2>';
+  if(isRest){
+    h+='<div class="note" style="margin:0 0 8px">😴 <b>Dia de descanso marcado</b> — é no descanso que o músculo cresce. '+
+       '<span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="delete DB.workouts[curDate];curWK=null;save();render()">afinal quero treinar</span></div>';
+  }
+  h+='<div class="row">';
+  for(var k in WK){ if(k.charAt(0)==='X'||k==='MIN'||k==='FER1'||k==='FER2') continue;
+    h+='<button class="chip" style="'+(curWK===k?'outline:2px solid var(--accent)':'')+'" onclick="curWK=\''+k+'\';render()">'+WK[k].name+'</button>'; }
+  h+='</div><h3 class="sec">Hoje apetece-me… (avulsos, qualquer dia)</h3><div class="row">';
+  var xOrder=isFem?['XGLUTE','XPERNA','XBRACO','XOMBRO','XPEITO','XCOSTA','XCORE']:['XPERNA','XGLUTE','XBRACO','XPEITO','XCOSTA','XOMBRO','XCORE'];
+  xOrder.forEach(function(xk,xi){ if(!WK[xk]) return;
+    h+='<button class="chip" style="'+(curWK===xk?'outline:2px solid var(--accent)':'')+'" onclick="curWK=\''+xk+'\';render()">'+WK[xk].name+(xi===0?' ⭐':'')+'</button>'; });
+  h+='</div><h3 class="sec">Sempre disponíveis</h3><div class="row">';
+  ['MIN','FER1','FER2'].forEach(function(mk){
+    h+='<button class="chip" style="'+(curWK===mk?'outline:2px solid var(--accent)':'')+'" onclick="curWK=\''+mk+'\';render()">'+WK[mk].name+'</button>'; });
+  h+='<button class="chip" style="background:var(--grid);color:var(--ink2)" onclick="DB.workouts[curDate]={type:\'REST\',sets:{}};curWK=null;save();render()">😴 Sem treino hoje</button>';
   h+='</div>'+(curWK&&WKNOTES[curWK]?'<div class="note" style="margin-top:6px">'+WKNOTES[curWK]+'</div>':'')+'</div>';
   if(curWK){
     var w=WK[curWK];
