@@ -193,7 +193,7 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v15';
+var APPV='v17';
 var CFGDEF = {kcal:2600, prot:195, steps:10000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
@@ -1078,6 +1078,28 @@ var ING = [
  {n:'Fatia de bolo de festa',k:300,p:4,t:'festa'},
  {n:'Mousse de chocolate (taça peq.)',k:220,p:4,t:'festa'},
  {n:'Bola de gelado (1)',k:130,p:2,t:'festa'},
+ /* — H3 hamburgologia (valores oficiais do site h3.com) — */
+ {n:'H3 Grelhado só hambúrguer (bem passado)',k:340,p:35,t:'h3 restaurante'},
+ {n:'H3 hambúrguer médio (mal passado)',k:354,p:35,t:'h3 restaurante'},
+ {n:'H3 molho da casa (dose)',k:114,p:2,t:'h3 restaurante'},
+ {n:'H3 arroz ½ dose (100 g)',k:195,p:4,t:'h3 restaurante'},
+ {n:'H3 arroz dose inteira',k:390,p:7,t:'h3 restaurante'},
+ {n:'H3 batatas fritas ½ dose',k:274,p:3,t:'h3 restaurante'},
+ {n:'H3 batatas fritas dose',k:411,p:5,t:'h3 restaurante'},
+ {n:'H3 Grelhado + ½ arroz (a escolha fit)',k:535,p:39,t:'h3 restaurante'},
+ {n:'H3 Grelhado + ½ arroz + ½ batatas',k:809,p:42,t:'h3 restaurante'},
+ {n:'H3 com molho + ½ arroz',k:649,p:41,t:'h3 restaurante'},
+ {n:'H3 Tuga (c/ ovo e molho) + ½ arroz',k:677,p:47,t:'h3 restaurante'},
+ {n:'H3 Cheese (fondue cheddar) + ½ arroz',k:632,p:42,t:'h3 restaurante'},
+ {n:'H3 Fit (salada, abacate, feta) — prato completo',k:450,p:38,t:'h3 restaurante'},
+ {n:'H3 Mediterrâneo — prato',k:441,p:37,t:'h3 restaurante'},
+ {n:'H3 à la Francesinha — prato',k:624,p:40,t:'h3 restaurante'},
+ {n:'H3 Carbonara — prato',k:546,p:41,t:'h3 restaurante'},
+ {n:'H3 Carbonara + ½ arroz',k:741,p:45,t:'h3 restaurante'},
+ {n:'H3 Benedict (ovo escalfado, holandês) — prato',k:553,p:44,t:'h3 restaurante'},
+ {n:'H3 Champignon (cogumelos frescos) — prato',k:421,p:36,t:'h3 restaurante'},
+ {n:'H3 esparregado (acompanhamento)',k:116,p:3,t:'h3 restaurante'},
+ {n:'H3 ovo estrelado (extra)',k:116,p:8,t:'h3 restaurante'},
  {n:'Pipocas punhado (10 g)',k:45,p:1,t:'festa cinema'},
  {n:'Pipocas balde pequeno inteiro',k:450,p:6,t:'festa cinema'},
  {n:'Pipocas balde grande — ⅓ (parte igual)',k:400,p:5,t:'festa cinema'},
@@ -1712,7 +1734,8 @@ function vComida(){
    '<div style="margin-bottom:6px">'+
    '<button class="mini ghost" onclick="ingQ=\'\';document.getElementById(\'ingQ\').value=\'\';refreshIng()">todos</button> '+
    '<button class="mini ghost" onclick="ingQ=\'festa\';document.getElementById(\'ingQ\').value=\'festa\';refreshIng()">🎉 festa</button> '+
-   '<button class="mini ghost" onclick="ingQ=\'auchan\';document.getElementById(\'ingQ\').value=\'auchan\';refreshIng()">🛒 Auchan</button></div>'+
+   '<button class="mini ghost" onclick="ingQ=\'auchan\';document.getElementById(\'ingQ\').value=\'auchan\';refreshIng()">🛒 Auchan</button> '+
+   '<button class="mini ghost" onclick="ingQ=\'h3\';document.getElementById(\'ingQ\').value=\'h3\';refreshIng()">🍔 H3</button></div>'+
    '<input id="ingQ" placeholder="procura: ovo, abacate, whey, festa, auchan…" value="'+esc(ingQ)+'" oninput="ingQ=this.value;refreshIng()">'+
    '<div id="ingList" style="max-height:280px;overflow-y:auto;margin-top:8px;border:1px solid var(--grid);border-radius:10px;padding:0 8px">'+ingListHTML()+'</div>'+
    '<div id="ingTotal">'+ingTotalHTML()+'</div>'+
