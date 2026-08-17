@@ -193,7 +193,7 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v17';
+var APPV='v18';
 var CFGDEF = {kcal:2600, prot:195, steps:10000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
@@ -302,6 +302,17 @@ function renderUsers(){
 function maintKcal(){
   var bmr=DB.cfg.bmr||2000, pw=DB.cfg.profile?DB.cfg.profile.w:94;
   return Math.round((bmr*1.15+10000*0.00048*pw+150)/50)*50;
+}
+function macroT(){
+  var pw=DB.cfg.profile?DB.cfg.profile.w:94;
+  var f=DB.cfg.fatT||Math.max(45,Math.round(0.8*pw));
+  var c=Math.max(60,Math.round((effKcal()-DB.cfg.prot*4-f*9)/4));
+  return {f:f,c:c};
+}
+function macroEst(dt){ // consumo estimado: kcal não-proteicas divididas 55/45 entre hidratos e gordura
+  var s2=sumFoods(dt);
+  var rest=Math.max(0,s2.k-s2.p*4);
+  return {c:Math.round(rest*0.55/4), f:Math.round(rest*0.45/9)};
 }
 function effKcal(){ return (DB.cfg.mode&&DB.cfg.mode!=='normal') ? maintKcal() : DB.cfg.kcal; }
 function setMode(m){
@@ -684,6 +695,7 @@ function applyProfile(){
   DB.cfg.kcal = p.goal==='perder' ? Math.round((estT-500)/50)*50
               : p.goal==='ganhar' ? Math.round((estT+250)/50)*50
               : Math.round((estT-100)/50)*50;
+  DB.cfg.fatT=Math.max(45,Math.round(0.8*p.w));   // gordura: ~0,8 g/kg (hormonas)
   // proteína: com %MG usa massa magra (Helms 2,3–3,1 g/kg MM); sem %MG usa peso total
   if(p.bf){ var mm=p.w*(1-p.bf/100); DB.cfg.prot=Math.round((p.goal==='ganhar'?2.2:2.6)*mm); }
   else DB.cfg.prot = Math.round((p.goal==='ganhar'?1.8:2.2)*p.w);
@@ -1031,7 +1043,14 @@ var ING = [
  {n:'Feijão cozido 1 c.s.',k:26,p:2},{n:'Grão cozido 1 c.s.',k:35,p:2},
  {n:'Legumes porção (150 g)',k:40,p:2},{n:'Sopa de legumes 1 concha',k:55,p:2},
  {n:'Tomate médio',k:20,p:1},{n:'Salada (tigela)',k:15,p:1},
- {n:'Banana',k:92,p:1},{n:'Maçã',k:80,p:0},{n:'Fruta média (outra)',k:75,p:1},
+ {n:'Banana',k:92,p:1},{n:'Maçã',k:80,p:0},{n:'Pera',k:82,p:0},{n:'Laranja',k:68,p:1},{n:'Kiwi (1)',k:45,p:1},
+ {n:'Melão fatia grande (250 g)',k:85,p:2,t:'fruta'},{n:'Melancia fatia (300 g)',k:90,p:2,t:'fruta'},
+ {n:'Uvas cacho pequeno (150 g)',k:105,p:1,t:'fruta'},{n:'Ananás 2 rodelas (160 g)',k:80,p:1,t:'fruta'},
+ {n:'Manga ½ (100 g)',k:60,p:1,t:'fruta'},{n:'Pêssego (1)',k:50,p:1,t:'fruta'},
+ {n:'Tangerinas (2)',k:80,p:1,t:'fruta'},{n:'Cerejas chávena (120 g)',k:76,p:1,t:'fruta'},
+ {n:'Figos frescos (2)',k:75,p:1,t:'fruta'},{n:'Diospiro (1)',k:120,p:1,t:'fruta'},
+ {n:'Maçaroca de milho grelhada (1)',k:110,p:3},{n:'Milho doce 3 c.s. (60 g)',k:58,p:2},
+ {n:'Fruta média (outra)',k:75,p:1},
  {n:'Frutos vermelhos (100 g)',k:45,p:1},{n:'Bolacha maria (1)',k:25,p:0},
  {n:'Açúcar 1 c.chá',k:16,p:0},{n:'Galão (1)',k:120,p:6},{n:'Bica',k:2,p:0},
  /* — marca Auchan (declarações nutricionais reais, peso escorrido) — */
@@ -1119,10 +1138,13 @@ function ingListHTML(){
     var hay=norm(it.n+' '+(it.t||''));
     if(qs.length && !qs.every(function(w){return hay.indexOf(w)>=0;})) return;
     var c=ingSel[i]||0;
+    var gram=/\(100 g\)/.test(it.n);
+    var cTxt=c?(c%1?Math.round(c*100)+'g':c):'';
     h+='<div class="foodline"><span class="fi"'+(c?' style="font-weight:700"':'')+'>'+esc(it.n)+'</span>'+
        '<span class="fk">'+it.k+' · '+it.p+'g</span>'+
+       (gram?'<button class="mini ghost" style="padding:4px 7px" onclick="ingGrams('+i+')">g</button>':'')+
        '<button class="mini danger" style="'+(c?'':'visibility:hidden')+'" onclick="ingStep('+i+',-1)">−</button>'+
-       '<span style="min-width:20px;text-align:center;font-weight:700">'+(c||'')+'</span>'+
+       '<span style="min-width:20px;text-align:center;font-weight:700">'+cTxt+'</span>'+
        '<button class="mini" style="background:var(--accent-soft);color:var(--accent)" onclick="ingStep('+i+',1)">＋</button></div>';
   });
   return h||'<div class="note">Nada encontrado — usa "Outro alimento" abaixo.</div>';
@@ -1143,6 +1165,11 @@ function refreshIng(){
   if(l) l.innerHTML=ingListHTML();
   if(t) t.innerHTML=ingTotalHTML();
 }
+function ingGrams(i){
+  var g=parseFloat(prompt('Quantos gramas? (o item é por 100 g)','170'));
+  if(!g||g<=0) return;
+  ingSel[i]=Math.round(g)/100; refreshIng();
+}
 function ingStep(i,d){
   ingSel[i]=(ingSel[i]||0)+d;
   if(ingSel[i]<=0) delete ingSel[i];
@@ -1153,7 +1180,8 @@ function ingConfirm(both, fav){
   for(var i in ingSel){
     tk+=ING[i].k*ingSel[i]; tp+=ING[i].p*ingSel[i];
     var base=ING[i].n.replace(/\s*\(.*\)/,'');
-    parts.push((ingSel[i]>1?ingSel[i]+'× ':'')+base);
+    if(ingSel[i]%1!==0&&/\(100 g\)/.test(ING[i].n)) parts.push(Math.round(ingSel[i]*100)+' g '+base);
+    else parts.push((ingSel[i]>1?ingSel[i]+'× ':'')+base);
   }
   if(!tk) return;
   var nm=parts.join(' + ');
@@ -1489,6 +1517,9 @@ function vHoje(){
     var psg=protSuggest();
     if(pR<0.70&&kR>0.85) alert+='<div class="note" style="color:var(--bad)">🔴 Faltam '+Math.round(DB.cfg.prot-s.p)+' g de proteína e pouco espaço calórico'+(psg?' — fecho magro: <b>'+psg.txt+'</b> (+'+psg.p+' g · '+psg.k+' kcal)':' — próxima refeição só proteína')+'.</div>';
     else if(pR<0.95&&kR>0.5) alert+='<div class="note" style="color:var(--warn)">🟠 Faltam '+Math.round(DB.cfg.prot-s.p)+' g de proteína'+(psg?' — sugestão: <b>'+psg.txt+'</b> (+'+psg.p+' g · '+psg.k+' kcal)':'')+'.</div>';
+    var mt2=macroT(), me2=macroEst(curDate);
+    if(me2.f>mt2.f*1.2) alert+='<div class="note" style="color:var(--warn)">🟠 Gordura ~'+me2.f+' g (alvo '+mt2.f+') — os suspeitos: azeite a olho, queijos, molhos. Refeições seguintes: grelhados e fio em vez de colher.</div>';
+    if(DB.workouts[curDate]&&DB.workouts[curDate].type!=='REST'&&me2.c<mt2.c*0.5&&kR<0.85) alert+='<div class="note" style="color:var(--warn)">🟠 Treinaste e os hidratos vão em ~'+me2.c+' g (alvo '+mt2.c+') — mete arroz/batata/fruta na próxima refeição: é combustível de recuperação, não inimigo.</div>';
   }
   var tune=autoTune();
   if(tune) h+='<div class="card" style="border:2px solid var(--warn)"><h2>⚖️ Auto-ajuste sugerido</h2>'+
@@ -1505,6 +1536,14 @@ function vHoje(){
    '<div class="stat"><span class="lb">Proteína</span><span class="vl" style="color:'+pCol+'">'+Math.round(s.p)+' g</span><span class="dl">de '+DB.cfg.prot+' g</span><div class="meter"><i style="width:'+protPct+'%"></i></div></div>'+
    '<div class="stat"><span class="lb">Défice estimado</span><span class="vl" style="color:'+dfCol+'">'+dfTxt+'</span><span class="dl">gasto est. '+td+' kcal · alvo −400 a −700</span></div>'+
    '<div class="stat"><span class="lb">Média 7 dias</span><span class="vl">'+fmt(a7)+'</span><span class="dl">alvo '+fmt(DB.cfg.target)+' kg</span></div>'+
+   (function(){
+     var mt=macroT(), me=macroEst(curDate);
+     var cR=me.c/mt.c, fR=me.f/mt.f;
+     var cCol=!s.k?'var(--ink)':(cR>=0.7&&cR<=1.1?'var(--good)':(cR>1.25?'var(--bad)':'var(--warn)'));
+     var fCol=!s.k?'var(--ink)':(fR<=1.05&&fR>=0.5?'var(--good)':(fR>1.2?'var(--bad)':'var(--warn)'));
+     return '<div class="stat"><span class="lb">Hidratos (est.)</span><span class="vl" style="color:'+cCol+'">'+me.c+' g</span><span class="dl">alvo ~'+mt.c+' g</span><div class="meter"><i style="width:'+Math.min(100,cR*100)+'%"></i></div></div>'+
+       '<div class="stat"><span class="lb">Gordura (est.)</span><span class="vl" style="color:'+fCol+'">'+me.f+' g</span><span class="dl">alvo ~'+mt.f+' g</span><div class="meter"><i class="'+(fR>1.1?'over':'')+'" style="width:'+Math.min(100,fR*100)+'%"></i></div></div>';
+   })()+
    '<div class="stat"><span class="lb">Passos</span><span class="vl">'+(d.steps? d.steps.toLocaleString('pt-PT'):'—')+'</span><span class="dl">piso '+DB.cfg.steps.toLocaleString('pt-PT')+'</span><div class="meter"><i style="width:'+stepsPct+'%"></i></div></div>'+
    '<div class="stat"><span class="lb">Água</span><span class="vl">'+fmt(d.water||0,2).replace(',00','')+' L</span><span class="dl">alvo '+fmt(DB.cfg.water)+' L</span><div class="meter"><i style="width:'+Math.min(100,(d.water||0)/DB.cfg.water*100)+'%"></i></div></div>'+
    '</div>'+(wkToday?(wkToday.type==='REST'?'<div class="note">😴 Hoje é descanso — marcado de propósito, conta como plano cumprido.</div>':'<div class="note">✅ Treino de hoje: <b>'+(WK[wkToday.type]?WK[wkToday.type].name:wkToday.type)+'</b>'+(tonnage(curDate)?' · '+tonnage(curDate).toLocaleString('pt-PT')+' kg movidos':'')+'</div>'):'<div class="note">Ainda sem treino registado hoje.</div>')+
@@ -2502,6 +2541,7 @@ function vGuia(){
    '<div><label>Proteína g/dia</label><input type="number" value="'+DB.cfg.prot+'" onchange="DB.cfg.prot=parseInt(this.value)||195;save();render()"></div>'+
    '<div><label>Passos (piso)</label><input type="number" value="'+DB.cfg.steps+'" onchange="DB.cfg.steps=parseInt(this.value)||7000;save();render()"></div>'+
    '<div><label>Peso alvo kg</label><input type="number" step="0.1" value="'+DB.cfg.target+'" onchange="DB.cfg.target=parseFloat(this.value)||86.5;save();render()"></div>'+
+   '<div><label>Gordura alvo (g/dia)</label><input type="number" value="'+(DB.cfg.fatT||75)+'" onchange="DB.cfg.fatT=parseInt(this.value)||75;save();render()"></div>'+
    '<div><label>Água (L/dia)</label><input type="number" step="0.25" value="'+DB.cfg.water+'" onchange="DB.cfg.water=parseFloat(this.value)||3;save();render()"></div>'+
    '</div><div class="note">Na semana de pausa da dieta: muda kcal para 3 000. No fim do bloco, volta a descer.</div></div></details>';
   return h;
