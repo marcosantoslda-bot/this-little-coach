@@ -9,10 +9,17 @@
 | Catálogo de exercícios (seed)        | feito  |
 | Motor gerador de treinos + testes    | feito  |
 | API NestJS (auth, perfis, treinos, sessões, progresso) | feito |
-| App Expo (auth, onboarding, gerador, player, progresso) | feito, por testar em dispositivo |
+| App Expo (auth, onboarding, gerador, player, progresso) | feito (typecheck e export web verdes), por testar em dispositivo |
 | Protótipo PWA a preto e branco       | feito  |
+| PWA com regras científicas por perfil (mulher 40+, adulto, jovem) e 3 pessoas | feito |
 | Deploy (Dockerfile API, EAS)         | por fazer |
 | Testes E2E em dispositivo            | por fazer |
+
+## Nota de contexto
+
+A app é para uso pessoal de uma família (3 pessoas). A PWA em `index.html`
+é o produto; a API e a app Expo ficam como base para uma versão futura com
+sincronização entre telemóveis. As sugestões abaixo valem para as duas.
 
 ## O que sugiro a seguir, por ordem de valor
 
