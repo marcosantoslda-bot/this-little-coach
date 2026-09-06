@@ -1,32 +1,41 @@
 # This Little Coach
 
-Super app de fitness com treino adaptativo por IA. Treino, nutrição e
-recuperação num só lugar, a crescer contigo.
+App de treino, alimentação e progresso para a família. Preto e branco, sem
+distrações, com regras baseadas em evidência para cada pessoa (adulto, mulher
+40+, jovem).
 
-- Plano de arquitetura: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- Decisões técnicas: [`docs/adr/`](docs/adr/)
-- Modelo de dados: [`packages/database/prisma/schema.prisma`](packages/database/prisma/schema.prisma)
+## A app que se usa: a PWA
 
-## Estrutura
+O ficheiro **`index.html`** é a app. É uma Progressive Web App num só ficheiro,
+sem servidor: instala-se no telemóvel a partir do browser e os dados ficam no
+próprio telemóvel. Publicada via GitHub Pages a partir do ramo `main`.
+
+- Regras de treino e nutrição por perfil: [`docs/SCIENCE.md`](docs/SCIENCE.md)
+- Decisão de design: [`docs/adr/0002-design-monochrome.md`](docs/adr/0002-design-monochrome.md)
+- Os ficheiros `index-1.html` a `index-5.html` são versões antigas, mantidas
+  por segurança.
+
+Para partilhar dados entre telemóveis usa-se o export/import de JSON na tab
+"Mais".
+
+## O resto do repositório: base para uma versão futura com servidor
+
+Não é necessário para uso pessoal. Fica guardado como ponto de partida se um
+dia quiseres sincronização automática entre telemóveis ou uma app nas lojas.
 
 ```
-apps/mobile      Expo / React Native
-apps/api         NestJS
-packages/database  Prisma + migrações
-packages/shared    domínio partilhado (Zod, gerador de treinos)
-packages/config    tsconfig / eslint / prettier
-docs/              arquitetura e ADRs
-index*.html        protótipos PWA originais
+apps/api            API NestJS (auth Supabase, treinos, sessões, progresso)
+apps/mobile         App Expo / React Native
+packages/database   Esquema Prisma + migrações + seed (130 exercícios)
+packages/shared     Contratos Zod + motor gerador de treinos (testado)
+docs/               arquitetura, ADRs, setup, roadmap, ciência
 ```
 
-## Começar
+Para pôr isso a correr: [`docs/SETUP.md`](docs/SETUP.md). Arquitetura:
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ```bash
 corepack enable && corepack prepare pnpm@10 --activate
 pnpm install
-cp .env.example .env      # preencher com as credenciais do Supabase
-pnpm db:generate
-pnpm db:migrate
+pnpm --filter @tlc/shared test
 ```
-
-Requer Node 22 (ver `.nvmrc`).
