@@ -182,14 +182,64 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v19';
+var APPV='v20';
 var CFGDEF = {kcal:2600, prot:195, steps:8000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
+/* ============ BASE DE CONHECIMENTO (docs/KNOWLEDGE.md · Parte 2) ============ */
+var KB=Object.freeze({"version":"2026-09","goals":{"muscle_gain":{"label":"Ganhar músculo","protein_g_per_kg":[1.6,2.2],"energy_balance":"surplus_small","weekly_kg_change":[0.002,0.005],"weekly_kg_change_unit":"fraction_of_bodyweight","strength_sessions_per_week":[3,5],"cardio":{"sessions_per_week":[1,2],"type":"moderado ou intervalos curtos","minutes":[15,30],"steps_per_day":7000},"rep_range":[6,15],"rir":[1,3],"sets_per_muscle_week":[10,20],"notes":["Superavit 10-20 % kcal; ganho de 0,25-0,5 % do peso por semana.","Se ganhar mais de 0,5 %/semana durante 3 semanas, reduzir 100-150 kcal.","Progressão dupla: subir reps ate ao topo do intervalo, depois +2,5-5 % carga."]},"fat_loss":{"label":"Perder gordura","protein_g_per_kg":[1.8,2.4],"energy_balance":"deficit_moderate","weekly_kg_change":[-0.01,-0.005],"weekly_kg_change_unit":"fraction_of_bodyweight","strength_sessions_per_week":[2,4],"cardio":{"sessions_per_week":[2,4],"type":"baixo impacto + 1 sessao de intervalos","minutes":[20,45],"steps_per_day":8000},"rep_range":[6,15],"rir":[1,3],"sets_per_muscle_week":[6,12],"notes":["Defice 10-25 %; perder 0,5-1 % do peso por semana.","Manter cargas (nao volume alto) para proteger massa magra.","Pausa de dieta de 1-2 semanas a cada 4-8 semanas de defice.","Platos de 2-4 semanas sao normais; verificar registo antes de cortar mais."]},"recomposition":{"label":"Recomposicao (perder gordura e ganhar musculo)","protein_g_per_kg":[2.0,2.4],"energy_balance":"deficit_small","weekly_kg_change":[-0.005,0.0],"weekly_kg_change_unit":"fraction_of_bodyweight","strength_sessions_per_week":[3,4],"cardio":{"sessions_per_week":[1,3],"type":"moderado","minutes":[20,40],"steps_per_day":8000},"rep_range":[6,15],"rir":[1,3],"sets_per_muscle_week":[10,16],"notes":["Indicado para iniciantes, regresso apos pausa e gordura corporal media-alta.","Defice de 200-300 kcal ou manutencao; a balanca pode nao mexer 8-12 semanas: medir cintura, fotos e cargas.","Sem progresso em nenhum marcador as 12 semanas: escolher cut ou lean bulk."]},"glute_focus":{"label":"Foco nos gluteos","uses_muscle_focus":"glutes","protein_g_per_kg":[1.6,2.2],"energy_balance":"maintenance","weekly_kg_change":null,"strength_sessions_per_week":[3,4],"cardio":{"sessions_per_week":[1,2],"type":"moderado","minutes":[15,30],"steps_per_day":7000},"rep_range":[6,20],"rir":[1,3],"sets_per_muscle_week":[14,20],"notes":["Bloco de especializacao de 6-8 semanas: gluteos 14-20 series/semana, restantes musculos 4-6 series de manutencao.","Combinar um exercicio em extensao completa (hip thrust/ponte) com um em flexao profunda (RDL, agachamento, step-up) e um de abducao.","Balanco energetico segue o objetivo secundario do utilizador (defice pequeno ou manutencao)."]},"strength":{"label":"Forca","protein_g_per_kg":[1.6,2.2],"energy_balance":"maintenance","weekly_kg_change":null,"strength_sessions_per_week":[3,4],"cardio":{"sessions_per_week":[1,2],"type":"moderado, separado da forca por 3 h ou apos","minutes":[15,30],"steps_per_day":7000},"rep_range":[3,8],"rir":[1,4],"sets_per_muscle_week":[6,12],"notes":["Exercicio prioritario primeiro na sessao; descanso 2-3 min.","Autorregular carga por RIR; sem testes de 1RM em menores de 16 anos nem em iniciantes.","Sem Valsalva se hipertensao, gravidez, doenca cardiaca ou retinopatia."]},"endurance_health":{"label":"Resistencia e saude","protein_g_per_kg":[1.2,1.6],"energy_balance":"maintenance","weekly_kg_change":null,"strength_sessions_per_week":[2,3],"cardio":{"sessions_per_week":[3,5],"type":"150-300 min moderado ou 75-150 vigoroso; 1 sessao de intervalos","minutes":[20,60],"steps_per_day":8000},"rep_range":[8,15],"rir":[2,4],"sets_per_muscle_week":[4,10],"notes":["Forca 2x/semana e obrigatoria nas recomendacoes OMS.","Progressao de cardio: +10 % de minutos por semana."]},"longevity_65plus":{"label":"Autonomia e longevidade (65+)","protein_g_per_kg":[1.2,1.6],"energy_balance":"maintenance","weekly_kg_change":null,"strength_sessions_per_week":[2,3],"cardio":{"sessions_per_week":[3,5],"type":"marcha, bicicleta, agua; equilibrio 3 h/semana somadas","minutes":[20,45],"steps_per_day":6000},"rep_range":[8,15],"rir":[2,4],"sets_per_muscle_week":[6,12],"notes":["Incluir 1-2 exercicios de potencia (sit-to-stand rapido, step-up rapido, lancamento de bola) por sessao.","Equilibrio em todas as sessoes: apoio unipodal, tandem, marcha com viragens.","Testar sit-to-stand 30 s e velocidade de marcha a cada 8 semanas.","Creatina 3-5 g/dia e vitamina D so se deficiencia documentada."]},"return_after_break":{"label":"Regresso apos pausa","protein_g_per_kg":[1.6,2.2],"energy_balance":"maintenance","weekly_kg_change":null,"strength_sessions_per_week":[2,3],"cardio":{"sessions_per_week":[1,3],"type":"moderado","minutes":[15,30],"steps_per_day":7000},"rep_range":[8,15],"rir":[3,4],"sets_per_muscle_week":[4,8],"notes":["Semanas 1-2: 50 % das cargas antigas, RIR 3-4, 2 series por exercicio.","Semanas 3-4: 70-80 %; a partir da semana 5 progressao normal.","A forca regressa mais depressa do que foi ganha (memoria muscular); nao acelerar por causa disso."]},"postpartum_return":{"label":"Regresso pos-parto","protein_g_per_kg":[1.4,1.8],"energy_balance":"maintenance","weekly_kg_change":null,"strength_sessions_per_week":[2,3],"cardio":{"sessions_per_week":[3,5],"type":"marcha; sem corrida antes das 12 semanas","minutes":[10,40],"steps_per_day":6000},"rep_range":[10,15],"rir":[3,4],"sets_per_muscle_week":[4,8],"notes":["Semanas 0-2: pavimento pelvico, respiracao, marcha.","Semanas 2-6 (cesariana: 6+): forca de baixo impacto sem coning nem sintomas pelvicos.","Semanas 6-12: progressao de carga; impacto so apos 12 semanas e avaliacao do pavimento pelvico.","Em amamentacao: sem defice agressivo; hidratar."]},"pregnancy_maintenance":{"label":"Manter a forma na gravidez","protein_g_per_kg":[1.2,1.5],"energy_balance":"maintenance","weekly_kg_change":null,"strength_sessions_per_week":[2,3],"cardio":{"sessions_per_week":[3,5],"type":"moderado; teste da fala","minutes":[20,40],"steps_per_day":6000},"rep_range":[10,15],"rir":[3,4],"sets_per_muscle_week":[4,8],"notes":["150 min/semana de moderado; quem ja era ativa pode manter intensidade habitual sem exaustao.","Sem aumentar cargas maximas; sem Valsalva; sem contacto ou risco de queda.","Apos o 1.o trimestre, supino inclinado ou de lado se houver tonturas em decubito dorsal."]}},"muscle_focus":{"glutes":{"label":"Gluteos","priority_exercises":[{"name_pt":"Hip thrust com barra","equipment":["barbell","bench"],"why":"Maior ativacao do gluteo maximo e hipertrofia igual ou ligeiramente superior ao agachamento","level":2},{"name_pt":"Agachamento profundo","equipment":["barbell","dumbbells"],"why":"Hipertrofia glutea semelhante ao thrust e cresce tambem quadriceps","level":2},{"name_pt":"Peso morto romeno","equipment":["barbell","dumbbells","kettlebell"],"why":"Carrega gluteo e isquios em alongamento","level":2},{"name_pt":"Step-up alto","equipment":["bench","dumbbells","none"],"why":"Ativacao muito alta do gluteo maximo; unilateral","level":1},{"name_pt":"Agachamento bulgaro","equipment":["bench","dumbbells","none"],"why":"Unilateral, longo alongamento","level":2},{"name_pt":"Abducao de anca com banda ou deitada","equipment":["band","none"],"why":"Gluteo medio e minimo","level":1},{"name_pt":"Ponte glutea unilateral","equipment":["none"],"why":"Regressao do hip thrust sem material","level":1}],"bodyweight_progression":["Ponte glutea","Ponte glutea unilateral","Hip thrust com ombros no sofa (unilateral)","Step-up alto","Agachamento bulgaro","Single-leg RDL","Pistol assistido"],"weekly_sets_specialisation":[14,20],"cues":["Queixo para o peito e costelas em baixo no topo do thrust","Apertar 1 s no topo","No RDL, anca para tras e barra rente as pernas","Joelhos alinhados com os dedos dos pes"],"mistakes":["Hiperextensao lombar no topo","Amplitude curta no RDL","Deixar o joelho colapsar para dentro","So treinar em extensao (thrust) sem exercicios em flexao profunda"]},"quads":{"label":"Quadriceps","priority_exercises":[{"name_pt":"Agachamento (barra ou goblet)","equipment":["barbell","dumbbells","kettlebell"],"why":"Composto com maior crescimento de quadriceps","level":2},{"name_pt":"Prensa de pernas","equipment":["machine"],"why":"Carga alta com pouca exigencia tecnica","level":1},{"name_pt":"Extensao de joelho (parcial em alongamento)","equipment":["machine"],"why":"Parciais em alongamento deram mais hipertrofia distal","level":1},{"name_pt":"Afundo / agachamento bulgaro","equipment":["dumbbells","none"],"why":"Unilateral","level":2},{"name_pt":"Agachamento bulgaro com pausa em baixo","equipment":["none","bench"],"why":"Alongamento sem material","level":2}],"bodyweight_progression":["Agachamento a cadeira","Agachamento profundo","Agachamento com pausa 3 s","Split squat","Agachamento bulgaro","Sissy squat assistido","Pistol assistido"],"weekly_sets_specialisation":[14,20],"cues":["Peito alto, calcanhares no chao","Descer ate a anca ficar abaixo do joelho se sem dor","Joelhos na direcao dos dedos"],"mistakes":["Amplitude curta","Tronco a cair para a frente","Calcanhares a levantar"]},"hamstrings":{"label":"Isquiotibiais","priority_exercises":[{"name_pt":"Leg curl sentado","equipment":["machine"],"why":"Mais hipertrofia do que deitado (anca fletida)","level":1},{"name_pt":"Peso morto romeno / stiff","equipment":["barbell","dumbbells","kettlebell"],"why":"Cresce semimembranoso; alongamento","level":2},{"name_pt":"Nordico (assistido)","equipment":["none","band"],"why":"Cresce semitendinoso; reduz lesoes","level":3},{"name_pt":"Sliding leg curl","equipment":["none"],"why":"Alternativa sem maquina","level":2}],"bodyweight_progression":["Ponte com pes na cadeira","Ponte unilateral com pes na cadeira","Sliding leg curl","Nordico com banda","Nordico"],"weekly_sets_specialisation":[10,16],"cues":["Anca para tras, joelhos ligeiramente fletidos","Sentir o alongamento antes de subir","No nordico, descer devagar com anca estendida"],"mistakes":["Costas redondas no RDL","Joelhos bloqueados","Nordico a dobrar na anca"]},"calves":{"label":"Gemeos","priority_exercises":[{"name_pt":"Elevacao de gemeos em pe com pausa em alongamento","equipment":["machine","dumbbells","none"],"why":"Em pe cresce mais gastrocnemio; pausa em baixo aumenta hipertrofia","level":1},{"name_pt":"Elevacao de gemeos sentado","equipment":["machine","dumbbells"],"why":"Solear","level":1},{"name_pt":"Elevacao unilateral num degrau","equipment":["none"],"why":"Carga suficiente sem material","level":1}],"bodyweight_progression":["Bilateral no chao","Bilateral no degrau com pausa 2 s","Unilateral no degrau","Unilateral com mochila"],"weekly_sets_specialisation":[12,20],"cues":["2 s de pausa em baixo","Subir ate a ponta dos pes, sem ressaltar"],"mistakes":["Ressaltar","Amplitude curta","Joelhos a dobrar"]},"chest":{"label":"Peito","priority_exercises":[{"name_pt":"Supino plano (barra/halteres)","equipment":["barbell","dumbbells","bench"],"why":"Peito medio e inferior","level":2},{"name_pt":"Supino inclinado","equipment":["barbell","dumbbells","bench"],"why":"Mais crescimento do peito superior","level":2},{"name_pt":"Flexoes com carga","equipment":["none"],"why":"Progressao equivalente ao supino","level":1},{"name_pt":"Crossover / fly com alongamento","equipment":["cable","dumbbells","band"],"why":"Isolamento em alongamento","level":1}],"bodyweight_progression":["Flexoes na parede","Flexoes inclinadas","Flexoes de joelhos","Flexoes","Flexoes com pes elevados","Flexoes com mochila","Flexoes em deficit/argolas"],"weekly_sets_specialisation":[12,20],"cues":["Omoplatas retraidas e para baixo","Cotovelos a 45-60 graus","Descer ate sentir alongamento"],"mistakes":["Ombros a subir","Amplitude curta","Ressaltar a barra no peito"]},"back":{"label":"Costas (dorsais e superior)","priority_exercises":[{"name_pt":"Puxada / pull-up pronado","equipment":["machine","cable","none"],"why":"Pega pronada ativa mais o grande dorsal","level":2},{"name_pt":"Remada (barra, halter, cabo)","equipment":["barbell","dumbbells","cable"],"why":"Trapezio medio, romboides, deltoide posterior","level":2},{"name_pt":"Remada invertida","equipment":["none"],"why":"Horizontal sem material","level":1},{"name_pt":"Pull-over com halter","equipment":["dumbbells","bench"],"why":"Dorsal em alongamento","level":1}],"bodyweight_progression":["Remada invertida na mesa/lencol","Remada invertida pes elevados","Pull-up negativo","Pull-up com banda","Pull-up"],"weekly_sets_specialisation":[12,20],"cues":["Cotovelos para os bolsos","Peito para a barra","Puxar com as omoplatas antes dos bracos"],"mistakes":["Encolher os ombros","Balancar","Puxar so com biceps"]},"shoulders":{"label":"Ombros (anterior, medio, posterior)","priority_exercises":[{"name_pt":"Press militar / halteres","equipment":["barbell","dumbbells"],"why":"Deltoide anterior e medio","level":2},{"name_pt":"Elevacao lateral","equipment":["dumbbells","cable","band"],"why":"Maior ativacao do deltoide medio; tolera muito volume","level":1},{"name_pt":"Elevacao posterior / face pull","equipment":["dumbbells","cable","band"],"why":"Deltoide posterior e saude do ombro","level":1},{"name_pt":"Pike push-up","equipment":["none"],"why":"Press sem material","level":2}],"bodyweight_progression":["Pike push-up","Pike com pes elevados","Handstand push-up na parede (parcial)","Laterais com garrafas"],"weekly_sets_specialisation":[12,20],"cues":["Ombros longe das orelhas","Nas laterais, ligeira rotacao interna e cotovelo quase estendido","Press: costelas em baixo, gluteos apertados"],"mistakes":["Balancar o tronco","Arquear a lombar no press","Laterais acima do ombro com dor"]},"biceps":{"label":"Biceps","priority_exercises":[{"name_pt":"Curl inclinado","equipment":["dumbbells","bench"],"why":"Biceps alongado; cresce porcao proximal","level":1},{"name_pt":"Curl Scott (preacher)","equipment":["barbell","dumbbells","machine","bench"],"why":"Cresce porcao distal e braquial","level":1},{"name_pt":"Chin-up","equipment":["none"],"why":"Composto com carga alta","level":2},{"name_pt":"Curl com banda ou mochila","equipment":["band","none"],"why":"Sem halteres","level":1}],"bodyweight_progression":["Curl isometrico com toalha","Remada invertida supinada","Chin-up negativo","Chin-up"],"weekly_sets_specialisation":[10,18],"cues":["Cotovelos fixos","Descer ate estender","Metade inferior do movimento e a mais importante"],"mistakes":["Balancar","Cotovelos a avancar","Amplitude curta em baixo"]},"triceps":{"label":"Triceps","priority_exercises":[{"name_pt":"Extensao de triceps acima da cabeca","equipment":["dumbbells","cable","band"],"why":"Cabeca longa alongada: ~1,5x mais hipertrofia do que pushdown","level":1},{"name_pt":"Press fechado / dips","equipment":["barbell","bench","none"],"why":"Carga alta","level":2},{"name_pt":"Pushdown","equipment":["cable","band"],"why":"Cabecas lateral e medial","level":1},{"name_pt":"Flexoes diamante","equipment":["none"],"why":"Sem material","level":1}],"bodyweight_progression":["Flexoes fechadas de joelhos","Flexoes diamante","Dips em banco","Extensao de triceps com o corpo (mesa)","Dips em paralelas"],"weekly_sets_specialisation":[12,20],"cues":["Cotovelos junto a cabeca na extensao","Estender totalmente","Descer ate alongar"],"mistakes":["Cotovelos a abrir","Amplitude curta","Ombros a subir"]},"core":{"label":"Core / abdominais","priority_exercises":[{"name_pt":"Crunch com carga / cabo","equipment":["cable","dumbbells","none"],"why":"Ativacao proporcional a carga; segmento superior","level":1},{"name_pt":"Elevacao de pernas / reverse crunch","equipment":["none","bench"],"why":"Segmento inferior","level":2},{"name_pt":"Prancha e prancha lateral","equipment":["none"],"why":"Anti-extensao e anti-flexao lateral; lombar","level":1},{"name_pt":"Pallof press","equipment":["band","cable"],"why":"Anti-rotacao","level":1},{"name_pt":"Farmer carry","equipment":["dumbbells","kettlebell"],"why":"Core e preensao","level":1}],"bodyweight_progression":["Dead bug","Prancha","Hollow hold","Ab wheel de joelhos","Hanging knee raise","Dragon flag negativo"],"weekly_sets_specialisation":[6,12],"cues":["Costelas para a bacia","Expirar ao subir","Lombar neutra nas pranchas"],"mistakes":["Flexores da anca a dominar","Apneia","Pescoco a puxar"]},"forearms":{"label":"Antebracos e preensao","priority_exercises":[{"name_pt":"Curl de punho e curl de punho invertido","equipment":["dumbbells","barbell","band"],"why":"Maior hipertrofia de flexores/extensores","level":1},{"name_pt":"Dead hang","equipment":["none"],"why":"Preensao isometrica e ombro","level":1},{"name_pt":"Farmer carry","equipment":["dumbbells","kettlebell"],"why":"Preensao sob carga","level":1},{"name_pt":"Curl invertido / martelo","equipment":["dumbbells","barbell"],"why":"Braquiorradial","level":1}],"bodyweight_progression":["Dead hang 20 s","Dead hang 60 s","Dead hang unilateral assistido","Carry com sacos de compras"],"weekly_sets_specialisation":[6,12],"cues":["Amplitude completa no punho","Ombros ativos no dead hang"],"mistakes":["Amplitude curta","Usar straps em tudo"]}},"age_bands":{"child_6_12":{"min":6,"max":12,"label":"Crianca (6-12)","rules":["Formato de jogo e circuitos curtos; habilidades de movimento antes de carga.","1-2 series de 8-15 reps, cargas leves, tecnica perfeita, supervisao de adulto.","Meta OMS: 60 min/dia de atividade; forca/osso 3 dias/semana.","Sem balanca, calorias, metas de peso ou linguagem de corpo.","Sessoes de 15-25 min."],"caps":{"max_sets_per_exercise":2,"rir_min":3,"no_max_tests":true,"plyo_sessions_per_week_max":2,"no_calorie_counting":true,"session_minutes_max":30}},"teen_13_17":{"min":13,"max":17,"label":"Adolescente (13-17)","rules":["Ver SCIENCE.md (d): 2-3 sessoes nao consecutivas, 1-3 series de 6-15, tecnica validada antes de carga.","Sem 1RM antes dos 16; sem contagem de calorias nem metas de peso.","Surto de crescimento ou dor no joelho/calcanhar (Osgood/Sever): reduzir saltos e corrida, manter forca, dor aceitavel ate 3-5/10 que passa em 24 h.","Horas de treino organizado por semana nao devem exceder a idade."],"caps":{"max_sets_per_exercise":3,"rir_min":2,"no_max_tests":true,"plyo_sessions_per_week_max":2,"no_calorie_counting":true,"session_minutes_max":60}},"adult_18_39":{"min":18,"max":39,"label":"Adulto (18-39)","rules":["Regras gerais de SCIENCE.md (a).","Fase ideal para construir massa muscular e ossea."],"caps":{"max_sets_per_exercise":5,"rir_min":0,"no_max_tests":false,"plyo_sessions_per_week_max":3,"no_calorie_counting":false,"session_minutes_max":90}},"adult_40_64":{"min":40,"max":64,"label":"Adulto (40-64)","rules":["Mulheres: regras de perimenopausa de SCIENCE.md (b).","Homens: marcadores metabolicos (cintura, PA, preensao, sit-to-stand).","Preferir 2-3 sessoes full-body; progressao de carga mais gradual em tendoes (+2,5 % em vez de 5 %).","Impacto so apos 4 semanas de forca e sem sintomas pelvicos/articulares."],"caps":{"max_sets_per_exercise":4,"rir_min":1,"no_max_tests":false,"plyo_sessions_per_week_max":2,"no_calorie_counting":false,"session_minutes_max":75}},"older_65plus":{"min":65,"max":120,"label":"65+","rules":["Forca 2-3x/semana, 2-3 series x 8-12, comecar a 20-30 % 1RM e progredir ate 80 %.","Potencia: concentrica rapida em 1-2 exercicios por sessao.","Equilibrio e funcional em todas as sessoes; 3 h/semana somadas para prevencao de quedas.","Proteina 1,2-1,6 g/kg; sem defices agressivos (>0,5 %/semana) sem aval.","Sit-to-stand 30 s abaixo da norma ou marcha <0,8 m/s: modo cadeira e encaminhar a medico/fisioterapeuta.","Manutencao requer mais volume do que em jovens (nao descer abaixo de 1/3 do volume habitual)."],"caps":{"max_sets_per_exercise":3,"rir_min":2,"no_max_tests":true,"plyo_sessions_per_week_max":1,"no_calorie_counting":false,"session_minutes_max":60}}},"conditions":{"chronic_low_back_pain":{"label":"Lombalgia cronica nao especifica","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["loaded_spinal_flexion_early","max_valsalva","end_range_extension_loaded"],"avoid_exercises_pt":["Good morning com carga","Sit-up com carga","Peso morto pesado nas primeiras 4 semanas"],"prefer_exercises_pt":["Bird-dog","Prancha lateral","Curl-up McGill","Hip hinge com bastao","RDL com kettlebell","Caminhada","Prensa de pernas","Remada com apoio do peito"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"pain_free","cardio_bias":true,"session_minutes_max":60},"helpful":["Forca, Pilates, estabilizacao e aerobio sao todos eficazes; manter-se ativo e melhor do que repouso.","Dor ate 3-5/10 que baixa em 24 h e aceitavel.","Progredir o hinge ao longo de 6-8 semanas ate peso morto."],"red_flags":["Dor noturna que nao alivia","Perda de peso ou febre","Alteracoes urinarias/intestinais ou anestesia em sela","Fraqueza progressiva nas pernas"],"explain_pt":"Mexer e fortalecer e o melhor tratamento para a lombalgia. Comecamos com exercicios de resistencia do tronco e um padrao de dobrar a anca seguro, e subimos a carga devagar."},"disc_herniation_symptomatic":{"label":"Hernia discal sintomatica","category":"musculoskeletal","requires_clearance":true,"avoid_patterns":["loaded_spinal_flexion","flexion_rotation_loaded","impact","prolonged_sitting"],"avoid_exercises_pt":["Peso morto convencional pesado","Crunch e sit-up","Remada curvada sem apoio","Saltos","Twist russo com carga"],"prefer_exercises_pt":["Caminhada","Extensao em decubito ventral (se centraliza a dor)","Bird-dog","Prancha lateral","Prensa de pernas com amplitude confortavel","Remada com apoio do peito","Puxada"],"modifiers":{"intensity_cap_rir_min":3,"no_breath_hold":true,"avoid_supine":false,"impact":"none","range_of_motion":"pain_free","cardio_bias":true,"session_minutes_max":45},"helpful":["Conservador 6-8 semanas resolve a maioria; exercicio e manter-se ativo tem efeito semelhante.","Progredir carga axial so quando a dor na perna desaparece."],"red_flags":["Anestesia em sela","Retencao ou incontinencia urinaria/fecal","Fraqueza progressiva do pe ou perna","Dor bilateral nas pernas"],"explain_pt":"Com hernia sintomatica evitamos dobrar e rodar a coluna com carga e saltos. Caminhar e fortalecer o tronco sem dor ajuda a recuperar."},"sciatica":{"label":"Ciatica","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["loaded_spinal_flexion","impact","prolonged_sitting"],"avoid_exercises_pt":["Peso morto pesado","Crunch","Saltos","Alongamento agressivo do nervo"],"prefer_exercises_pt":["Caminhada","Bird-dog","Prancha lateral","Ponte glutea","Prensa de pernas","Deslizamento neural suave"],"modifiers":{"intensity_cap_rir_min":3,"no_breath_hold":true,"avoid_supine":false,"impact":"none","range_of_motion":"pain_free","cardio_bias":true,"session_minutes_max":45},"helpful":["Manter-se ativo e tao eficaz como exercicio estruturado; evitar repouso na cama.","Se a dor 'centraliza' (sobe da perna para a coluna) o exercicio esta a ajudar."],"red_flags":["Anestesia em sela","Incontinencia","Fraqueza progressiva","Dor bilateral"],"explain_pt":"Na ciatica o objetivo e manter-se a andar e forte sem carregar a coluna em flexao. Os sintomas devem melhorar ao longo de 6 semanas."},"patellofemoral_pain":{"label":"Dor patelofemoral (joelho anterior)","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["deep_knee_flexion_loaded_early","impact","downhill"],"avoid_exercises_pt":["Agachamento profundo com carga (fase dolorosa)","Saltos","Extensao de joelho em amplitude completa com carga alta","Afundos profundos"],"prefer_exercises_pt":["Abducao de anca com banda","Monster walk","Clamshell","Agachamento parcial 0-45 graus","Prensa de pernas parcial","Step-up baixo","Hip thrust","Isometrico de quadriceps a 60 graus"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"limited","cardio_bias":false,"session_minutes_max":60},"helpful":["Fortalecer anca e joelho e a recomendacao mais forte.","Progredir profundidade 15 graus por semana se dor <=3/10.","Bicicleta com selim alto e boa alternativa de cardio."],"red_flags":["Derrame ou inchaco do joelho","Bloqueio ou falha do joelho","Trauma recente"],"explain_pt":"A dor a frente do joelho melhora com forca da anca e do quadriceps e com gestao da profundidade. Vamos aumentar a amplitude a medida que a dor baixa."},"knee_hip_osteoarthritis":{"label":"Artrose do joelho ou anca","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["impact_in_flare","deep_loaded_flexion_in_flare"],"avoid_exercises_pt":["Saltos","Corrida em fase dolorosa","Afundos profundos com dor"],"prefer_exercises_pt":["Sit-to-stand","Prensa de pernas","Bicicleta","Marcha","Exercicio em agua","Step-up baixo","Hip thrust","Abducao de anca"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"pain_free","cardio_bias":true,"session_minutes_max":60},"helpful":["Exercicio de forca e aerobio e o tratamento central (OARSI).","Perder >=10 % do peso reduz dor e carga articular; dieta + exercicio reduziu dor em 51 %.","Dor ate 5/10 durante o exercicio e aceitavel se volta ao basal em 24 h."],"red_flags":["Articulacao quente e vermelha","Derrame subito","Febre"],"explain_pt":"Na artrose o exercicio nao gasta a articulacao: fortalecer os musculos a volta e manter-se ativo reduz a dor. Escolhemos opcoes de baixo impacto."},"shoulder_rotator_cuff":{"label":"Ombro (coifa dos rotadores / impingement)","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["overhead_in_flare","behind_neck","deep_horizontal_press_in_flare","lateral_raise_above_shoulder_in_flare"],"avoid_exercises_pt":["Press militar (fase dolorosa)","Puxada atras da nuca","Elevacao lateral acima do ombro","Supino profundo com barra","Dips"],"prefer_exercises_pt":["Rotacao externa com banda","Face pull","Remada","Press inclinado ligeiro com halteres","Landmine press","Elevacao escapular (Y, T)","Flexoes na parede"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"ok","range_of_motion":"pain_free","cardio_bias":false,"session_minutes_max":60},"helpful":["Exercicio e a primeira linha; nenhum programa e claramente superior.","Progressao: isometricos -> banda -> halteres -> overhead quando dor <=3/10.","Manter equilibrio 1:1 entre empurrar e puxar."],"red_flags":["Perda de forca subita apos trauma","Dor noturna intensa e persistente","Deformidade ou luxacao"],"explain_pt":"O ombro melhora com exercicio progressivo. Evitamos movimentos acima da cabeca enquanto doi e reforcamos rotadores e omoplata."},"tendinopathy":{"label":"Tendinopatia (Aquiles, rotuliano, gluteo, cotovelo)","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["plyometrics_in_flare","aggressive_stretching","tendon_compression","sudden_volume_spikes"],"avoid_exercises_pt":["Saltos e sprints (fase dolorosa)","Alongamento estatico agressivo do tendao","Cruzar pernas / deitar sobre a anca dolorosa (gluteo)"],"prefer_exercises_pt":["Isometricos 5x45 s a 70 % (dor)","Heavy slow resistance 3 s/3 s","Elevacao de gemeos lenta com carga","Agachamento lento em declive","Curl de punho lento"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"pain_free","cardio_bias":false,"session_minutes_max":60},"helpful":["Carga lenta e pesada 3x/semana durante 12 semanas iguala o excentrico com mais adesao.","Isometricos reduzem a dor por 45 min e servem de aquecimento.","Dor ate 3-5/10 que passa em 24 h e aceitavel; nao mudar muitas variaveis de uma vez."],"red_flags":["Dor subita com 'estalo'","Incapacidade de suportar carga","Inchaco subito"],"explain_pt":"Os tendoes gostam de carga lenta e pesada. Comecamos com isometricos para a dor e progredimos para series lentas ao longo de 12 semanas."},"plantar_fasciitis":{"label":"Fascite plantar","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["impact_in_flare","sudden_walking_volume_increase"],"avoid_exercises_pt":["Corrida e saltos (fase dolorosa)","Burpees"],"prefer_exercises_pt":["Elevacao de gemeos unilateral com toalha sob os dedos (3 s/2 s/3 s)","Bicicleta","Remo","Forca de membros inferiores sentada"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"none","range_of_motion":"full","cardio_bias":false,"session_minutes_max":60},"helpful":["Forca de alta carga em dias alternados, progressao 12RM -> 8RM, superou o alongamento aos 3 meses.","Calcado com suporte; reduzir volume de marcha temporariamente."],"red_flags":["Dormencia no pe","Dor noturna em repouso","Inchaco"],"explain_pt":"A fascite plantar responde a forca lenta e pesada dos gemeos com os dedos elevados, feita em dias alternados."},"neck_pain_desk":{"label":"Dor cervical (trabalho sentado)","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["axial_neck_loading","behind_neck"],"avoid_exercises_pt":["Puxada atras da nuca","Ponte de pescoco","Agachamento com barra alta se dor aguda"],"prefer_exercises_pt":["Elevacao lateral com banda ate a falha (2 min/dia)","Face pull","Remada","Shrug","Retracao cervical","Pausas de movimento a cada 30-60 min"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":false,"avoid_supine":false,"impact":"ok","range_of_motion":"pain_free","cardio_bias":false,"session_minutes_max":60},"helpful":["2 min/dia de elevacao lateral com banda, 5x/semana, reduz dor em 10 semanas.","Forca de ombro/trapezio e mais eficaz do que alongamento."],"red_flags":["Dormencia ou fraqueza nos bracos","Dor apos trauma","Cefaleia subita intensa"],"explain_pt":"A dor cervical de secretaria melhora com forca dos ombros e trapezio, mesmo em doses minusculas diarias."},"hypertension":{"label":"Hipertensao","category":"cardiometabolic","requires_clearance":false,"avoid_patterns":["valsalva","max_isometrics","loads_below_5RM_early","inverted_positions"],"avoid_exercises_pt":["Testes de 1RM","Isometricos maximos prolongados","Prensa com pernas acima da cabeca","Handstand"],"prefer_exercises_pt":["Marcha rapida","Bicicleta","Circuito de forca 8-12 reps","Remada","Prensa de pernas","Isometrico de preensao submaximo (2 min x4)"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":true,"avoid_supine":false,"impact":"ok","range_of_motion":"full","cardio_bias":true,"session_minutes_max":60},"helpful":["Aerobio e/ou forca reduzem a PA 5-8 mmHg; 90-150 min/semana.","Expirar sempre na fase de esforco.","Medir PA antes: >=180/110 nao treinar; >160/100 requer aval medico.","Sodio <2 g/dia."],"red_flags":["Dor toracica","Cefaleia intensa","Visao turva","Dispneia desproporcionada","PA >=180/110"],"explain_pt":"O exercicio baixa a pressao arterial tanto como alguns medicamentos. Evitamos suster a respiracao e cargas maximas, e medimos a pressao antes de treinar."},"type2_diabetes":{"label":"Diabetes tipo 2","category":"cardiometabolic","requires_clearance":true,"avoid_patterns":["valsalva_if_retinopathy","impact_if_neuropathy","fasting_training_on_insulin"],"avoid_exercises_pt":["Saltos com neuropatia periferica","Treino em jejum com insulina/sulfonilureias","Isometricos maximos com retinopatia proliferativa"],"prefer_exercises_pt":["Marcha 2-5 min apos refeicoes","Forca 2-3x/semana em dias nao consecutivos","Bicicleta","Circuito de forca antes do aerobio"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":true,"avoid_supine":false,"impact":"low","range_of_motion":"full","cardio_bias":true,"session_minutes_max":75},"helpful":["150 min aerobio + forca 2-3x/semana; nunca mais de 2 dias seguidos sem atividade; interromper o sentar a cada 30 min.","Glicemia <90 mg/dL antes: comer 15-30 g de hidratos; >250 com cetonas ou >300: nao treinar.","Forca antes do aerobio reduz hipoglicemia.","Verificar os pes apos cada sessao."],"red_flags":["Hipoglicemia recorrente","Feridas nos pes","Dor toracica","Visao subitamente turva"],"explain_pt":"Forca e caminhadas apos as refeicoes sao dos melhores 'medicamentos' para a diabetes. Se usa insulina, vamos verificar a glicemia antes de treinar."},"prediabetes_metabolic_syndrome":{"label":"Pre-diabetes / sindrome metabolica","category":"cardiometabolic","requires_clearance":false,"avoid_patterns":[],"avoid_exercises_pt":[],"prefer_exercises_pt":["Marcha rapida 150 min/semana","Forca 2-3x/semana","Intervalos 10x1","Marcha apos refeicoes"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":false,"avoid_supine":false,"impact":"ok","range_of_motion":"full","cardio_bias":true,"session_minutes_max":75},"helpful":["Perder 7 % do peso + 150 min/semana reduz a incidencia de diabetes 58 % (71 % em >60 anos).","Aerobio + forca reduz a cintura ~3,8 cm."],"red_flags":["Sede e poliuria intensas","Perda de peso involuntaria"],"explain_pt":"Nesta fase o exercicio e a alimentacao podem reverter o risco. O foco e cintura, caminhadas e forca."},"obesity":{"label":"Obesidade (IMC >=30)","category":"cardiometabolic","requires_clearance":false,"avoid_patterns":["high_impact","prone_positions_if_uncomfortable","long_sessions_early"],"avoid_exercises_pt":["Burpees","Saltos","Corrida (fase inicial)","Flexoes no chao (usar parede/banco)"],"prefer_exercises_pt":["Marcha","Bicicleta","Remo","Exercicio em agua","Sit-to-stand","Prensa de pernas","Remada sentada","Flexoes na parede","Hip thrust"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"none","range_of_motion":"pain_free","cardio_bias":true,"session_minutes_max":45},"helpful":["Forca + aerobio e a combinacao mais eficaz para composicao corporal.","Comecar por 10 min e progredir tempo antes de intensidade; passos +1000/semana.","Proteina 1,6-2,4 g/kg de peso ajustado; ritmo 0,5-1 %/semana.","Exercicio na manutencao reduz o reganho em ~2,8 kg."],"red_flags":["Dispneia desproporcionada","Dor toracica","Dor articular aguda com inchaco","IMC >=40 com sintomas: aval medico"],"explain_pt":"Comecamos por opcoes que poupam as articulacoes e construimos o habito. A forca protege o musculo enquanto a gordura desce."},"glp1_medication":{"label":"Em medicacao GLP-1 (semaglutido, tirzepatido)","category":"cardiometabolic","requires_clearance":false,"avoid_patterns":["aggressive_deficit","training_dehydrated"],"avoid_exercises_pt":["HIIT intenso em dias de nausea"],"prefer_exercises_pt":["Forca 2-3x/semana full-body","Marcha diaria","Sit-to-stand","Remada","Prensa de pernas"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"full","cardio_bias":false,"session_minutes_max":60},"helpful":["15-40 % do peso perdido pode ser massa magra sem forca e proteina.","Proteina >=1,2-1,6 g/kg, primeiro no prato; forca 2-3x/semana reduz a perda muscular para ~3 %.","Hidratar; se nausea, sessao curta de forca em vez de cardio."],"red_flags":["Vomitos persistentes","Dor abdominal intensa","Tonturas ao levantar"],"explain_pt":"Com estes medicamentos o apetite baixa muito; a prioridade e proteina e treino de forca para que o peso perdido seja gordura e nao musculo."},"osteoporosis":{"label":"Osteoporose / osteopenia","category":"musculoskeletal","requires_clearance":true,"avoid_patterns":["loaded_spinal_flexion","ballistic_rotation","fall_risk_exercises","high_impact_if_severe"],"avoid_exercises_pt":["Crunch e sit-up com carga","Toe-touch com peso","Twist russo","Saltos de caixa (osteoporose grave)","Remada curvada com costas redondas"],"prefer_exercises_pt":["Peso morto com hinge neutro","Agachamento","Press","Puxada","Bird-dog","Prancha","Saltos com queda (osteopenia)","Marcha rapida","Equilibrio"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"full","cardio_bias":false,"session_minutes_max":60},"helpful":["LIFTMOR: 2x/semana, 5x5 a >85 % 1RM + impacto, 8 meses, aumentou DMO sem fraturas sob supervisao.","4-8 semanas de tecnica antes de cargas altas.","Substituir flexao lombar carregada por anti-flexao."],"red_flags":["Dor dorsal subita (fratura vertebral)","Perda de altura >2 cm","Queda com dor persistente"],"explain_pt":"O osso responde a carga pesada e a impacto bem feitos. Evitamos dobrar a coluna com peso e construimos a tecnica antes de carregar."},"pregnancy":{"label":"Gravidez","category":"womens_health","requires_clearance":true,"avoid_patterns":["contact","fall_risk","valsalva","prolonged_supine_after_T1_if_symptomatic","heat","max_loads","loaded_flexion_with_coning","scuba"],"avoid_exercises_pt":["Desportos de contacto","Equitacao, esqui, ciclismo de estrada tardio","Testes de 1RM","Crunch e prancha com coning","Hot yoga","Mergulho"],"prefer_exercises_pt":["Marcha","Bicicleta estatica","Natacao","Agachamento","Hip thrust","Remada","Press inclinado com halteres","Pavimento pelvico","Bird-dog"],"modifiers":{"intensity_cap_rir_min":3,"no_breath_hold":true,"avoid_supine":true,"impact":"low","range_of_motion":"full","cardio_bias":true,"session_minutes_max":45},"helpful":["150 min/semana moderado com forca; teste da fala / RPE 12-14.","Quem ja era ativa pode manter intensidade habitual.","Pavimento pelvico iniciado na gravidez previne incontinencia.","Hidratar e evitar calor."],"red_flags":["Hemorragia vaginal","Contracoes regulares dolorosas","Perda de liquido","Dispneia antes do esforco","Tonturas ou desmaio","Cefaleia","Dor toracica","Fraqueza muscular que afeta equilibrio","Dor ou edema na barriga da perna","Reducao de movimentos fetais"],"explain_pt":"Exercicio na gravidez e seguro e recomendado quando nao ha complicacoes. Mantemos intensidade em que consegue falar, sem suster a respiracao nem risco de queda."},"postpartum":{"label":"Pos-parto (ate 6 meses)","category":"womens_health","requires_clearance":true,"avoid_patterns":["impact_before_12_weeks","loaded_flexion_with_coning","valsalva","max_loads"],"avoid_exercises_pt":["Corrida e saltos antes das 12 semanas","Crunch/sit-up com coning","Testes de 1RM","Burpees"],"prefer_exercises_pt":["Pavimento pelvico","Respiracao diafragmatica","Marcha","Ponte glutea","Agachamento","Remada","Dead bug","Bird-dog","Sit-to-stand unilateral"],"modifiers":{"intensity_cap_rir_min":3,"no_breath_hold":true,"avoid_supine":false,"impact":"none","range_of_motion":"full","cardio_bias":true,"session_minutes_max":40},"helpful":["Corrida so apos 12 semanas e avaliacao do pavimento pelvico; criterios: 20 sit-to-stand unilaterais, 30 s de corrida no lugar, 10 single-leg hops sem sintomas.","Diastase: exercicio de transverso e pavimento pelvico; evitar coning.","Cesariana: forca a partir das 6 semanas com aval."],"red_flags":["Hemorragia que aumenta","Febre","Dor pelvica intensa","Incontinencia ou peso pelvico que nao melhora ate 12 semanas","Sintomas de depressao pos-parto"],"explain_pt":"Depois do parto reconstruimos o pavimento pelvico e o tronco antes de voltar a carga e ao impacto. A corrida espera pelas 12 semanas e por uma avaliacao."},"pelvic_floor_incontinence":{"label":"Pavimento pelvico / incontinencia","category":"womens_health","requires_clearance":false,"avoid_patterns":["impact_until_controlled","valsalva","max_loads"],"avoid_exercises_pt":["Saltos e corrida (ate controlo)","Saltar a corda","Testes de 1RM","Sit-up com carga"],"prefer_exercises_pt":["Treino do pavimento pelvico 3x8-12 contracoes/dia","Step-up","Agachamento","Hip thrust","Remada","Bicicleta","Natacao"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":true,"avoid_supine":false,"impact":"none","range_of_motion":"full","cardio_bias":false,"session_minutes_max":60},"helpful":["Treino do pavimento pelvico: 8x mais probabilidade de cura na incontinencia de esforco; >=12 semanas.","Expirar no esforco; contrair o pavimento antes de levantar carga.","Encaminhar a fisioterapia pelvica."],"red_flags":["Prolapso sintomatico","Dor pelvica","Sangue na urina"],"explain_pt":"Os musculos do pavimento pelvico treinam-se como qualquer outro. Substituimos o impacto por forca ate haver controlo, e recomendamos fisioterapia pelvica."},"asthma_eib":{"label":"Asma / broncoconstricao induzida pelo exercicio","category":"respiratory","requires_clearance":false,"avoid_patterns":["cold_dry_air_unprotected","sudden_max_effort_without_warmup"],"avoid_exercises_pt":["Sprints sem aquecimento","Corrida ao ar livre em ar frio sem protecao"],"prefer_exercises_pt":["Aquecimento intervalado 10-15 min","Natacao","Bicicleta","Forca","Intervalos curtos apos aquecimento"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":false,"avoid_supine":false,"impact":"ok","range_of_motion":"full","cardio_bias":false,"session_minutes_max":75},"helpful":["Aquecimento intervalado cria periodo refratario de ~2 h.","Broncodilatador pre-exercicio quando prescrito; inalador de alivio sempre a mao."],"red_flags":["Sibilancia que nao responde ao inalador","Labios azulados","Incapacidade de falar frases"],"explain_pt":"Com asma pode treinar a intensidade alta; a chave e um aquecimento progressivo e ter o inalador a mao."},"stable_heart_disease":{"label":"Doenca cardiaca estavel","category":"cardiometabolic","requires_clearance":true,"avoid_patterns":["valsalva","max_loads","training_with_symptoms","extreme_heat_cold","hr_guided_if_beta_blocker"],"avoid_exercises_pt":["Testes de 1RM","Isometricos maximos","HIIT sem aval","Handstand"],"prefer_exercises_pt":["Marcha","Bicicleta","Circuito de forca 30-60 % 1RM, 10-15 reps","Remada sentada","Prensa de pernas","Aquecimento e arrefecimento de 10 min"],"modifiers":{"intensity_cap_rir_min":3,"no_breath_hold":true,"avoid_supine":false,"impact":"low","range_of_motion":"full","cardio_bias":true,"session_minutes_max":45},"helpful":["Requer aval medico e idealmente reabilitacao cardiaca.","150 min moderado + forca >=3x/semana; RPE <=13.","Betabloqueantes: usar RPE, nao FC.","Nao treinar com sintomas nem 2 h apos refeicao pesada."],"red_flags":["Dor ou pressao toracica","Dispneia subita","Palpitacoes sustentadas","Tontura ou sincope","Sudacao fria"],"explain_pt":"Com doenca cardiaca estavel o exercicio prolonga a vida, mas precisa de aval medico. Treinamos a intensidade moderada, sem suster a respiracao."},"anxiety_depression":{"label":"Ansiedade / depressao","category":"mental_health","requires_clearance":false,"avoid_patterns":["all_or_nothing_scheduling"],"avoid_exercises_pt":[],"prefer_exercises_pt":["Marcha ao ar livre","Forca 2-3x/semana","Intervalos curtos","Sessoes de 10 min quando a motivacao e baixa","Treino em grupo/familia"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":false,"avoid_supine":false,"impact":"ok","range_of_motion":"full","cardio_bias":false,"session_minutes_max":75},"helpful":["Efeito medio na depressao (-0,43) e ansiedade (-0,42); maior com intensidade mais alta e programas de <=12 semanas.","Complemento ao tratamento, nao substituto.","Sessao minima conta; sem culpa por falhar."],"red_flags":["Ideacao suicida","Incapacidade de cuidar de si","Agravamento rapido"],"explain_pt":"O exercicio e um tratamento com efeito real na ansiedade e depressao. Mantemos as sessoes curtas e faceis de cumprir nos dias dificeis."},"insomnia":{"label":"Insonia","category":"mental_health","requires_clearance":false,"avoid_patterns":["vigorous_within_1h_of_bed","caffeine_within_6h_of_bed"],"avoid_exercises_pt":["HIIT na hora antes de deitar"],"prefer_exercises_pt":["Forca 2-3x/semana","Marcha matinal a luz do dia","Exercicio moderado ao fim da tarde"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":false,"avoid_supine":false,"impact":"ok","range_of_motion":"full","cardio_bias":false,"session_minutes_max":75},"helpful":["Forca 12 semanas melhora qualidade de sono e insonia.","Exercicio ao fim do dia nao prejudica se termina 1-2 h antes de deitar.","Nao agendar HIIT se sono <6 h registado."],"red_flags":["Sonolencia diurna com apneias (encaminhar)","Insonia >3 meses sem avaliacao"],"explain_pt":"Treinar regularmente melhora o sono. So evitamos treinos muito intensos mesmo antes de deitar."},"hypermobility_heds":{"label":"Hipermobilidade / SED hipermovel","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":["end_range_loading","joint_locking","passive_stretching","ballistic_loads","rapid_position_changes_if_dysautonomia"],"avoid_exercises_pt":["Alongamento passivo","Kipping pull-ups","Snatch","Bloquear cotovelos/joelhos com carga","Yoga de amplitude extrema"],"prefer_exercises_pt":["Cadeia fechada (agachamento a cadeira, flexoes na parede)","Maquinas","Halteres leves com controlo","Propriocepcao unipodal","Remada","Isometricos em amplitude media"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"limited","cardio_bias":false,"session_minutes_max":45},"helpful":["Forca e propriocepcao melhoram dor e estabilidade; ate forca pesada de ombro e tolerada com progressao.","Parar 10-20 graus antes do fim da amplitude.","Subir de posicao devagar e hidratar se disautonomia."],"red_flags":["Subluxacoes repetidas","Taquicardia postural marcada","Dor toracica"],"explain_pt":"Nas articulacoes hipermoveis o objetivo e controlo, nao amplitude. Treinamos forca em amplitude media, com progressao lenta."},"scoliosis":{"label":"Escoliose","category":"musculoskeletal","requires_clearance":false,"avoid_patterns":[],"avoid_exercises_pt":[],"prefer_exercises_pt":["Forca geral simetrica","Exercicios unilaterais equilibrados dos dois lados","Prancha lateral","Remada unilateral","Natacao"],"modifiers":{"intensity_cap_rir_min":1,"no_breath_hold":false,"avoid_supine":false,"impact":"ok","range_of_motion":"full","cardio_bias":false,"session_minutes_max":75},"helpful":["Treino geral e desporto sao seguros e recomendados.","Exercicios especificos (Schroth/PSSE) so com especialista, sobretudo em crescimento e curvas >20 graus."],"red_flags":["Progressao rapida da curva em adolescente","Dor com sintomas neurologicos"],"explain_pt":"A escoliose nao impede treinar; a forca geral e boa para a coluna. Se tem indicacao de exercicios especificos, fazemo-los em paralelo com o especialista."},"migraine":{"label":"Enxaqueca","category":"other","requires_clearance":false,"avoid_patterns":["sudden_max_effort","valsalva_in_attack","training_dehydrated_or_fasted_if_trigger"],"avoid_exercises_pt":["Sprints sem aquecimento","Cargas maximas durante a crise"],"prefer_exercises_pt":["Aerobio moderado 3x/semana (bicicleta, marcha rapida)","Forca moderada","Aquecimento gradual de 10 min"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":true,"avoid_supine":false,"impact":"ok","range_of_motion":"full","cardio_bias":true,"session_minutes_max":60},"helpful":["Aerobio regular reduz ~0,6 dias de enxaqueca/mes e a intensidade, comparavel a topiramato.","Hidratar e comer antes se jejum e gatilho."],"red_flags":["Pior dor de cabeca da vida","Cefaleia com febre ou rigidez da nuca","Cefaleia com defices neurologicos"],"explain_pt":"O exercicio aerobio regular previne enxaquecas. Aquecemos devagar para nao desencadear crises."},"fibromyalgia":{"label":"Fibromialgia","category":"other","requires_clearance":false,"avoid_patterns":["rapid_progression","high_intensity_early","training_to_failure"],"avoid_exercises_pt":["HIIT (fase inicial)","Series ate a falha","Sessoes >45 min"],"prefer_exercises_pt":["Marcha ou bicicleta 10-20 min","Exercicio em agua quente","Forca leve 40-60 % 1RM","Tai chi/yoga suave"],"modifiers":{"intensity_cap_rir_min":4,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"pain_free","cardio_bias":true,"session_minutes_max":30},"helpful":["Aerobio 20 min (ou 2x10), 2-3x/semana, melhora dor, depressao e qualidade de vida.","Aumentar <=10 %/semana; dor pos-exercicio deve baixar em 24 h."],"red_flags":["Crise que nao cede em dias","Sintomas novos ou neurologicos"],"explain_pt":"Na fibromialgia o segredo e comecar muito leve e subir muito devagar. Pequenas doses regulares ganham a crises grandes."},"rheumatoid_arthritis":{"label":"Artrite reumatoide","category":"musculoskeletal","requires_clearance":true,"avoid_patterns":["max_loads_on_deformed_joints","axial_neck_loading","impact_in_flare"],"avoid_exercises_pt":["Puxada atras da nuca","Ponte de pescoco","Testes de 1RM","Saltos em surto"],"prefer_exercises_pt":["Forca com maquinas e bandas","Isometricos em surto","Bicicleta","Exercicio em agua","Mobilidade diaria"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"pain_free","cardio_bias":true,"session_minutes_max":60},"helpful":["Atividade fisica nas 4 componentes e segura e parte do tratamento padrao (EULAR).","Em surto: reduzir carga na articulacao inflamada, manter amplitude e isometricos."],"red_flags":["Surto com febre","Dor cervical com dormencia nos bracos","Articulacao subitamente quente"],"explain_pt":"Com artrite reumatoide o exercicio reduz a dor e a fadiga. Adaptamos a carga nos dias de surto sem parar por completo."},"sarcopenia":{"label":"Sarcopenia","category":"other","requires_clearance":false,"avoid_patterns":["aggressive_deficit","long_detraining"],"avoid_exercises_pt":["Dietas de restricao sem forca"],"prefer_exercises_pt":["Sit-to-stand","Prensa de pernas ou agachamento a cadeira","Step-up","Remada","Press","Potencia: sit-to-stand rapido","Marcha"],"modifiers":{"intensity_cap_rir_min":2,"no_breath_hold":false,"avoid_supine":false,"impact":"low","range_of_motion":"full","cardio_bias":false,"session_minutes_max":60},"helpful":["Forca e a recomendacao forte (ICFSR); proteina 1,2-1,5 g/kg.","Potencia declina 2x mais depressa do que forca: incluir movimentos rapidos.","Creatina 3-5 g/dia ajuda a forca de membros superiores."],"red_flags":["Perda de peso involuntaria >5 %","Quedas","Marcha <0,8 m/s"],"explain_pt":"A perda de musculo com a idade trava-se com forca e proteina. Cada sessao inclui levantar-se da cadeira, empurrar e puxar."},"copd":{"label":"DPOC","category":"respiratory","requires_clearance":true,"avoid_patterns":["valsalva","training_in_exacerbation","long_continuous_efforts_if_not_tolerated"],"avoid_exercises_pt":["Isometricos maximos","HIIT longo"],"prefer_exercises_pt":["Marcha intervalada 1 min/1 min","Bicicleta","Forca com bandas 8-12 reps","Sit-to-stand","Respiracao com labios semicerrados"],"modifiers":{"intensity_cap_rir_min":3,"no_breath_hold":true,"avoid_supine":false,"impact":"low","range_of_motion":"full","cardio_bias":true,"session_minutes_max":40},"helpful":["Reabilitacao pulmonar e a intervencao mais eficaz para a dispneia.","Intensidade por dispneia Borg CR10 4-6; 3-5 sessoes/semana."],"red_flags":["SpO2 <88 %","Dispneia em repouso","Expetoracao purulenta ou febre (exacerbacao)"],"explain_pt":"Na DPOC o exercicio reduz a falta de ar. Usamos intervalos curtos e forca leve, guiados pela sua sensacao de dispneia."},"recent_injury_post_surgery":{"label":"Lesao recente / pos-cirurgia","category":"musculoskeletal","requires_clearance":true,"avoid_patterns":["loading_unreleased_region","impact","max_loads","pain_provoking_ranges"],"avoid_exercises_pt":["Qualquer exercicio da regiao operada nao liberado pelo fisioterapeuta"],"prefer_exercises_pt":["Treino do membro contralateral","Tronco e regioes nao afetadas","Isometricos liberados","Marcha ou bicicleta se permitido"],"modifiers":{"intensity_cap_rir_min":3,"no_breath_hold":true,"avoid_supine":false,"impact":"none","range_of_motion":"limited","cardio_bias":false,"session_minutes_max":40},"helpful":["Diferir para fisioterapia; a app programa so o que foi liberado.","Cronograma orientador: 1-3 semanas isometricos, 3-6 carga lenta, 6-12 forca pesada, depois impacto; cirurgia major 3-12 meses.","Treinar o lado contralateral mantem forca."],"red_flags":["Dor a aumentar","Derrame","Febre","Ferida com sinais de infecao","Dormencia nova"],"explain_pt":"Depois de uma lesao ou cirurgia seguimos o plano do fisioterapeuta e mantemos o resto do corpo a treinar."}},"screening":{"parq_questions_pt":["O seu medico ja lhe disse que tem uma doenca cardiaca OU pressao arterial alta?","Sente dor no peito em repouso, nas atividades do dia a dia OU quando faz atividade fisica?","Perde o equilibrio por causa de tonturas OU perdeu a consciencia nos ultimos 12 meses?","Ja lhe foi diagnosticada outra doenca cronica (alem de doenca cardiaca ou pressao alta)?","Toma atualmente medicamentos receitados para uma doenca cronica?","Tem atualmente (ou teve nos ultimos 12 meses) um problema osseo, articular ou de tecidos moles que possa agravar com atividade fisica?","O seu medico ja lhe disse que so deve fazer atividade fisica com supervisao medica?"],"parq_positive_action_pt":"Respondeu sim a pelo menos uma pergunta: a app limita a intensidade a moderada (RIR >=3, sem intervalos vigorosos) ate confirmar aval medico ou responder as perguntas de seguimento do PAR-Q+.","universal_red_flags_pt":["Dor, aperto ou pressao no peito, pescoco, maxilar ou bracos","Desmaio ou quase desmaio","Falta de ar inexplicada ou desproporcionada ao esforco","Palpitacoes ou batimentos irregulares","Inchaco articular agudo ou articulacao quente","Febre ou infecao ativa","Hemorragia vaginal na gravidez","Dor de cabeca subita e muito intensa","Fraqueza ou dormencia subita","Inchaco dos tornozelos ou dor nas pernas ao caminhar"]},"programming":{"progression_rules":[{"id":"double_progression","rule_pt":"Quando todas as series atingem o topo do intervalo de reps com RIR >= alvo, subir a carga 2,5-5 % (2,5 % em >40 anos ou tendoes sensiveis) e voltar ao fundo do intervalo."},{"id":"rir_autoregulation","rule_pt":"Se RIR reportado >= alvo+2 em todas as series, +1 rep ou +2,5-5 % carga na sessao seguinte; se RIR 0 ou RPE >=9 em 2 sessoes seguidas, -20 % volume na semana seguinte."},{"id":"bodyweight_progression","rule_pt":"Sem carga externa: progredir pela lista bodyweight_progression do musculo quando atingir 15-20 reps limpas com RIR 2."},{"id":"specialisation_block","rule_pt":"Bloco de 6-8 semanas: musculo alvo +30-50 % series (usar weekly_sets_specialisation), restantes 4-6 series/semana; depois rodar ou voltar ao equilibrio."},{"id":"pain_rule","rule_pt":"Dor ate 3-5/10 que volta ao basal em 24 h e aceitavel em condicoes musculoesqueleticas; acima disso reduzir amplitude ou carga na sessao seguinte."},{"id":"return_rule","rule_pt":"Apos pausa >=3 semanas: 50 % das cargas na semana 1-2, 70-80 % na 3-4."}],"ratios":{"push_pull_sets":"1:1","squat_hinge_sets":"1:1","vertical_horizontal_pull":"1:1","unilateral_exercises_per_lower_session_min":1,"balance_minutes_per_week_65plus":180},"warmup":{"general_minutes":[3,5],"mobility_minutes":[2,3],"ramp_sets_first_exercise":[{"pct_of_working_load":50,"reps":8},{"pct_of_working_load":70,"reps":5},{"pct_of_working_load":85,"reps":2}],"ramp_sets_other_exercises":1,"no_static_stretching_before":true,"asthma_interval_warmup_minutes":[10,15],"cardiac_warmup_cooldown_minutes":10},"deload":{"trigger":"reactive","every_weeks_max":8,"signals":["RPE >=9 em 2 sessoes seguidas","estagnacao 2-3 semanas","sono <6 h persistente","dor articular a aumentar"],"volume_reduction_pct":[30,50],"intensity_reduction_pct":[10,20],"keep_frequency":true,"duration_days":7},"exercise_order":["Aquecimento especifico","Exercicio prioritario ou de forca (composto, musculo alvo em especializacao)","Compostos secundarios em superset agonista-antagonista","Isolamentos e core","Cardio (se na mesma sessao; forca primeiro em diabetes e para proteger hipertrofia)","Equilibrio/pavimento pelvico onde aplicavel"],"rest_seconds":{"compound":[90,180],"isolation":[60,90],"superset_pairs":[60,90],"tendon_hsr":[120,180]},"tempo":{"eccentric_seconds":[1,3],"concentric":"controlado a rapido (rapido em potencia 65+)","stretch_pause_seconds":{"calves":2,"chest":1,"hamstrings":1}}},"nutrition":{"by_goal":{"muscle_gain":{"protein_g_per_kg":[1.6,2.2],"kcal_adjust_pct":[10,20],"fibre_g":[25,35],"carbs_note_pt":"Refeicao com hidratos e proteina 1-3 h antes do treino; total diario importa mais do que timing."},"fat_loss":{"protein_g_per_kg":[1.8,2.4],"kcal_adjust_pct":[-25,-10],"fibre_g":[25,35],"carbs_note_pt":"Concentrar hidratos a volta do treino ajuda o rendimento; sem regra de horario."},"recomposition":{"protein_g_per_kg":[2.0,2.4],"kcal_adjust_pct":[-10,0],"fibre_g":[25,35],"carbs_note_pt":"Manutencao ou defice pequeno; proteina em 4 refeicoes de ~0,4 g/kg."},"strength":{"protein_g_per_kg":[1.6,2.2],"kcal_adjust_pct":[0,10],"fibre_g":[25,35],"carbs_note_pt":"Hidratos suficientes para sessoes pesadas (3-5 g/kg/dia)."},"endurance_health":{"protein_g_per_kg":[1.2,1.6],"kcal_adjust_pct":[0,0],"fibre_g":[25,30],"carbs_note_pt":"Hidratos 3-5 g/kg; mais em dias de sessoes longas."},"longevity_65plus":{"protein_g_per_kg":[1.2,1.6],"kcal_adjust_pct":[0,0],"fibre_g":[25,30],"carbs_note_pt":"Proteina distribuida em 3-4 refeicoes de >=25-30 g; defices so com aval."},"pregnancy_maintenance":{"protein_g_per_kg":[1.2,1.5],"kcal_adjust_pct":[0,15],"fibre_g":[25,30],"carbs_note_pt":"Sem defice; nao treinar em jejum; hidratar."},"postpartum_return":{"protein_g_per_kg":[1.4,1.8],"kcal_adjust_pct":[-10,0],"fibre_g":[25,30],"carbs_note_pt":"Em amamentacao, defice maximo 10 % e apos 6 semanas."},"return_after_break":{"protein_g_per_kg":[1.6,2.2],"kcal_adjust_pct":[0,0],"fibre_g":[25,35],"carbs_note_pt":"Manutencao nas primeiras 4 semanas."},"glute_focus":{"protein_g_per_kg":[1.6,2.2],"kcal_adjust_pct":[-10,10],"fibre_g":[25,35],"carbs_note_pt":"Segue o objetivo secundario (defice pequeno ou superavit pequeno)."}},"hydration_l_per_day":{"women":2.0,"men":2.5,"extra_per_training_hour":[0.4,0.8]},"sodium_max_g_per_day_hypertension":2.0,"vegetarian_note_pt":"Proteina vegetal funciona quando igualada em leucina (~2-3 g por refeicao) e quantidade; combinar leguminosas com cereais e apontar para o topo do intervalo de proteina.","supplements_with_evidence":[{"name_pt":"Creatina monohidratada","dose":"3-5 g/dia, qualquer hora","evidence_pt":"Forca e massa magra em todas as idades; ajuda forca de membros superiores em idosos. Aval medico se doenca renal."},{"name_pt":"Cafeina","dose":"2-6 mg/kg, 30-60 min antes; evitar nas 6 h antes de dormir","evidence_pt":"Melhora forca, resistencia e potencia; >=9 mg/kg so traz efeitos adversos."},{"name_pt":"Proteina em po (whey, soja, ervilha)","dose":"20-40 g quando a comida nao chega","evidence_pt":"So conveniencia; soja igualada em leucina = whey."},{"name_pt":"Vitamina D","dose":"600-800 UI/dia se pouca exposicao solar; doses maiores so com analise","evidence_pt":"Sem beneficio para quedas/fraturas em populacao geral; util em deficiencia."}],"myths":[{"myth_pt":"Proteina alta faz mal aos rins","truth_pt":"Sem efeito em rins saudaveis ate 2,2 g/kg ou mais; cuidado apenas com doenca renal."},{"myth_pt":"Hidratos a noite engordam","truth_pt":"Conta o balanco energetico total e a distribuicao de proteina, nao a hora."},{"myth_pt":"E preciso comer proteina nos 30 min apos o treino","truth_pt":"A janela anabolica dura horas; o total diario e o que importa."},{"myth_pt":"Jejum intermitente e superior para perder gordura","truth_pt":"Igual a qualquer defice com calorias e proteina iguais; util so se ajudar a aderencia."},{"myth_pt":"Suplementos 'queimadores de gordura' funcionam","truth_pt":"Sem evidencia de efeito relevante; cafeina e o unico com efeito pequeno."},{"myth_pt":"Proteina vegetal nao constroi musculo","truth_pt":"Constroi, desde que a quantidade e a leucina sejam suficientes."}]},"disclaimer_pt":"Esta app da orientacoes gerais de treino e alimentacao baseadas em evidencia cientifica. Nao substitui a avaliacao de um medico, fisioterapeuta ou nutricionista. Se tem uma doenca, esta gravida, teve uma lesao recente ou respondeu sim a alguma pergunta de rastreio, confirme com um profissional de saude antes de comecar ou aumentar a intensidade. Pare imediatamente e procure ajuda medica se sentir dor no peito, falta de ar inexplicada, tonturas, desmaio ou qualquer sinal de alarme listado."});
+var KB_SOURCES_NOTE='Fontes (estudos e guidelines) de cada objetivo, músculo e condição: docs/KNOWLEDGE.md — as listas "sources" não vêm embutidas na app para poupar espaço.';
+var KB_LABEL_PT={muscle_gain:'Ganhar músculo',fat_loss:'Perder gordura',recomposition:'Recomposição (perder gordura e ganhar músculo)',glute_focus:'Foco nos glúteos',strength:'Força',endurance_health:'Resistência e saúde',longevity_65plus:'Autonomia e longevidade (65+)',return_after_break:'Regresso após pausa',postpartum_return:'Regresso pós-parto',pregnancy_maintenance:'Manter a forma na gravidez',
+ glutes:'Glúteos',quads:'Quadríceps',hamstrings:'Isquiotibiais',calves:'Gémeos',chest:'Peito',back:'Costas (dorsais e superior)',shoulders:'Ombros (anterior, médio, posterior)',biceps:'Bíceps',triceps:'Tríceps',core:'Core / abdominais',forearms:'Antebraços e preensão',
+ chronic_low_back_pain:'Lombalgia crónica não específica',disc_herniation_symptomatic:'Hérnia discal sintomática',sciatica:'Ciática',patellofemoral_pain:'Dor patelofemoral (joelho anterior)',knee_hip_osteoarthritis:'Artrose do joelho ou anca',shoulder_rotator_cuff:'Ombro (coifa dos rotadores / impingement)',tendinopathy:'Tendinopatia (Aquiles, rotuliano, glúteo, cotovelo)',plantar_fasciitis:'Fascite plantar',neck_pain_desk:'Dor cervical (trabalho sentado)',hypertension:'Hipertensão',type2_diabetes:'Diabetes tipo 2',prediabetes_metabolic_syndrome:'Pré-diabetes / síndrome metabólica',obesity:'Obesidade (IMC ≥30)',glp1_medication:'Em medicação GLP-1 (semaglutido, tirzepatido)',osteoporosis:'Osteoporose / osteopenia',pregnancy:'Gravidez',postpartum:'Pós-parto (até 6 meses)',pelvic_floor_incontinence:'Pavimento pélvico / incontinência',asthma_eib:'Asma / broncoconstrição induzida pelo exercício',stable_heart_disease:'Doença cardíaca estável',anxiety_depression:'Ansiedade / depressão',insomnia:'Insónia',hypermobility_heds:'Hipermobilidade / SED hipermóvel',scoliosis:'Escoliose',migraine:'Enxaqueca',fibromyalgia:'Fibromialgia',rheumatoid_arthritis:'Artrite reumatoide',sarcopenia:'Sarcopenia',copd:'DPOC',recent_injury_post_surgery:'Lesão recente / pós-cirurgia',
+ musculoskeletal:'Músculos e articulações',cardiometabolic:'Coração e metabolismo',womens_health:'Saúde da mulher',respiratory:'Respiração',mental_health:'Saúde mental',other:'Outras'};
+function kbLabel(id){ return KB_LABEL_PT[id]||(kbGoal(id)||kbMuscle(id)||kbCondition(id)||{}).label||id; }
+function kbGoal(id){ return (id&&KB.goals[id])||null; }
+function kbMuscle(id){ return (id&&KB.muscle_focus[id])||null; }
+function kbAgeBand(age){
+  var a=(age==null||isNaN(age))?30:age, out=null;
+  for(var k in KB.age_bands){ var b=KB.age_bands[k]; if(a>=b.min&&a<=b.max) out={id:k,label:b.label,rules:b.rules,caps:b.caps}; }
+  if(!out){ var d=KB.age_bands.adult_18_39; out={id:'adult_18_39',label:d.label,rules:d.rules,caps:d.caps}; }
+  return out;
+}
+function kbCondition(id){ return (id&&KB.conditions[id])||null; }
+function kbConditionsFor(user){
+  var p=(user||DB).cfg.profile;
+  return ((p&&p.conditions)||[]).map(function(id){ var c=kbCondition(id); return c?Object.assign({id:id},c):null; }).filter(Boolean);
+}
+/* objetivo legado ('perder'/'ganhar'/'manter') <-> objetivo da base de conhecimento (goalId) */
+var GOAL_LEGACY={perder:'fat_loss',ganhar:'muscle_gain',manter:'endurance_health'};
+var GOAL_SELECT_VALUE={fat_loss:'perder',muscle_gain:'ganhar',endurance_health:'manter'}; // valores antigos mantidos no <select> por compatibilidade
+function legacyGoal(goalId, conds){
+  if(goalId==='fat_loss') return 'perder';
+  if(goalId==='muscle_gain'||goalId==='strength') return 'ganhar';
+  if((conds||[]).indexOf('obesity')>=0&&goalId!=='pregnancy_maintenance'&&goalId!=='postpartum_return'&&goalId!=='longevity_65plus') return 'perder';
+  return 'manter';
+}
+function legacyFocus(muscles){
+  var m=muscles||[];
+  if(m.indexOf('glutes')>=0) return 'gluteos';
+  if(m.some(function(x){ return ['chest','back','shoulders','biceps','triceps'].indexOf(x)>=0; })) return 'tronco';
+  return 'geral';
+}
+function migrateProfile(p){ // campos novos com valores por defeito (compatibilidade com perfis antigos)
+  if(!p) return p;
+  if(!p.goalId||!KB.goals[p.goalId]) p.goalId=GOAL_LEGACY[p.goal]||'endurance_health';
+  if(!Array.isArray(p.muscles)) p.muscles=p.focus==='gluteos'?['glutes']:(p.focus==='tronco'?['chest','back']:[]);
+  p.muscles=p.muscles.filter(function(m){ return !!KB.muscle_focus[m]; }).slice(0,2);
+  if(!Array.isArray(p.conditions)) p.conditions=[];
+  p.conditions=p.conditions.filter(function(c){ return !!KB.conditions[c]; });
+  if(p.clearance==null) p.clearance=false;
+  if(p.parqPositive==null) p.parqPositive=false;
+  p.goal=legacyGoal(p.goalId,p.conditions);
+  p.focus=legacyFocus(p.muscles);
+  return p;
+}
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
   for(var ck in CFGDEF){ if(u.cfg[ck]==null) u.cfg[ck]=CFGDEF[ck]; }
   if(u.cfg.steps===7000||u.cfg.steps===10000) u.cfg.steps=8000; // 8 000 = mínimo eficaz (SCIENCE.md)
   u.cfg.techOk=u.cfg.techOk||{}; // checklist "Técnica primeiro" (jovem), por exercício
   if(u.cfg.profile&&u.cfg.profile.pelvic==null) u.cfg.profile.pelvic=false;
+  if(u.cfg.profile) migrateProfile(u.cfg.profile); // objetivo/foco/condições da base de conhecimento (v20)
   return u;
 }
 function loadRoot(){
@@ -571,6 +621,384 @@ var WK_EXTRA = {
   {id:'lb6',n:'Prancha + prancha lateral',t:'3×45s',m:'Core profundo · oblíquos',a:['Hollow hold','Pallof press']},
   {id:'xco1',n:'Dead bug',t:'2×10/lado',m:'Estabilidade lombo-pélvica',a:['Bird dog']}]}
 };
+/* ============ MOTOR DO COACH: faixa etária → rastreio → condições → objetivo → foco → equipamento ============ */
+function nrm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[×–—]/g,' ').replace(/\s+/g,' ').trim(); }
+/* padrões de movimento por nome de exercício (pequeno, cobre o catálogo) */
+var PATTERN_OF=[
+ [/chest press|press de peito|supino|floor press|aberturas|peck-deck(?! invertid)|crossover|\bfly\b/, ['push_h']],
+ [/supino plano|supino \(barra|supino barra|floor press|supino pesado/, ['deep_press']],
+ [/flexoes|flexao|push-?up|pushup/, ['push_h','pushup']],
+ [/\bdips?\b|fundos/, ['push_h','dips','deep_press']],
+ [/pike|handstand/, ['push_v','overhead','inverted']],
+ [/press militar|press de ombros|press halteres|press maquina|maquina de ombros|press acima|acima da cabeca|overhead|arnold|press c\/ banda|\bohp\b/, ['push_v','overhead']],
+ [/landmine/, ['push_v']],
+ [/elevacoes laterais|elevacao lateral|\blaterais\b/, ['lateral_raise']],
+ [/remada|\brow\b|face pull|pull-apart|reverse fly|elevacoes posteriores|peck-deck invertid|posteriores/, ['pull_h']],
+ [/remada (barra|curvada|t-bar)|remada maquina\/barra|remada barra|t-bar|remada c\/ mochila|remada c\/ mala|remada (barra|maquina)\/barra/, ['row_bent']],
+ [/puxada|pull-?ups?|chin-?up|elevacao na barra|dead hang|pullover|pull-over/, ['pull_v']],
+ [/atras da nuca|behind/, ['behind_neck']],
+ [/agachamento|squat|goblet|hack|prensa|sissy|pistol|split/, ['squat']],
+ [/profund|sissy|pistol/, ['deep_knee_flexion']],
+ [/bulgaro|afundo|step-?up|lunge|subidas ao banco|passo longo/, ['lunge']],
+ [/afundo|passo longo/, ['deep_knee_flexion']],
+ [/extensao de pernas|extensao de joelho|leg extension/, ['knee_ext']],
+ [/peso morto|\brdl\b|stiff|good morning|hinge|hiperextens|swing/, ['hinge']],
+ [/good morning/, ['spinal_flexion_loaded','good_morning']],
+ [/hiperextens/, ['end_range_extension']],
+ [/hip thrust|ponte|glute bridge|kickback|coice|extensao de quadril|extensao da anca|extensao de anca/, ['hip_ext']],
+ [/ponte|glute bridge|bridge/, ['supine']],
+ [/supino(?! inclinado)|floor press|dead bug|hollow|skullcrusher|frances deitado|abdominal com carga|\bcrunch|sit-?up|pull-over com halter|pullover com halter|elevacao de pernas(?! suspenso)/, ['supine']],
+ [/abdominal|\babs\b|crunch|sit-?up|ab wheel|elevacao de pernas|hollow|toe-touch|mountain climb|reverse crunch|knee raise|dragon/, ['core_flexion']],
+ [/abdominal com carga|abdominal cabo|abdominal no cabo|abdominal na maquina|crunch com carga|cabo ajoelhado|ab wheel|sit-?up com carga|toe-touch com peso|maquina de abdominais/, ['spinal_flexion_loaded']],
+ [/twist|russo|rotacao|woodchop|lenhador/, ['rotation']],
+ [/pallof|prancha|plank|bird ?dog|dead bug|farmer|carry/, ['core_stab']],
+ [/\bsalt|jump|burpee|sprint|corrida|drop jump|plyo|box jump|mountain climb|kipping|snatch|\bclean\b/, ['impact']],
+ [/pausa em baixo|pausa em alongamento|alongamento|alongado|profund|dead hang/, ['end_range']],
+ [/gemeos|\bcalf|heel drop/, ['calf']],
+ [/\bcurl(?! de punho)(?! invertido)|biceps/, ['curl']],
+ [/triceps|pushdown|frances|skull|\bcorda$|corda\)/, ['triceps']],
+ [/ponte de pescoco|barra alta/, ['neck_load']]
+];
+function exPatterns(ex){
+  var n=nrm(ex.n), out=[];
+  PATTERN_OF.forEach(function(r){ if(r[0].test(n)) r[1].forEach(function(pt){ if(out.indexOf(pt)<0) out.push(pt); }); });
+  if(ex.ossos||ex.plyo) out.push('impact');
+  var m=String(ex.t||'').match(/×(\d+)[–-](\d+)/);
+  if((m&&parseInt(m[1])<=5)||/pesad/.test(n)) out.push('heavy');
+  if(/max/.test(nrm(ex.t||''))) out.push('failure');
+  return out;
+}
+function exHas(ex, pat, orig){
+  var ps=exPatterns(ex);
+  if(orig&&!ps.length&&nrm(ex.n).split(' ').length<=2) ps=exPatterns(orig); // alternativa genérica ("Máquina", "Cabo") herda o padrão do original
+  if(pat==='lock') return ['push_h','push_v','squat','lunge'].some(function(x){ return ps.indexOf(x)>=0; });
+  return ps.indexOf(pat)>=0;
+}
+/* avoid_patterns da base de conhecimento → restrição na app: [padrão, modo, dica] · null = não é ao nível do exercício (fica só no cartão Coach) */
+var PAT_ALIAS={
+ valsalva:['heavy','lighten','Expira no esforço, sem cargas máximas (8–12 reps)'], max_valsalva:['heavy','lighten','Expira no esforço, sem cargas máximas (8–12 reps)'], valsalva_if_retinopathy:['heavy','lighten','Sem apneia nem cargas máximas'], valsalva_in_attack:['heavy','lighten','Sem apneia nem cargas máximas'],
+ max_loads:['heavy','lighten','Sem máximos: 8–12 reps com 2–3 na reserva'], loads_below_5RM_early:['heavy','lighten','Sem séries abaixo de 5 reps por agora'], sudden_max_effort:['heavy','lighten','Sem esforços máximos súbitos; aquece primeiro'], sudden_max_effort_without_warmup:['heavy','lighten','Aquece 10 min antes de qualquer esforço forte'], max_loads_on_deformed_joints:['heavy','lighten','Cargas moderadas nas articulações afetadas'],
+ training_to_failure:['failure','lighten','Nunca até à falha — deixa 3 na reserva'], max_isometrics:['core_stab','cue','Isométricos curtos e submáximos (20–30 s), sempre a respirar'],
+ loaded_spinal_flexion:['spinal_flexion_loaded','remove'], loaded_spinal_flexion_early:['spinal_flexion_loaded','remove'], flexion_rotation_loaded:['spinal_flexion_loaded','remove'], loaded_flexion_with_coning:['core_flexion','cue','Sem coning (barriga em cume): se aparecer, para'],
+ end_range_extension_loaded:['end_range_extension','remove'], end_range_loading:['end_range','cue','Amplitude sem dor — para antes do fim do movimento'], pain_provoking_ranges:['end_range','cue','Só amplitude sem dor'], aggressive_stretching:['end_range','cue','Sem alongamentos agressivos'], passive_stretching:['end_range','cue','Sem alongamento passivo no fim'], tendon_compression:['end_range','cue','Evita a posição de máximo alongamento do tendão'], joint_locking:['lock','cue','Não bloqueies cotovelos/joelhos com carga'],
+ deep_knee_flexion_loaded_early:['deep_knee_flexion','remove'], deep_loaded_flexion_in_flare:['deep_knee_flexion','remove'],
+ impact:['impact','remove'], high_impact:['impact','remove'], high_impact_if_severe:['impact','remove'], impact_if_neuropathy:['impact','remove'], impact_until_controlled:['impact','remove'], impact_before_12_weeks:['impact','remove'], impact_in_flare:['impact','remove'], ballistic_loads:['impact','remove'], plyometrics_in_flare:['impact','remove'], ballistic_rotation:['rotation','remove'], fall_risk:['impact','remove'], fall_risk_exercises:['impact','remove'], contact:['impact','remove'],
+ overhead_in_flare:['overhead','remove'], behind_neck:['behind_neck','remove'], deep_horizontal_press_in_flare:['deep_press','remove'], lateral_raise_above_shoulder_in_flare:['lateral_raise','cue','Só até à linha do ombro'],
+ inverted_positions:['inverted','remove'], axial_neck_loading:['neck_load','remove'], high_intensity_early:'noHIIT'
+};
+/* avoid_exercises_pt (texto) → restrição, com qualificadores (pesado / profundo / com carga) */
+var AVOID_RULES=[
+ [/good morning/, ['good_morning','remove']],
+ [/sit-?up|crunch|abdominal|toe-touch/, function(s){ return /com carga|com peso/.test(s)?['spinal_flexion_loaded','remove']:(/coning/.test(s)?['core_flexion','cue','Sem coning: se a barriga faz cume, para e troca']:['core_flexion','remove']); }],
+ [/peso morto/, function(s){ return /pesad/.test(s)?['hinge','lighten','Peso morto leve, 8–12 reps, técnica primeiro; sobe só sem dor']:['hinge','remove']; }],
+ [/agachamento/, function(s){ return /profund/.test(s)?['deep_knee_flexion','remove']:(/barra alta/.test(s)?['neck_load','remove']:null); }],
+ [/afundo/, function(s){ return /profund/.test(s)?['deep_knee_flexion','remove']:['lunge','remove']; }],
+ [/press militar/, ['overhead','remove']],
+ [/atras da nuca/, ['behind_neck','remove']],
+ [/elevacao lateral acima/, ['lateral_raise','cue','Só até à linha do ombro']],
+ [/supino/, ['deep_press','remove']],
+ [/\bdips\b/, ['dips','remove']],
+ [/flexoes no chao/, ['pushup','remove']],
+ [/remada curvada/, ['row_bent','remove']],
+ [/extensao de joelho/, ['knee_ext','cue','Amplitude parcial (último terço), carga moderada']],
+ [/twist|rotacao/, ['rotation','remove']],
+ [/prancha/, ['core_stab','cue','Sem coning nem apneia']],
+ [/isometricos maximos/, ['core_stab','cue','Isométricos curtos e submáximos, a respirar']],
+ [/bloquear cotovelos/, ['lock','cue','Não bloqueies cotovelos/joelhos com carga']],
+ [/salto|saltar|corrida|sprint|burpee|kipping|snatch|handstand|\bbox\b/, ['impact','remove']],
+ [/1rm|cargas maximas|series ate a falha/, ['heavy','lighten','Sem máximos: 8–12 reps, expira no esforço']],
+ [/hiit/, function(s){ return /hora antes|nausea/.test(s)?null:'noHIIT'; }],
+ [/sessoes >45/, 'min45']
+];
+function avoidRule(s){
+  var n=nrm(s);
+  for(var i=0;i<AVOID_RULES.length;i++){ if(AVOID_RULES[i][0].test(n)){ var a=AVOID_RULES[i][1]; return typeof a==='function'?a(n):a; } }
+  return null;
+}
+/* equipamento da base de conhecimento disponível por classe de equipamento do perfil */
+var EQUIP_KB={maq:['machine','cable','bench','none','dumbbells'], misto:['dumbbells','machine','cable','bench','kettlebell','none','band'], livre:['barbell','dumbbells','bench','kettlebell','none','machine','cable'], casa:['band','none','dumbbells']};
+function equipOk(list, equip){ var have=EQUIP_KB[equip||'misto']||EQUIP_KB.misto; return !list||!list.length||list.some(function(e){ return have.indexOf(e)>=0; }); }
+/* exercícios da base de conhecimento (prioritários por músculo e preferidos por condição): chave = nome normalizado */
+var KBX={
+ 'hip thrust com barra':{id:'lb3',n:'Hip thrust',t:'3×8–12',m:'Glúteos (pico de contração)',a:['Glute bridge c/ barra','Hip thrust c/ haltere'],k:/hip thrust|ponte|glute bridge/,g:'lower',pic:'hipthrust'},
+ 'hip thrust':{id:'lb3',n:'Hip thrust',t:'3×8–12',m:'Glúteos',a:['Glute bridge c/ barra','Hip thrust c/ haltere'],k:/hip thrust|ponte|glute bridge/,g:'lower',pic:'hipthrust'},
+ 'ponte glutea':{id:'kb_ponte',n:'Ponte glútea',t:'3×12–20',m:'Glúteos (sem material)',a:['Ponte glútea unilateral','Hip thrust'],k:/hip thrust|ponte|glute bridge/,g:'lower',pic:'hipthrust'},
+ 'ponte glutea unilateral':{id:'kb_ponte1',n:'Ponte glútea unilateral',t:'3×10–15/perna',m:'Glúteos (regressão do hip thrust)',a:['Ponte glútea','Hip thrust c/ ombros no sofá'],k:/hip thrust|ponte|glute bridge/,g:'lower',pic:'hipthrust'},
+ 'agachamento profundo':{id:'gla1',n:'Agachamento profundo',t:'3×6–10',m:'Glúteos · quadríceps',a:['Goblet squat profundo','Prensa pés altos'],k:/agachamento|squat|goblet|hack/,g:'lower',pic:'squat'},
+ 'agachamento':{id:'la1',n:'Agachamento',t:'3×8–12',m:'Quadríceps · glúteos',a:['Goblet squat c/ haltere','Prensa de pernas','Agachamento à cadeira'],k:/agachamento|squat|goblet|hack|prensa/,g:'lower',pic:'squat'},
+ 'agachamento (barra ou goblet)':{id:'la1',n:'Agachamento (barra ou goblet)',t:'3×6–10',m:'Quadríceps · glúteos',a:['Goblet squat','Hack squat','Prensa de pernas'],k:/agachamento|squat|goblet|hack/,g:'lower',pic:'squat'},
+ 'agachamento parcial 0-45 graus':{id:'kb_sqparc',n:'Agachamento parcial (0–45°)',t:'3×10–15',m:'Quadríceps sem dor no joelho',a:['Prensa de pernas parcial','Sit-to-stand'],k:/agachamento parcial|sit-to-stand/,g:'lower',pic:'squat'},
+ 'agachamento lento em declive':{id:'kb_sqdecl',n:'Agachamento lento em declive (3 s/3 s)',t:'3×10–15',m:'Tendão rotuliano (heavy slow resistance)',a:['Agachamento lento'],k:/declive/,g:'lower',pic:'squat'},
+ 'sit-to-stand':{id:'kb_sts',n:'Sit-to-stand (levantar da cadeira)',t:'3×10–15',m:'Pernas · autonomia',a:['Sit-to-stand rápido (potência)','Agachamento à cadeira'],k:/sit-to-stand|cadeira/,g:'lower',pic:'squat'},
+ 'sit-to-stand unilateral':{id:'kb_sts1',n:'Sit-to-stand unilateral',t:'2×8/perna',m:'Pernas · equilíbrio',a:['Sit-to-stand'],k:/sit-to-stand/,g:'lower',pic:'squat'},
+ 'peso morto romeno':{id:'la2',n:'Peso morto romeno',t:'3×8–12',m:'Glúteos · isquios (alongamento = crescimento)',a:['RDL c/ halteres','RDL c/ kettlebell'],k:/peso morto|rdl|stiff/,g:'lower',pic:'rdl'},
+ 'peso morto romeno / stiff':{id:'la2',n:'Peso morto romeno / stiff',t:'3×8–12',m:'Isquios · glúteos',a:['RDL c/ halteres','RDL c/ kettlebell'],k:/peso morto|rdl|stiff/,g:'lower',pic:'rdl'},
+ 'rdl com kettlebell':{id:'la2',n:'RDL c/ kettlebell',t:'3×10–12',m:'Glúteos · isquios (hinge leve)',a:['RDL c/ halteres','Hip hinge com bastão'],k:/peso morto|rdl|stiff/,g:'lower',pic:'rdl',eq:['misto','livre','maq']},
+ 'peso morto com hinge neutro':{id:'la2',n:'Peso morto com hinge neutro',t:'3×8–12',m:'Costas neutras · glúteos · isquios',a:['RDL c/ halteres','Hip hinge com bastão'],k:/peso morto|rdl|stiff/,g:'lower',pic:'rdl'},
+ 'hip hinge com bastao':{id:'kb_hinge',n:'Hip hinge com bastão',t:'2×10',m:'Padrão de dobrar a anca (costas neutras)',a:['RDL leve c/ halteres'],k:/hinge|peso morto|rdl/,g:'lower',pic:'rdl'},
+ 'step-up alto':{id:'kb_stepup',n:'Step-up alto',t:'3×8–10/perna',m:'Glúteo máximo (unilateral)',a:['Step-up baixo','Agachamento búlgaro'],k:/step-?up|subidas ao banco/,g:'lower',pic:'lunge'},
+ 'step-up':{id:'kb_stepup',n:'Step-up',t:'3×10/perna',m:'Glúteos · quadríceps',a:['Step-up baixo'],k:/step-?up|subidas ao banco/,g:'lower',pic:'lunge'},
+ 'step-up baixo':{id:'kb_stepupb',n:'Step-up baixo (degrau 15–20 cm)',t:'3×10/perna',m:'Quadríceps · glúteos sem dor',a:['Step-up alto'],k:/step-?up/,g:'lower',pic:'lunge'},
+ 'agachamento bulgaro':{id:'glb1',n:'Agachamento búlgaro',t:'3×8–12/perna',m:'Glúteos · quadríceps (longo alongamento)',a:['Afundos','Step-up alto'],k:/bulgaro|afundo|split/,g:'lower',pic:'lunge'},
+ 'afundo / agachamento bulgaro':{id:'glb1',n:'Afundo / agachamento búlgaro',t:'3×8–12/perna',m:'Quadríceps · glúteos',a:['Afundos em caminhada','Step-up'],k:/bulgaro|afundo|split/,g:'lower',pic:'lunge'},
+ 'agachamento bulgaro com pausa em baixo':{id:'glb1',n:'Agachamento búlgaro c/ pausa em baixo',t:'3×8–12/perna',m:'Quadríceps (alongamento)',a:['Afundos'],k:/bulgaro|afundo|split/,g:'lower',pic:'lunge'},
+ 'abducao de anca com banda ou deitada':{id:'gla4',n:'Abdução de anca (banda ou deitada)',t:'2×15–20',m:'Glúteo médio e mínimo',a:['Abdução na máquina','Clamshell'],k:/abducao|clamshell|monster/,g:'lower',pic:'abduction'},
+ 'abducao de anca com banda':{id:'gla4',n:'Abdução de anca c/ banda',t:'2×15–20',m:'Glúteo médio (estabilidade do joelho)',a:['Clamshell','Monster walk'],k:/abducao|clamshell|monster/,g:'lower',pic:'abduction'},
+ 'abducao de anca':{id:'gla4',n:'Abdução de anca',t:'2×15–20',m:'Glúteo médio',a:['Abdução c/ banda','Clamshell'],k:/abducao|clamshell|monster/,g:'lower',pic:'abduction'},
+ 'clamshell':{id:'kb_clam',n:'Clamshell c/ mini band',t:'2×15–20/lado',m:'Glúteo médio',a:['Abdução deitada'],k:/abducao|clamshell|monster/,g:'lower',pic:'abduction'},
+ 'monster walk':{id:'kb_monster',n:'Monster walk c/ mini band',t:'2×12 passos',m:'Glúteo médio · alinhamento do joelho',a:['Passos laterais c/ mini band'],k:/abducao|clamshell|monster/,g:'lower',pic:'abduction'},
+ 'prensa de pernas':{id:'la3',n:'Prensa de pernas',t:'3×10–15',m:'Quadríceps · glúteos',a:['Hack squat','Goblet squat'],k:/prensa|hack|agachamento|squat/,g:'lower',pic:'legpress',eq:['maq','misto','livre']},
+ 'prensa de pernas parcial':{id:'la3',n:'Prensa de pernas (amplitude parcial)',t:'3×10–15',m:'Quadríceps sem dor',a:['Agachamento parcial'],k:/prensa|agachamento/,g:'lower',pic:'legpress',eq:['maq','misto','livre']},
+ 'prensa de pernas com amplitude confortavel':{id:'la3',n:'Prensa de pernas (amplitude confortável)',t:'3×10–15',m:'Pernas sem carga na coluna',a:['Agachamento à cadeira'],k:/prensa|agachamento/,g:'lower',pic:'legpress',eq:['maq','misto','livre']},
+ 'extensao de joelho (parcial em alongamento)':{id:'lb4',n:'Extensão de joelho (parcial em alongamento)',t:'3×12–15',m:'Quadríceps (recto femoral)',a:['Sissy squat'],k:/extensao de pernas|extensao de joelho/,g:'lower',pic:'legext',eq:['maq','misto','livre']},
+ 'isometrico de quadriceps a 60 graus':{id:'kb_isoq',n:'Isométrico de quadríceps a 60° (parede)',t:'5×45s',m:'Quadríceps · analgesia do joelho',a:['Extensão de joelho isométrica'],k:/isometrico de quadriceps/,g:'lower',pic:'squat'},
+ 'leg curl sentado':{id:'la4',n:'Leg curl sentado',t:'3×10–15',m:'Isquiotibiais',a:['Leg curl deitado','Nordic assistido'],k:/leg curl|nordic|nordico|sliding/,g:'lower',pic:'legcurl',eq:['maq','misto','livre']},
+ 'nordico (assistido)':{id:'kb_nordic',n:'Nórdico assistido',t:'3×5–8',m:'Isquiotibiais (excêntrico)',a:['Sliding leg curl','Leg curl'],k:/leg curl|nordic|nordico|sliding/,g:'lower',pic:'legcurl'},
+ 'sliding leg curl':{id:'kb_slide',n:'Sliding leg curl (toalha no chão)',t:'3×8–12',m:'Isquiotibiais sem material',a:['Nórdico assistido'],k:/leg curl|nordic|nordico|sliding/,g:'lower',pic:'legcurl'},
+ 'elevacao de gemeos em pe com pausa em alongamento':{id:'la5',n:'Gémeos em pé (pausa em baixo)',t:'3×10–15',m:'Gémeos',a:['Gémeos na prensa'],k:/gemeos/,g:'lower',pic:'calf'},
+ 'elevacao de gemeos sentado':{id:'lb5',n:'Gémeos sentado',t:'3×12–20',m:'Solear',a:['Gémeos em pé'],k:/gemeos/,g:'lower',pic:'calf',eq:['maq','misto','livre']},
+ 'elevacao unilateral num degrau':{id:'la5',n:'Gémeos unilateral no degrau',t:'3×10–15/perna',m:'Gémeos',a:['Gémeos em pé'],k:/gemeos/,g:'lower',pic:'calf'},
+ 'elevacao de gemeos lenta com carga':{id:'la5',n:'Gémeos lentos c/ carga (3 s/3 s)',t:'3×12–15',m:'Tendão de Aquiles (heavy slow resistance)',a:['Gémeos unilateral no degrau'],k:/gemeos/,g:'lower',pic:'calf'},
+ 'elevacao de gemeos unilateral com toalha sob os dedos (3 s/2 s/3 s)':{id:'la5',n:'Gémeos unilateral c/ toalha sob os dedos (3 s/2 s/3 s)',t:'3×12/perna',m:'Fáscia plantar · gémeos',a:['Gémeos em pé'],k:/gemeos/,g:'lower',pic:'calf'},
+ 'supino plano (barra/halteres)':{id:'ub3',n:'Supino plano (barra/halteres)',t:'3×6–10',m:'Peito · tríceps',a:['Supino halteres','Chest press máquina'],k:/supino|chest press|press de peito/,g:'upper',pic:'flatpress'},
+ 'supino inclinado':{id:'ua1',n:'Supino inclinado',t:'3×8–12',m:'Peito superior',a:['Supino inclinado halteres','Máquina inclinada'],k:/supino inclinado|press inclinado/,g:'upper',pic:'incline'},
+ 'press inclinado ligeiro com halteres':{id:'ua1',n:'Press inclinado ligeiro c/ halteres',t:'3×10–12',m:'Peito · ombro sem dor',a:['Flexões na parede'],k:/supino inclinado|press inclinado/,g:'upper',pic:'incline'},
+ 'press inclinado com halteres':{id:'ua1',n:'Press inclinado c/ halteres',t:'3×10–15',m:'Peito · ombro (sem deitar de costas)',a:['Flexões na parede'],k:/supino inclinado|press inclinado/,g:'upper',pic:'incline'},
+ 'flexoes com carga':{id:'kb_pushw',n:'Flexões c/ carga (mochila)',t:'3×8–12',m:'Peito · tríceps',a:['Flexões pés elevados','Flexões diamante'],k:/flexoes|flexao/,g:'upper',pic:'pushup'},
+ 'flexoes na parede':{id:'kb_pushwall',n:'Flexões na parede',t:'3×12–15',m:'Peito · ombro (carga leve)',a:['Flexões inclinadas na mesa'],k:/flexoes|flexao/,g:'upper',pic:'pushup'},
+ 'flexoes diamante':{id:'kb_pushdia',n:'Flexões diamante',t:'3×8–12',m:'Tríceps · peito',a:['Flexões fechadas de joelhos'],k:/flexoes|flexao/,g:'upper',pic:'pushup'},
+ 'crossover / fly com alongamento':{id:'xpe1',n:'Crossover / fly c/ alongamento',t:'2×12–15',m:'Peito (alongamento)',a:['Aberturas halteres','Crossover c/ banda'],k:/crossover|fly|aberturas|peck/,g:'upper',pic:'flatpress'},
+ 'puxada / pull-up pronado':{id:'ua4',n:'Puxada / pull-up pronado',t:'3×6–10',m:'Dorsal (largura)',a:['Pull-ups assistidas','Puxada neutra'],k:/puxada|pull-?up|chin/,g:'upper',pic:'pulldown'},
+ 'puxada':{id:'ua4',n:'Puxada vertical',t:'3×8–12',m:'Dorsal · bíceps',a:['Pull-ups assistidas','Puxada c/ banda'],k:/puxada|pull-?up|chin/,g:'upper',pic:'pulldown'},
+ 'chin-up':{id:'ub2',n:'Chin-up (pega supinada)',t:'3×5–8',m:'Bíceps · dorsal',a:['Chin-up negativo','Chin-up c/ banda'],k:/puxada|pull-?up|chin/,g:'upper',pic:'pullup'},
+ 'remada (barra, halter, cabo)':{id:'ua2',n:'Remada (barra, haltere ou cabo)',t:'3×8–12',m:'Costas · bíceps',a:['Remada unilateral c/ haltere','Remada no cabo sentado'],k:/remada/,g:'upper',pic:'rowbent'},
+ 'remada':{id:'ua2',n:'Remada',t:'3×8–12',m:'Costas · bíceps',a:['Remada máquina','Remada unilateral c/ haltere','Remada c/ banda'],k:/remada/,g:'upper',pic:'seatedrow'},
+ 'remada sentada':{id:'ub4',n:'Remada sentada (cabo/máquina)',t:'3×10–12',m:'Costas · bíceps',a:['Remada máquina','Remada c/ banda sentado'],k:/remada/,g:'upper',pic:'seatedrow'},
+ 'remada com apoio do peito':{id:'ua2',n:'Remada c/ apoio do peito',t:'3×10–12',m:'Costas sem carga na lombar',a:['Remada máquina','Remada unilateral c/ haltere no banco'],k:/remada/,g:'upper',pic:'seatedrow'},
+ 'remada unilateral':{id:'ua2',n:'Remada unilateral c/ haltere',t:'3×10–12/lado',m:'Costas (simétrico, lado a lado)',a:['Remada máquina'],k:/remada/,g:'upper',pic:'rowbent'},
+ 'remada invertida':{id:'f2',n:'Remada invertida',t:'3×8–12',m:'Costas · bíceps (sem material)',a:['Remada invertida pés elevados','Remada na toalha/mesa'],k:/remada/,g:'upper',pic:'seatedrow'},
+ 'pull-over com halter':{id:'kb_pullover',n:'Pull-over c/ haltere',t:'2×10–15',m:'Dorsal (alongamento)',a:['Pullover no cabo'],k:/pullover|pull-over/,g:'upper',pic:'pulldown'},
+ 'press militar / halteres':{id:'ua3',n:'Press militar / halteres',t:'3×6–10',m:'Ombros · tríceps',a:['Press halteres sentado','Landmine press'],k:/press militar|press de ombros|press halteres|maquina de ombros|landmine|pike/,g:'upper',pic:'ohp'},
+ 'press':{id:'ua3',n:'Press (ombros ou peito)',t:'3×8–12',m:'Ombros · peito · tríceps',a:['Press halteres sentado','Chest press máquina'],k:/press|supino/,g:'upper',pic:'ohp'},
+ 'landmine press':{id:'kb_landmine',n:'Landmine press',t:'3×8–12',m:'Ombro · peito superior (ângulo amigo do ombro)',a:['Press inclinado ligeiro c/ halteres'],k:/landmine/,g:'upper',pic:'incline',eq:['livre','misto','maq']},
+ 'elevacao lateral':{id:'ub5',n:'Elevação lateral',t:'3×12–20',m:'Ombro lateral',a:['Elevações laterais no cabo','Laterais c/ banda'],k:/laterais|elevacao lateral/,g:'upper',pic:'lateral'},
+ 'elevacao lateral com banda ate a falha (2 min/dia)':{id:'ub5',n:'Elevação lateral c/ banda (leve, 2 min/dia)',t:'2×20–30',m:'Trapézio superior · cervical',a:['Laterais c/ garrafas'],k:/laterais|elevacao lateral/,g:'upper',pic:'lateral'},
+ 'elevacao posterior / face pull':{id:'pl4',n:'Elevação posterior / face pull',t:'3×15–20',m:'Ombro posterior',a:['Reverse fly halteres','Pull-apart c/ banda'],k:/face pull|posterior|reverse fly|pull-apart/,g:'upper',pic:'facepull'},
+ 'face pull':{id:'pl4',n:'Face pull',t:'3×15–20',m:'Ombro posterior · saúde do ombro',a:['Pull-apart c/ banda','Reverse fly halteres'],k:/face pull|posterior|reverse fly|pull-apart/,g:'upper',pic:'facepull'},
+ 'rotacao externa com banda':{id:'kb_extrot',n:'Rotação externa c/ banda',t:'3×12–15/lado',m:'Coifa dos rotadores',a:['Rotação externa c/ haltere deitado de lado'],k:/rotacao externa/,g:'upper',pic:'band'},
+ 'elevacao escapular (y, t)':{id:'kb_yt',n:'Elevação escapular Y e T',t:'2×10 cada',m:'Omoplata (trapézio inferior · serrátil)',a:['Face pull'],k:/escapular|\by e t\b/,g:'upper',pic:'facepull'},
+ 'shrug':{id:'kb_shrug',n:'Shrug (encolher ombros)',t:'2×12–15',m:'Trapézio superior',a:['Shrug c/ banda'],k:/shrug/,g:'upper',pic:'lateral'},
+ 'retracao cervical':{id:'kb_chin',n:'Retração cervical (queixo para trás)',t:'2×10 (5 s)',m:'Cervical profunda',a:['Retração cervical c/ banda'],k:/retracao cervical/,g:'upper',pic:'plank'},
+ 'pike push-up':{id:'f5',n:'Pike push-up',t:'3×6–10',m:'Ombros (sem material)',a:['Pike c/ pés elevados'],k:/pike|press de ombros|press militar/,g:'upper',pic:'pike'},
+ 'curl inclinado':{id:'ua5',n:'Curl inclinado',t:'3×8–12',m:'Bíceps (alongado)',a:['Curl halteres em pé'],k:/curl(?! de punho)/,g:'upper',pic:'curl',eq:['misto','livre','maq']},
+ 'curl scott (preacher)':{id:'ua5',n:'Curl Scott (preacher)',t:'3×8–12',m:'Bíceps (cabeça curta)',a:['Curl inclinado','Curl máquina'],k:/curl(?! de punho)/,g:'upper',pic:'curl',eq:['misto','livre','maq']},
+ 'curl com banda ou mochila':{id:'ua5',n:'Curl c/ banda ou mochila',t:'3×12–20',m:'Bíceps (sem halteres)',a:['Curl isométrico c/ toalha'],k:/curl(?! de punho)/,g:'upper',pic:'curl'},
+ 'extensao de triceps acima da cabeca':{id:'ua6',n:'Ext. tríceps acima da cabeça',t:'3×10–15',m:'Tríceps (cabeça longa)',a:['Francês deitado','Tríceps corda'],k:/triceps|pushdown/,g:'upper',pic:'ohT'},
+ 'press fechado / dips':{id:'kb_close',n:'Press fechado / dips',t:'3×8–12',m:'Tríceps · peito',a:['Flexões diamante','Fundos no banco'],k:/dips|fundos|press fechado|fechado/,g:'upper',pic:'flatpress'},
+ 'pushdown':{id:'d53',n:'Pushdown (corda ou banda)',t:'3×10–15',m:'Tríceps',a:['Tríceps c/ banda'],k:/triceps|pushdown/,g:'upper',pic:'pushdownT'},
+ 'crunch com carga / cabo':{id:'la6',n:'Crunch c/ carga / cabo',t:'3×10–15',m:'Reto abdominal',a:['Abdominal no cabo ajoelhado'],k:/abdominal|crunch/,g:'core',pic:'abscrunch'},
+ 'elevacao de pernas / reverse crunch':{id:'kb_legraise',n:'Elevação de pernas / reverse crunch',t:'3×10–15',m:'Abdominal inferior',a:['Reverse crunch no banco'],k:/elevacao de pernas|reverse crunch/,g:'core',pic:'abscrunch'},
+ 'prancha e prancha lateral':{id:'lb6',n:'Prancha + prancha lateral',t:'3×30–45s',m:'Core profundo · oblíquos',a:['Hollow hold'],k:/prancha|plank/,g:'core',pic:'plank'},
+ 'prancha':{id:'lb6',n:'Prancha',t:'3×30–45s',m:'Core (sem fletir a coluna)',a:['Prancha de joelhos'],k:/prancha|plank/,g:'core',pic:'plank'},
+ 'prancha lateral':{id:'kb_sideplank',n:'Prancha lateral',t:'2×30s/lado',m:'Oblíquos · quadrado lombar',a:['Prancha lateral de joelhos'],k:/prancha lateral/,g:'core',pic:'plank'},
+ 'pallof press':{id:'kb_pallof',n:'Pallof press',t:'2×10/lado',m:'Anti-rotação · core',a:['Pallof c/ banda na porta'],k:/pallof/,g:'core',pic:'band'},
+ 'farmer carry':{id:'kb_carry',n:'Farmer carry',t:'3×30 m',m:'Preensão · core · trapézio',a:['Carry com sacos de compras'],k:/carry|farmer/,g:'core',pic:'lateral',eq:['misto','livre','maq']},
+ 'bird-dog':{id:'kb_birddog',n:'Bird-dog',t:'2×8/lado (5 s)',m:'Core · lombar (estabilização)',a:['Dead bug'],k:/bird ?dog/,g:'core',pic:'plank'},
+ 'curl-up mcgill':{id:'kb_curlup',n:'Curl-up McGill',t:'2×8 (10 s)',m:'Core sem fletir a lombar',a:['Bird-dog'],k:/curl-up/,g:'core',pic:'plank'},
+ 'dead bug':{id:'xco1',n:'Dead bug',t:'2×10/lado',m:'Estabilidade lombo-pélvica',a:['Bird-dog'],k:/dead bug/,g:'core',pic:'plank'},
+ 'extensao em decubito ventral (se centraliza a dor)':{id:'kb_ext',n:'Extensão deitado de barriga para baixo (McKenzie)',t:'2×10',m:'Lombar — só se a dor centraliza',a:['Bird-dog'],k:/decubito ventral|mckenzie/,g:'core',pic:'plank'},
+ 'pavimento pelvico':{id:'kb_pelvic',n:'Pavimento pélvico (contrações 3×8–12)',t:'3×8–12',m:'Continência · suporte pélvico',a:['Respiração diafragmática'],k:/pavimento pelvico/,g:'core',pic:'plank'},
+ 'treino do pavimento pelvico 3x8-12 contracoes/dia':{id:'kb_pelvic',n:'Pavimento pélvico (3×8–12 contrações/dia)',t:'3×8–12',m:'Continência · suporte pélvico',a:['Respiração diafragmática'],k:/pavimento pelvico/,g:'core',pic:'plank'},
+ 'respiracao diafragmatica':{id:'kb_breath',n:'Respiração diafragmática',t:'2×10 respirações',m:'Core profundo · pavimento pélvico',a:['Dead bug'],k:/respiracao diafragmatica/,g:'core',pic:'plank'},
+ 'curl de punho e curl de punho invertido':{id:'kb_wrist',n:'Curl de punho + curl de punho invertido',t:'3×12–15',m:'Antebraços',a:['Curl de punho c/ banda'],k:/curl de punho|punho/,g:'upper',pic:'curl'},
+ 'curl de punho lento':{id:'kb_wrist',n:'Curl de punho lento (3 s/3 s)',t:'3×12–15',m:'Cotovelo (tendinopatia)',a:['Curl de punho c/ banda'],k:/curl de punho|punho/,g:'upper',pic:'curl'},
+ 'dead hang':{id:'kb_hang',n:'Dead hang (pendurado)',t:'3×20–40s',m:'Preensão · ombro',a:['Dead hang unilateral assistido'],k:/dead hang/,g:'upper',pic:'pullup'},
+ 'curl invertido / martelo':{id:'pl6',n:'Curl invertido / martelo',t:'3×10–15',m:'Antebraço · braquial',a:['Curl martelo c/ banda'],k:/martelo|invertido/,g:'upper',pic:'curl'},
+ 'isometrico de preensao submaximo (2 min x4)':{id:'kb_grip',n:'Preensão isométrica submáxima (2 min ×4, 30 %)',t:'4×2min',m:'Baixa a pressão arterial (isometria de preensão)',a:['Apertar bola/toalha'],k:/preensao/,g:'upper',pic:'curl'},
+ 'isometricos 5x45 s a 70 % (dor)':{id:'kb_isoT',n:'Isométricos 5×45 s a 70 % (tendão dorido)',t:'5×45s',m:'Analgesia do tendão',a:['Isométrico de quadríceps a 60°'],k:/isometric/,g:'lower',pic:'squat'},
+ 'heavy slow resistance 3 s/3 s':{id:'kb_hsr',n:'Heavy slow resistance (3 s/3 s) no tendão',t:'3×12–15',m:'Tendão (carga lenta e pesada)',a:['Gémeos lentos c/ carga'],k:/slow resistance|lento/,g:'lower',pic:'calf'}
+};
+var KBX_SLUG=function(s){ return 'kb_'+nrm(s).replace(/[^a-z0-9]+/g,'_').slice(0,24); };
+function kbxLookup(name){ // entrada do catálogo (ou genérica) para um nome da base de conhecimento
+  var k=nrm(name), e=KBX[k];
+  if(!e){ var base=k.replace(/\s*\(.*\)$/,'').trim(); e=KBX[base]; }
+  if(e) return JSON.parse(JSON.stringify(Object.assign({},e,{k:e.k.source})));
+  return null;
+}
+function kbxHas(session, e){ // já existe este movimento na sessão?
+  var rx=new RegExp(e.k||'§'); return session.ex.some(function(x){ return rx.test(nrm(x.n))||x.id===e.id; });
+}
+/* músculos de um exercício (a partir de "m" e do nome) */
+var MUSCLE_RX={glutes:/gluteo|rabo|hip thrust|ponte|abducao|kickback|coice/,quads:/quadriceps|\bpernas\b|coxa|agachamento|prensa|extensao de pernas/,hamstrings:/isquio|parte de tras|leg curl|nordic|peso morto|rdl/,calves:/gemeos|solear/,chest:/peito|supino|flexoes|chest/,back:/costas|dorsal|trapezio|remada|puxada|pull/,shoulders:/ombro|laterais|press militar|face pull/,biceps:/biceps|curl(?! de punho)/,triceps:/triceps|pushdown|corda/,core:/core|abdom|barriga|lombo|obliquo|prancha|dead bug|bird/,forearms:/antebraco|preensao|punho|carry|hang/};
+function exMuscles(ex){ var s=nrm((ex.m||'')+' '+ex.n), out=[]; for(var k in MUSCLE_RX){ if(MUSCLE_RX[k].test(s)) out.push(k); } return out; }
+var PROG_SEQ={UL:['UA','LA','UB','LB'],PPL:['PUSH','PULL','LEGS'],FB:['FBA','FBB'],SIM:['SIMA','SIMB'],ELA:['BA','BB']};
+var FOCUS_SESS={lower:['LA','LB','LEGS','FBA','FBB','SIMA','SIMB','BA','BB'],upper:['UA','UB','PUSH','PULL','FBA','FBB','SIMA','SIMB','BA','BB','D5'],core:['LA','LB','LEGS','UA','UB','PUSH','PULL','FBA','FBB','SIMA','SIMB','BA','BB']};
+function muscleGroupKind(m){ return (['glutes','quads','hamstrings','calves'].indexOf(m)>=0)?'lower':(m==='core'?'core':'upper'); }
+/* ---- regras fundidas (o mais restritivo ganha) ---- */
+var RC={key:null,r:null};
+function rulesFromProfile(p){
+  if(!p) return null;
+  var band=kbAgeBand(p.age), caps=band.caps;
+  var goalId=(p.goalId&&KB.goals[p.goalId])?p.goalId:(GOAL_LEGACY[p.goal]||'endurance_health');
+  var goal=KB.goals[goalId];
+  var conds=(p.conditions||[]).map(function(id){ var c=KB.conditions[id]; return c?Object.assign({id:id},c):null; }).filter(Boolean);
+  var r={band:band, goalId:goalId, goal:goal, muscles:(p.muscles||[]).filter(function(m){ return !!KB.muscle_focus[m]; }).slice(0,2), conds:conds,
+    maxSets:caps.max_sets_per_exercise, rirMin:caps.rir_min, noMaxTests:!!caps.no_max_tests, plyoMax:caps.plyo_sessions_per_week_max, noCalories:!!caps.no_calorie_counting,
+    minutesMax:caps.session_minutes_max, impact:'ok', rom:'full', noBreathHold:false, avoidSupine:false, cardioBias:false, noHIIT:false,
+    constraints:[], avoidText:[], preferText:[], otherAvoid:[], msk:false, needClearance:false, clearanceLabels:[], soft:false, softWhy:'', energyWhy:''};
+  var IMP={none:0,low:1,ok:2}, ROM={limited:0,pain_free:1,full:2};
+  function addC(a,src){
+    if(!a) return;
+    if(a==='noHIIT'){ r.noHIIT=true; return; }
+    if(a==='min45'){ r.minutesMax=Math.min(r.minutesMax,45); return; }
+    if(!r.constraints.some(function(c){ return c.pat===a[0]&&c.mode===a[1]; })) r.constraints.push({pat:a[0],mode:a[1],cue:a[2]||'',src:src});
+  }
+  conds.forEach(function(c){
+    var m=c.modifiers||{};
+    if(m.intensity_cap_rir_min!=null) r.rirMin=Math.max(r.rirMin,m.intensity_cap_rir_min);
+    if(m.impact&&IMP[m.impact]<IMP[r.impact]) r.impact=m.impact;
+    if(m.range_of_motion&&ROM[m.range_of_motion]<ROM[r.rom]) r.rom=m.range_of_motion;
+    r.noBreathHold=r.noBreathHold||!!m.no_breath_hold; r.avoidSupine=r.avoidSupine||!!m.avoid_supine; r.cardioBias=r.cardioBias||!!m.cardio_bias;
+    if(m.session_minutes_max) r.minutesMax=Math.min(r.minutesMax,m.session_minutes_max);
+    if(c.category==='musculoskeletal') r.msk=true;
+    if(c.requires_clearance){ r.needClearance=true; r.clearanceLabels.push(kbLabel(c.id)); }
+    var lb=kbLabel(c.id);
+    (c.avoid_patterns||[]).forEach(function(pt){ var a=PAT_ALIAS[pt]; if(a) addC(a,lb); else if(r.otherAvoid.indexOf(pt)<0) r.otherAvoid.push(pt); });
+    (c.avoid_exercises_pt||[]).forEach(function(s){ if(r.avoidText.indexOf(s)<0) r.avoidText.push(s); var k=avoidRule(s); if(k) addC(k,lb); });
+    (c.prefer_exercises_pt||[]).forEach(function(s){ if(r.preferText.indexOf(s)<0) r.preferText.push(s); });
+  });
+  if(p.parqPositive&&!p.clearance){ r.soft=true; r.softWhy='rastreio PAR-Q+ com pelo menos um "sim"'; }
+  if(r.needClearance&&!p.clearance){ r.soft=true; r.softWhy=(r.softWhy?r.softWhy+' e ':'')+'condição que pede aval médico ('+r.clearanceLabels.join(', ')+')'; }
+  if(r.soft){ r.rirMin=Math.max(r.rirMin,3); r.impact='none'; r.noHIIT=true; addC(['heavy','lighten','Modo suave: sem cargas pesadas até ao aval médico'],'modo suave'); }
+  if(r.impact==='none') addC(['impact','remove'],'sem impacto');
+  if(r.rom!=='full') addC(['end_range','cue','Amplitude sem dor — para antes do fim do movimento'],'amplitude');
+  if(r.noMaxTests) addC(['heavy','lighten','Sem testes de máximos nem séries abaixo de 5 reps'],r.band.label);
+  r.repRange=goal.rep_range.slice();
+  var lo=Math.max(goal.rir[0],r.rirMin), hi=Math.max(goal.rir[1],lo); r.rir=[lo,hi];
+  r.energy=goal.energy_balance; r.protein=goal.protein_g_per_kg; r.setsWeek=goal.sets_per_muscle_week; r.strengthSessions=goal.strength_sessions_per_week; r.cardio=goal.cardio;
+  r.focusSets=r.muscles.length?kbMuscle(r.muscles[0]).weekly_sets_specialisation:null;
+  var ids=conds.map(function(c){ return c.id; });
+  if(/deficit/.test(r.energy)){
+    if(ids.indexOf('pregnancy')>=0||goalId==='pregnancy_maintenance'){ r.energy='maintenance'; r.energyWhy='gravidez: sem défice (manutenção)'; }
+    else if(ids.indexOf('sarcopenia')>=0){ r.energy='maintenance'; r.energyWhy='sarcopenia: primeiro força e proteína, sem défice'; }
+    else if(ids.indexOf('copd')>=0){ r.energy='maintenance'; r.energyWhy='DPOC: sem défice (proteger massa muscular)'; }
+    else if(band.id==='older_65plus'&&r.energy==='deficit_moderate'){ r.energy='deficit_small'; r.energyWhy='65+: défice pequeno (≤0,5 %/semana) sem aval médico'; }
+    else if(ids.indexOf('postpartum')>=0&&r.energy==='deficit_moderate'){ r.energy='deficit_small'; r.energyWhy='pós-parto: défice máximo 10 %, e só após 6 semanas'; }
+    else if(ids.indexOf('glp1_medication')>=0&&r.energy==='deficit_moderate'){ r.energy='deficit_small'; r.energyWhy='GLP-1: défice suave e proteína alta para não perder músculo'; }
+  }
+  if(r.noCalories){ r.energy='maintenance'; r.energyWhy='sem contagem de calorias nesta idade'; }
+  return r;
+}
+function coachRules(user){
+  var p=(user||DB).cfg.profile; if(!p) return null;
+  var key=JSON.stringify([p.age,p.goalId,p.goal,p.muscles,p.conditions,p.clearance,p.parqPositive,p.equip,p.sex]);
+  if(RC.key===key&&RC.p===p) return RC.r;
+  RC={key:key,p:p,r:rulesFromProfile(p)}; return RC.r;
+}
+function rirLabel(r){ if(!r) return 'RIR 1–3'; if(r.soft) return 'RIR ≥3 (modo suave)'; return r.rir[0]===r.rir[1]?'RIR '+r.rir[0]:'RIR '+r.rir[0]+'–'+r.rir[1]; }
+function nameAvoided(name, r, orig){
+  var f={n:name,t:''};
+  return r.constraints.some(function(c){ return c.mode==='remove'&&exHas(f,c.pat,orig); })||(r.avoidSupine&&exHas(f,'supine',orig));
+}
+function addCue(ex, c){ if(!c) return; ex.cues=ex.cues||[]; if(ex.cues.indexOf(c)<0) ex.cues.push(c); }
+function clampT(t, r){ // séries ≤ cap da faixa etária; reps dentro do intervalo do objetivo (mais leve é sempre aceitável)
+  var m=String(t).match(/^(\d+)×(\d+)[–-](\d+)(.*)$/);
+  if(m){
+    var sets=Math.min(parseInt(m[1]),r.maxSets), lo=parseInt(m[2]), hi=parseInt(m[3]), g0=r.repRange[0], g1=r.repRange[1];
+    var ilo=Math.max(lo,g0), ihi=Math.min(hi,g1);
+    if(ihi-ilo>=3){ lo=ilo; hi=ihi; }
+    else if(hi<g0+2){ lo=g0; hi=Math.min(g1,g0+4); }
+    return sets+'×'+lo+'–'+hi+m[4];
+  }
+  var m2=String(t).match(/^(\d+)×/);
+  if(m2&&parseInt(m2[1])>r.maxSets) return String(t).replace(/^\d+×/, r.maxSets+'×');
+  return t;
+}
+function applyRulesEx(ex, r){ // devolve o exercício adaptado ou null (retirado)
+  var removed=r.constraints.filter(function(c){ return c.mode==='remove'&&exHas(ex,c.pat); });
+  var supine=r.avoidSupine&&exHas(ex,'supine');
+  if(removed.length||supine){
+    var pool=(ex.a||[]).filter(function(a){ return !nameAvoided(a,r,ex); });
+    if(supine) pool.sort(function(a,b){ var sc=function(x){ return /inclinad|em pe|parede|sentado|maquina/.test(nrm(x))?1:0; }; return sc(b)-sc(a); });
+    if(!pool.length) return null;
+    ex.swapFrom=ex.n; ex.n=pool[0]; ex.a=pool.slice(1);
+    ex.why=supine&&!removed.length?'sem posição deitada de costas':removed[0].src;
+  } else ex.a=(ex.a||[]).filter(function(a){ return !nameAvoided(a,r,ex); });
+  var light=r.constraints.filter(function(c){ return c.mode==='lighten'&&exHas(ex,c.pat); });
+  if(light.length){ ex.t=ex.t.replace(/×[3-5]–\d+/,'×8–12').replace(/×6–10/,'×8–12').replace(/máx−1/,'máx−3'); addCue(ex,light[0].cue); }
+  r.constraints.forEach(function(c){ if(c.mode==='cue'&&exHas(ex,c.pat)) addCue(ex,c.cue); });
+  ex.t=clampT(ex.t,r);
+  return ex;
+}
+function estMinutes(exs){ var mn=5; exs.forEach(function(e){ var m=String(e.t).match(/^(\d+)/); mn+=(m?parseInt(m[1]):2)*2.2; }); return Math.round(mn); }
+function trimMinutes(sess, max){ // corta do fim (nunca os exercícios de foco primeiro) até caber na duração máxima
+  var n=0;
+  while(sess.ex.length>3&&estMinutes(sess.ex)>max){
+    var idx=-1; for(var i=sess.ex.length-1;i>=0;i--){ if(!sess.ex[i].focus){ idx=i; break; } }
+    if(idx<0) idx=sess.ex.length-1;
+    sess.ex.splice(idx,1); n++;
+  }
+  if(n) sess.trimmed=n;
+}
+function pickPrefer(sess, r, p, kind){ // repõe 1 exercício preferido pelas condições quando algo foi retirado
+  for(var i=0;i<r.preferText.length;i++){
+    var e=kbxLookup(r.preferText[i]); if(!e) continue;
+    if(e.eq&&e.eq.indexOf(p.equip||'misto')<0) continue;
+    if(kind!=='all'&&e.g!==kind&&e.g!=='core') continue;
+    if(kbxHas(sess,e)||nameAvoided(e.n,r)) continue;
+    e.pref=true; e.why='preferido para '+(r.conds.length?kbLabel(r.conds[0].id):'a tua condição'); e.k=undefined;
+    return applyRulesEx(e,r);
+  }
+  return null;
+}
+function sessKind(k){ var lo=FOCUS_SESS.lower.indexOf(k)>=0, up=FOCUS_SESS.upper.indexOf(k)>=0; if(k.charAt(0)==='X') return /XPERNA|XGLUTE/.test(k)?'lower':(k==='XCORE'?'core':'upper'); return lo&&up?'all':(lo?'lower':(up?'upper':'all')); }
+function addFocusBlocks(w, p, r){ // bloco "Foco": exercícios prioritários do músculo (filtrados por equipamento) à cabeça da sessão; restantes grupos em manutenção
+  if(!r.muscles.length) return;
+  r.muscles.forEach(function(m, mi){
+    var mus=kbMuscle(m), kind=muscleGroupKind(m);
+    var prio=mus.priority_exercises.filter(function(x){ return equipOk(x.equipment, p.equip); });
+    if(!prio.length&&(p.equip==='casa')) prio=mus.bodyweight_progression.slice(0,3).map(function(n){ return {name_pt:n,equipment:['none'],why:'progressão sem material'}; });
+    var sess=FOCUS_SESS[kind].filter(function(k){ return !!w[k]; }), si=0;
+    sess.forEach(function(k){
+      var added=0, tries=0;
+      while(added<2&&tries<prio.length){
+        var px=prio[(si*2+tries)%prio.length]; tries++;
+        var e=kbxLookup(px.name_pt)||{id:KBX_SLUG(px.name_pt),n:px.name_pt,t:'3×8–12',m:kbLabel(m),a:[],k:nrm(px.name_pt).split(' ').slice(0,2).join(' '),g:kind};
+        if(kbxHas(w[k],e)||nameAvoided(e.n,r)) continue;
+        var ex=applyRulesEx(Object.assign({},e,{focus:m,why:px.why,k:undefined}),r); if(!ex) continue;
+        w[k].ex.unshift(ex); added++;
+      }
+      si++;
+    });
+  });
+  for(var k2 in w){
+    if(k2.charAt(0)==='X'||k2==='MIN'||k2==='FER1'||k2==='FER2') continue;
+    var foc=w[k2].ex.filter(function(e){ return e.focus; }), rest=w[k2].ex.filter(function(e){ return !e.focus; });
+    rest.forEach(function(e){
+      if(e.ossos||e.plyo||e.pref) return;
+      if(exMuscles(e).some(function(mm){ return r.muscles.indexOf(mm)>=0; })){ e.focus=e.focus||r.muscles.filter(function(mm){ return exMuscles(e).indexOf(mm)>=0; })[0]; e.focusOwn=true; return; }
+      var m=String(e.t).match(/^(\d+)×/); if(m&&parseInt(m[1])>2){ e.t=e.t.replace(/^\d+×/,'2×'); e.maint=true; }
+    });
+    w[k2].ex=foc.concat(rest.filter(function(e){ return e.focus; })).concat(rest.filter(function(e){ return !e.focus; }));
+  }
+}
+function applyRulesWK(w, p, r){
+  var dropped={};
+  for(var k in w){
+    var out=[]; w[k].ex.forEach(function(ex){ var e=applyRulesEx(ex,r); if(e) out.push(e); else { dropped[k]=dropped[k]||[]; dropped[k].push(ex.n); } });
+    w[k].ex=out;
+  }
+  for(var k2 in dropped){ var add=pickPrefer(w[k2],r,p,sessKind(k2)); if(add) w[k2].ex.push(add); w[k2].dropped=dropped[k2]; }
+  addFocusBlocks(w,p,r);
+  for(var k3 in w){ if(k3.charAt(0)==='X'||k3==='MIN'||k3==='FER2') continue; trimMinutes(w[k3],r.minutesMax); }
+}
+function focusWeeklySets(m){ // séries/semana para o músculo em foco, seguindo a rotação do programa pelos dias do perfil
+  var p=DB.cfg.profile||{}, seq=PROG_SEQ[progOf(p)]||[], days=p.days||4, n=0;
+  if(!seq.length) return 0;
+  for(var i=0;i<days;i++){ var s=WK[seq[i%seq.length]]; if(!s) continue;
+    s.ex.forEach(function(e){ if(exMuscles(e).indexOf(m)<0) return; var mm=String(e.t).match(/^(\d+)/); n+=mm?parseInt(mm[1]):0; }); }
+  return n;
+}
 function progOf(p){
   if(typeof DB!=='undefined'&&DB.cfg&&DB.cfg.progSel) return DB.cfg.progSel; // troca rápida no separador Treino
   if(!p) return 'UL';
@@ -641,14 +1069,15 @@ var IMPACT_WOMAN={id:'imp1',n:'Saltos no lugar (aterragem suave)',t:'3×8',m:'Os
 var IMPACT_PELVIC={id:'imp2',n:'Step-up com carga (degrau alto)',t:'3×8/perna',m:'Ossos — carga sem impacto (pavimento pélvico)',a:['Heel drops (sobe aos dedos, deixa cair os calcanhares) 3×10','Prensa pesada 3×6'],ossos:true};
 var IMPACT_YOUTH={id:'imp3',n:'Saltos no lugar (aterragem silenciosa)',t:'2×6',m:'Pliometria leve — aterrar sem barulho é o critério para progredir',a:['Saltar à corda 2×30 s','Saltos para um banco baixo 2×5'],plyo:true};
 var LOWER_KEYS=['LA','LB','LEGS','PULL','FBA','FBB','SIMA','SIMB','BA','BB']; // sessões que recebem o bloco (PULL só para garantir 2/semana em PPL)
-function impactEx(profile){
-  var g=ageGroup(profile);
-  if(g==='woman40') return JSON.parse(JSON.stringify(profile.pelvic?IMPACT_PELVIC:IMPACT_WOMAN));
-  if(g==='youth') return JSON.parse(JSON.stringify(IMPACT_YOUTH));
+function impactEx(profile, rules){
+  var g=ageGroup(profile), low=!!(rules&&rules.impact==='low');
+  if(rules&&rules.impact==='none') return null; // condição/rastreio: sem impacto
+  if(g==='woman40') return JSON.parse(JSON.stringify((profile.pelvic||low)?IMPACT_PELVIC:IMPACT_WOMAN));
+  if(g==='youth'){ if(low){ var st=JSON.parse(JSON.stringify(IMPACT_PELVIC)); st.id='imp3'; st.t='2×6/perna'; st.m='Carga sem saltos (impacto baixo pelas condições)'; delete st.ossos; st.plyo=true; return st; } return JSON.parse(JSON.stringify(IMPACT_YOUTH)); }
   return null;
 }
-function appendImpactBlock(w, profile){
-  var ie=impactEx(profile); if(!ie) return;
+function appendImpactBlock(w, profile, rules){
+  var ie=impactEx(profile, rules); if(!ie) return;
   LOWER_KEYS.forEach(function(k){ if(w[k]) w[k].ex.push(JSON.parse(JSON.stringify(ie))); });
 }
 function impactCap(){ var g=ageGroup(DB.cfg.profile); return g==='youth'?2:(g==='woman40'?3:0); }
@@ -693,45 +1122,55 @@ function buildWK(profile){
   for(var xk in xt) w[xk]=xt[xk];
   w.MIN=base.MIN; w.FER1=base.FER1; w.FER2=base.FER2;
   if(profile) for(var wk2 in w){ w[wk2].ex=w[wk2].ex.map(function(e){ return adaptEx(e, profile); }); }
-  appendImpactBlock(w, profile);
+  var rules=profile?rulesFromProfile(profile):null; // pipeline: faixa etária → rastreio → condições → objetivo → foco → equipamento
+  if(rules) applyRulesWK(w, profile, rules);
+  appendImpactBlock(w, profile, rules);
   if(ageGroup(profile)==='youth') for(var yk in w){ w[yk].ex=w[yk].ex.map(youthAdaptEx); }
   return w;
 }
 var WK = buildWK(DB.cfg.profile);
 /* ============ PERFIL & AUTO-AJUSTE ============ */
 function applyProfile(){
-  function gv(id){ return document.getElementById(id).value; }
+  function gv(id){ var el=document.getElementById(id); return el?el.value:''; }
+  var old=DB.cfg.profile||{};
+  var muscles=[].slice.call(document.querySelectorAll('.pfMus:checked')).map(function(c){ return c.value; }).slice(0,2);
+  var conds=[].slice.call(document.querySelectorAll('.pfCond:checked')).map(function(c){ return c.value; });
+  var gsel=gv('pfGoal'), goalId=KB.goals[gsel]?gsel:(GOAL_LEGACY[gsel]||'endurance_health');
+  var clr=document.getElementById('pfClear');
   var p={name:gv('pfName').trim(), sex:gv('pfSex'), age:parseInt(gv('pfAge'))||30, h:parseFloat(gv('pfH'))||170,
          w:parseFloat(gv('pfW'))||70, bf:parseFloat(gv('pfBF'))||null,
-         goalWeight:parseFloat(gv('pfGW'))||null, goal:gv('pfGoal'), focus:gv('pfFocus'),
+         goalWeight:parseFloat(gv('pfGW'))||null, goalId:goalId, goal:legacyGoal(goalId,conds), muscles:muscles, focus:legacyFocus(muscles), conditions:conds,
+         clearance:clr?!!clr.checked:!!old.clearance, parq:old.parq||null, parqPositive:!!old.parqPositive, screened:old.screened||null,
          days:parseInt(gv('pfDays'))||4, prog:gv('pfProg'), exp:gv('pfExp'), equip:gv('pfEquip'),
          pelvic:!!(document.getElementById('pfPelvic')&&document.getElementById('pfPelvic').checked)};
   DB.cfg.profile=p;
-  var grp=ageGroup(p);
+  var grp=ageGroup(p), r=coachRules();
   var bmr = p.bf ? Math.round(370+21.6*(p.w*(1-p.bf/100)))
                  : Math.round(10*p.w+6.25*p.h-5*p.age+(p.sex==='F'?-161:5));
   DB.cfg.bmr=bmr;
   var stepK=0.00048*p.w;
-  var estT=Math.round(bmr*1.15+10000*stepK+(p.goal==='ganhar'?100:180));
-  DB.cfg.kcal = p.goal==='perder' ? Math.round((estT-500)/50)*50
-              : p.goal==='ganhar' ? Math.round((estT+250)/50)*50
-              : Math.round((estT-100)/50)*50;
+  var estT=bmr*1.15+10000*stepK+150; // manutenção estimada (mesma fórmula de maintKcal)
+  var EB={deficit_small:-250,deficit_moderate:-500,maintenance:0,surplus_small:200}; // balanço energético do objetivo (base de conhecimento)
+  var delta=EB[r.energy]!=null?EB[r.energy]:0;
+  DB.cfg.kcal=Math.round((estT+delta)/50)*50;
+  DB.cfg.energyNote=r.energyWhy||'';
   DB.cfg.fatT=Math.max(45,Math.round(0.8*p.w));   // gordura: ~0,8 g/kg (hormonas)
-  // proteína: com %MG usa massa magra (Helms 2,3–3,1 g/kg MM); sem %MG usa peso total
-  if(p.bf){ var mm=p.w*(1-p.bf/100); DB.cfg.prot=Math.round((p.goal==='ganhar'?2.2:2.6)*mm); }
-  else DB.cfg.prot = Math.round((p.goal==='ganhar'?1.8:2.2)*p.w);
-  if(grp==='woman40') DB.cfg.prot=Math.round(1.8*p.w); // mulher 40+: 1,6–2,0 g/kg de peso total
+  // proteína: ponto médio do intervalo do objetivo (g/kg de peso total); mulher 40+: 1,8 g/kg dentro desse intervalo
+  var pr=r.protein, gk=(pr[0]+pr[1])/2;
+  if(grp==='woman40') gk=Math.min(pr[1],Math.max(pr[0],1.8));
+  DB.cfg.prot=Math.round(gk*p.w);
   if(grp==='youth'){ DB.cfg.kcal=Math.round(estT/50)*50; DB.cfg.prot=Math.round(1.5*p.w); DB.cfg.target=null; } // jovem: sem défice, sem meta de peso (só uso interno)
   DB.cfg.water = Math.round((0.03*p.w+0.7)*4)/4;
   if(p.goalWeight&&grp!=='youth') DB.cfg.target=p.goalWeight;
   if(!DB.cfg.startW) DB.cfg.startW=p.w; // ponto de partida da jornada (fixa na 1ª vez)
+  if(muscles.length){ if(!DB.cfg.focusStart||JSON.stringify(old.muscles||[])!==JSON.stringify(muscles)) DB.cfg.focusStart=today(); } else DB.cfg.focusStart=null;
   DB.cfg.progSel=null; // o programa do perfil volta a mandar
   WK = buildWK(p);
   curWK=null;
   DB.cfg.lastTune=null;
   save(); renderUsers();
   if(grp==='youth'){ alert('Perfil jovem aplicado \n\nRegras: técnica antes de carga, 1–3 séries de 6–15 reps com 2 na reserva, sem testes de máximos, sem contagem de calorias nem balança. Dormir 8–10 h.'); render(); return; }
-  alert('Perfil aplicado \n\nGasto base (BMR): '+bmr+' kcal\nAlvo diário: '+DB.cfg.kcal+' kcal\nProteína: '+DB.cfg.prot+' g/dia\nÁgua: '+DB.cfg.water+' L\nPeso alvo: '+(DB.cfg.target||'—')+' kg\nTreino: '+(p.focus==='gluteos'?'ênfase glúteos/pernas':p.focus==='tronco'?'ênfase tronco/braços':'equilibrado')+'\n\nA app recalcula o défice e as sugestões com estes números.');
+  alert('Perfil aplicado \n\nObjetivo: '+kbLabel(goalId)+'\nGasto base (BMR): '+bmr+' kcal\nAlvo diário: '+DB.cfg.kcal+' kcal'+(r.energyWhy?' ('+r.energyWhy+')':'')+'\nProteína: '+DB.cfg.prot+' g/dia ('+String(Math.round(gk*100)/100).replace('.',',')+' g/kg)\nÁgua: '+DB.cfg.water+' L\nPeso alvo: '+(DB.cfg.target||'—')+' kg\nTreino: '+(muscles.length?'foco '+muscles.map(kbLabel).join(' + '):'equilibrado')+' · '+rirLabel(r)+' · reps '+r.repRange.join('–')+(conds.length?'\nCondições: '+conds.map(kbLabel).join(', '):'')+(r.soft?'\nModo suave até aval médico.':'')+'\n\nA app recalcula o défice e as sugestões com estes números.');
   render();
 }
 function dateOffset(nDays){
@@ -852,7 +1291,7 @@ function autoregulate(){ // RIR ≥3 em 2 sessões → sobe; RIR 0/RPE ≥9 em 2
 }
 function autoregCard(){ var a=autoregulate(); if(!a) return '';
   return '<div class="card" style="border:1.5px solid var(--ink)"><h2>'+a.title+'</h2><div class="note" style="margin:0">'+a.txt+'</div></div>'; }
-function rirHint(){ return isYouth()?'RIR ≥2 · deixa 2 na reserva':'RIR 1–3'; }
+function rirHint(){ return isYouth()?'RIR ≥2 · deixa 2 na reserva':rirLabel(coachRules()); }
 function weekStats(u, wk){ // sessões de força e dias de cardio/passos numa semana ISO, para uma pessoa
   var str=0, cardio=0;
   for(var dt in u.workouts){ var t=u.workouts[dt].type; if(t&&t!=='REST'&&weekOf(dt)===wk) str++; }
@@ -912,6 +1351,8 @@ function coachWeek(){
     s:'Marca os dias no calendário à segunda-feira, à mesma hora. Dia mau? Sessão Mínima de 12 min — nunca zero.'});
   var ar=autoregulate();
   if(ar) issues.push({e:ar.title, s:ar.txt});
+  if(DB.cfg.focusStart&&(DB.cfg.profile.muscles||[]).length){ var fwk=Math.floor((new Date(today())-new Date(DB.cfg.focusStart))/(7*86400000));
+    if(fwk>=8) issues.push({e:'Bloco de foco muscular com '+fwk+' semanas', s:'Blocos de especialização rendem 6–8 semanas. Roda o foco (outro músculo) ou volta ao equilíbrio no Perfil — os restantes grupos estiveram em manutenção.'}); }
   if(isWoman40()){ // ≥4 semanas com ≥2 sessões: técnica estável → cargas pesadas
     var okW=0; for(var wi=0;wi<8;wi++){ if(weekStats(DB, weekOf(dateOffset(-7*wi))).str>=2) okW++; }
     if(okW>=4) issues.push({e:'Técnica estável há '+okW+' semanas com 2+ sessões',
@@ -1486,7 +1927,8 @@ function renderPlayer(){
       '<button class="pgo" onclick="endSession()">Terminar</button></div>';
     buzz(); return;
   }
-  var ex=exs[PL.idx];
+  var ex=exs[PL.idx], RU=coachRules();
+  var shownN=((DB.workouts[curDate].altn||{})[ex.id])||ex.n;
   var mySets=(DB.workouts[curDate].sets[ex.id]||[]).filter(function(x){return x.w&&x.r;});
   var last=lastPerf(ex.id);
   var sug=suggest(ex.id,ex.t);
@@ -1504,8 +1946,11 @@ function renderPlayer(){
   } else {
     body='<div class="pmain">'+
       (exPic(ex.id)?exPic(ex.id).replace('class="pict"','class="ppict"'):'')+
-      '<div class="pname">'+esc(ex.n)+'</div>'+
-      '<div class="ptarget">'+ex.t+' · '+rirHint()+'</div>'+
+      '<div class="pname">'+esc(shownN)+'</div>'+
+      '<div class="ptarget">'+ex.t+' · '+rirHint()+(RU&&!isYouth()?' · objetivo '+RU.repRange[0]+'–'+RU.repRange[1]+' reps':'')+'</div>'+
+      (RU&&RU.noBreathHold?'<div style="font-size:12.5px;color:var(--ink);margin-bottom:4px"><b>Respira</b>: expira no esforço, não bloqueies a respiração.</div>':'')+
+      (ex.focus?'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Foco '+esc(kbLabel(ex.focus))+(ex.why?' — '+esc(ex.why):'')+'</div>':'')+
+      (ex.cues?ex.cues.map(function(c){ return '<div style="font-size:12px;color:var(--muted);margin-bottom:4px">'+esc(c)+'</div>'; }).join(''):'')+
       (PL.idx===0&&!mySets.length?'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Aquecimento: 1 série leve deste exercício antes da 1.ª a sério.</div>':'')+
       (ex.ossos?'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Porquê: impacto + carga = densidade óssea (LIFTMOR).</div>':'')+
       (ex.plyo?'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Aterra em silêncio; máx. 2 sessões com saltos por semana.</div>':'')+
@@ -1517,7 +1962,10 @@ function renderPlayer(){
       '<div class="pin"><input id="plW" type="number" step="0.5" inputmode="decimal" placeholder="kg" value="'+preW+'">'+
       '<span style="color:var(--muted)">×</span><input id="plR" type="number" inputmode="numeric" placeholder="reps"></div>'+
       rirStepper(PL.rir)+
-      '<button class="pgo" onclick="plLogSet()">Série feita</button>')+'</div>';
+      '<button class="pgo" onclick="plLogSet()">Série feita</button>'+
+      (RU&&RU.msk&&ex.a&&ex.a.length?'<div style="margin-top:10px"><button class="mini ghost" onclick="plToggleAlts()">Dor? Para e troca</button>'+
+        (PL.alts?'<div class="psets">'+ex.a.map(function(an){ return '<button class="chip" onclick="plPickAlt(\''+ex.id+'\',\''+esc(an).replace(/'/g,"\\'")+'\')">'+esc(an)+'</button>'; }).join('')+
+        ((DB.workouts[curDate].altn||{})[ex.id]?'<button class="chip" onclick="plPickAlt(\''+ex.id+'\',null)">original</button>':'')+'</div>':'')+'</div>':''))+'</div>';
   }
   p.innerHTML='<div class="ptop"><span>'+WK[PL.wk].name+'</span><span>'+(PL.idx+1)+' / '+exs.length+'</span>'+
     '<span style="cursor:pointer;text-decoration:underline" onclick="endSession()">sair</span></div>'+
@@ -1528,6 +1976,8 @@ function renderPlayer(){
     '<button class="pnext" onclick="PL.rest=0;if(PL.timer)clearInterval(PL.timer);PL.idx++;PL.rec=null;renderPlayer()">'+(PL.idx>=exs.length-1?'terminar':'próximo →')+'</button></div>';
 }
 function plRate(r){ DB.workouts[curDate].rate=r; buzz(); save(); renderPlayer(); }
+function plToggleAlts(){ var ex=plExs()[PL.idx]; PL.alts=!PL.alts; if(ex){ openAlts[ex.id]=!!PL.alts; render(); } renderPlayer(); }
+function plPickAlt(id,name){ pickAlt(id,name); PL.alts=false; renderPlayer(); }
 function plLogSet(){
   var w=parseFloat(document.getElementById('plW').value)||null;
   var r=parseInt(document.getElementById('plR').value)||null;
@@ -1571,7 +2021,7 @@ function vHoje(){
   var journey=journeyCard();
   h+='<div class="datebar"><input type="date" value="'+curDate+'" onchange="curDate=this.value;render()">'+
      (curDate!==today()?'<button class="mini ghost" onclick="curDate=today();render()">Hoje</button>':'')+'</div>';
-  h+=todayWKCard();
+  h+=coachLine()+parqCard()+(coachRules()&&coachRules().soft?screeningCard():'')+cardioBiasCard()+todayWKCard();
   var quick='<div class="quick">'+
    '<button class="ghost" onclick="go(\'comida\')">Comida</button>'+
    '<button class="ghost" onclick="addWater(0.25)">+250 ml</button>'+
@@ -1961,6 +2411,19 @@ function nutritionRulesCard(){ // adultos: proteína por refeição, fibra, cami
   var h='<div class="card"><h2>Regras do prato</h2>';
   h+='<div class="note" style="margin:0">Proteína: <b>~'+Math.round(0.4*w)+' g por refeição</b> (0,4 g/kg) em 4 refeições · fibra <b>25–30 g/dia</b> (legumes, fruta, leguminosas, aveia).</div>';
   h+='<div class="note">2–5 min a andar depois das refeições baixam o pico de glicose — dá a volta ao quarteirão.</div>';
+  var r=coachRules();
+  if(r){
+    var ng=KB.nutrition.by_goal[r.goalId];
+    if(ng){ var pct=ng.kcal_adjust_pct;
+      h+='<div class="note"><b>'+esc(kbLabel(r.goalId))+':</b> proteína <b>'+String(ng.protein_g_per_kg[0]).replace('.',',')+'–'+String(ng.protein_g_per_kg[1]).replace('.',',')+' g/kg</b> · calorias '+(pct[0]===0&&pct[1]===0?'de manutenção':(pct[0]>0?'+':'')+pct[0]+' a '+(pct[1]>0?'+':'')+pct[1]+' %')+' · fibra '+ng.fibre_g.join('–')+' g/dia.</div>';
+      h+='<div class="note">'+esc(ng.carbs_note_pt)+'</div>'; }
+    if(r.energyWhy) h+='<div class="note">Balanço energético ajustado: '+esc(r.energyWhy)+'.</div>';
+    var ids=r.conds.map(function(c){ return c.id; });
+    if(ids.indexOf('hypertension')>=0) h+='<div class="note"><b>Sódio &lt; '+String(KB.nutrition.sodium_max_g_per_day_hypertension).replace('.',',')+' g/dia</b> (≈5 g de sal): sem saleiro à mesa; cuidado com enchidos, queijos curados, caldos e pré-feitos.</div>';
+    if(ids.indexOf('type2_diabetes')>=0||ids.indexOf('prediabetes_metabolic_syndrome')>=0) h+='<div class="note"><b>Glicose:</b> marcha 2–5 min depois de cada refeição. Com insulina ou sulfonilureias: não treines em jejum e tem hidratos rápidos à mão (risco de hipoglicemia); força antes do aeróbio.</div>';
+    if(ids.indexOf('pregnancy')>=0||r.goalId==='pregnancy_maintenance') h+='<div class="note"><b>Gravidez:</b> sem défice, não treinar em jejum, hidratar e evitar calor; intensidade em que consegues falar.</div>';
+    if(ids.indexOf('glp1_medication')>=0) h+='<div class="note"><b>GLP-1:</b> proteína em cada refeição mesmo sem fome, 2–2,5 L de água e força 2–3×/semana — é o que protege o músculo enquanto o peso desce.</div>';
+  }
   if(isWoman40()) h+='<div class="note">Creatina 3–5 g/dia é segura e útil (evidência para mulheres 40+).</div>';
   h+='<div class="note"><b>Bebidas:</b> água primeiro; 1 copo de água entre bebidas.'+(isAdultMan()?' Álcool no dia de treino corta a síntese proteica ~24 % — copos e treino em dias diferentes, e nunca "compensar" com treino extra.':'')+'</div>';
   return h+'</div>';
@@ -2168,7 +2631,6 @@ function addCustom(){
 function todayWKCard(){
   var wkToday=DB.workouts[curDate];
   var isRest=wkToday&&wkToday.type==='REST';
-  var PROG_SEQ={UL:['UA','LA','UB','LB'],PPL:['PUSH','PULL','LEGS'],FB:['FBA','FBB'],SIM:['SIMA','SIMB'],ELA:['BA','BB']};
   var seqP=PROG_SEQ[progOf(DB.cfg.profile)]||[];
   var nextWK=seqP[0]||null;
   for(var bi=1;bi<=14;bi++){
@@ -2286,7 +2748,14 @@ function vTreino(){
     var sets=DB.workouts[curDate].sets;
     var altn=DB.workouts[curDate].altn||{};
     h+=impactCapNote(curDate);
+    var RU=coachRules(), lastFocus=null, focusMuscles=RU?RU.muscles:[];
+    if(RU&&!isYouth()) h+='<div class="note" style="margin:0 0 8px">Coach: '+rirLabel(RU)+' · reps '+RU.repRange[0]+'–'+RU.repRange[1]+' · máx. '+RU.maxSets+' séries/exercício · sessão ≤ '+RU.minutesMax+' min'+(RU.noBreathHold?' · <b>respira, não bloqueies</b>':'')+(w.trimmed?' · '+w.trimmed+' exercício'+(w.trimmed>1?'s':'')+' cortado'+(w.trimmed>1?'s':'')+' pela duração':'')+(w.dropped?' · retirado: '+esc(w.dropped.join(', ')):'')+'</div>';
+    if(focusMuscles.length&&w.ex.some(function(e){ return e.focus; })){
+      h+='<h3 class="sec" style="margin-top:4px">Foco — '+esc(focusMuscles.map(kbLabel).join(' + '))+'</h3>'+
+         '<div class="note" style="margin:0 0 8px">'+focusMuscles.map(function(m){ var ws=kbMuscle(m).weekly_sets_specialisation; return esc(kbLabel(m))+': ~'+focusWeeklySets(m)+' séries/semana neste plano (alvo '+ws[0]+'–'+ws[1]+')'; }).join(' · ')+'. Os outros grupos ficam em manutenção (4–6 séries/semana) durante o bloco de 6–8 semanas.</div>';
+    }
     sessionExs(curWK, curDate).forEach(function(ex){
+      if(focusMuscles.length&&lastFocus!==!!ex.focus){ lastFocus=!!ex.focus; if(!ex.focus) h+='<h3 class="sec" style="margin-top:4px">Resto da sessão — manutenção</h3>'; }
       var last=lastPerf(ex.id);
       var mySets=sets[ex.id]||[];
       var shown=altn[ex.id]||ex.n;
@@ -2296,7 +2765,12 @@ function vTreino(){
          '<div class="xm">'+ex.m+'</div>'+
          (ex.ossos?'<div class="xm">Porquê: impacto + carga = densidade óssea (LIFTMOR). 2–3×/semana chega.</div>':'')+
          (ex.plyo?'<div class="xm">Aterra em silêncio · máx. 2 sessões com saltos por semana.</div>':'')+
-         (ex.youth?'<div class="xm">'+rirHint()+'</div>':'')+'</div>'+
+         (ex.youth?'<div class="xm">'+rirHint()+'</div>':'')+
+         (ex.focus&&!ex.focusOwn?'<div class="xm"><b>Foco '+esc(kbLabel(ex.focus))+'</b>'+(ex.why?' — '+esc(ex.why):'')+'</div>':'')+
+         (ex.pref?'<div class="xm">Escolhido pelo coach — '+esc(ex.why||'')+'</div>':'')+
+         (ex.swapFrom?'<div class="xm">Trocado (em vez de '+esc(ex.swapFrom)+'): '+esc(ex.why||'condição')+'</div>':'')+
+         (ex.cues?ex.cues.map(function(c){ return '<div class="xm">Dica: '+esc(c)+'</div>'; }).join(''):'')+
+         (ex.maint?'<div class="xm">Manutenção (o foco está noutro músculo)</div>':'')+'</div>'+
          (exPic(ex.id)?'<div style="text-align:center">'+exPic(ex.id)+
            '<a href="'+yt+'" target="_blank" style="display:block;font-size:10.5px;color:var(--ink2);text-decoration:underline;margin-top:2px">vídeo</a></div>':'')+
          '</div>';
@@ -2315,7 +2789,7 @@ function vTreino(){
       var sug=suggest(ex.id, ex.t);
       if(sug) h+='<div class="note" style="margin:0 0 6px;color:'+(sug.t==='up'?'var(--good)':'var(--ink2)')+'">'+sug.txt+'</div>';
       if(needsTech(ex)) h+=techCardHTML(ex,false);
-      if(!last && STDW[ex.id] && !isYouth()){ // jovem: sem sugestões de carga nem 1RM
+      if(!last && STDW[ex.id] && !isYouth() && !(RU&&RU.noMaxTests)){ // jovem / 65+ / condições: sem sugestões de carga nem 1RM
         h+='<div style="margin-bottom:6px"><button class="mini ghost" onclick="toggleStart(\''+ex.id+'\')">com que peso começo?</button>';
         if(openStart[ex.id]){
           var st=stdStart(ex.id);
@@ -2339,7 +2813,7 @@ function vTreino(){
       h+='<button class="mini ghost" onclick="addSet(\''+ex.id+'\')">+ série</button></div>';
     });
     h+='<div class="note">'+(isYouth()?'Regra: deixa sempre 2 reps na reserva (RIR ≥2). Sobe carga só quando a técnica se mantém limpa em todas as séries — nunca testes de máximos.':
-      'Regra: RIR 1–3 (1–3 reps da falha) em cada série. RIR ≥3 em todas as séries? Próxima sessão: +1 rep ou +2,5 kg. Duas sessões no limite (RIR 0)? Semana leve, −20 % de volume.')+'</div>';
+      'Regra: '+rirLabel(RU)+' em cada série. RIR ≥ alvo+2 em todas as séries? Próxima sessão: +1 rep ou +2,5–5 % de carga'+(DB.cfg.profile&&DB.cfg.profile.age>=40?' (2,5 % depois dos 40)':'')+'. Duas sessões no limite (RIR 0)? Semana leve, −20 % de volume.'+(RU&&RU.msk?' Dor até 3–5/10 que passa em 24 h é aceitável; acima disso reduz amplitude ou carga.':''))+'</div>';
   }
   h+=cardioCard+semanaCard+progCard;
   return h;
@@ -2354,6 +2828,7 @@ function logInterval(kind){
 }
 function intervalBlock(){
   if(lowSleepToday()) return '<div class="note" style="margin:0 0 6px">Sono curto hoje — sem intervalos intensos; caminhada ou bicicleta leve.</div>';
+  var ru=coachRules(); if(ru&&ru.noHIIT) return '<div class="note" style="margin:0 0 6px">Sem intervalos intensos por agora ('+esc(ru.soft?'modo suave':'condição ativa')+'): marcha rápida, bicicleta ou 10×1 leve, sempre a conseguir falar.</div>';
   var adv=intervalWeeks()>=4;
   return '<div class="note" style="margin:0 0 6px">Sessão de intervalos da semana (1×/semana): '+
     (adv?'<b>4×4 (norueguês, 25 min)</b> — 4 min forte / 3 min leve ×4. Já tens 4+ semanas de cardio: podes progredir.':'<b>10×1 (10 min)</b> — 1 min forte / 1 min leve ×10. Após 4 semanas passa ao 4×4 (norueguês, 25 min).')+
@@ -2711,8 +3186,9 @@ function getWeek(d){
 /* ============ VIEW: GUIA ============ */
 function vGuia(){
   var h='';
-  var p=DB.cfg.profile||{sex:'M',age:36,h:184,w:94.2,bf:19.7,goalWeight:86.5,goal:'perder',focus:'geral'};
-  h+='<h3 class="sec" style="margin-top:0">Perfil</h3>';
+  var p=DB.cfg.profile||{sex:'M',age:36,h:184,w:94.2,bf:19.7,goalWeight:86.5,goal:'perder',goalId:'fat_loss',focus:'geral',muscles:[],conditions:[]};
+  h+='<h3 class="sec" style="margin-top:0">Coach</h3>'+parqCard()+screeningCard()+coachCard();
+  h+='<h3 class="sec">Perfil</h3>';
   h+='<details '+(DB.cfg.profile?'':'open')+'><summary>Perfil — adapta a app a qualquer pessoa</summary><div class="in">'+
    '<div class="grid2">'+
    '<div><label>Nome</label><input id="pfName" value="'+esc(p.name||'')+'" placeholder="ex.: João / Ana"></div>'+
@@ -2722,14 +3198,9 @@ function vGuia(){
    '<div><label>Peso atual (kg)</label><input id="pfW" type="number" step="0.1" value="'+p.w+'"></div>'+
    '<div><label>% massa gorda (opcional)</label><input id="pfBF" type="number" step="0.1" value="'+(p.bf||'')+'" placeholder="da balança Tanita"></div>'+
    '<div><label>Peso alvo (kg)</label><input id="pfGW" type="number" step="0.1" value="'+(p.goalWeight||'')+'"></div>'+
-   '<div><label>Objetivo</label><select id="pfGoal">'+
-     '<option value="perder"'+(p.goal==='perder'?' selected':'')+'>Perder gordura</option>'+
-     '<option value="manter"'+(p.goal==='manter'?' selected':'')+'>Manter / recompor</option>'+
-     '<option value="ganhar"'+(p.goal==='ganhar'?' selected':'')+'>Ganhar músculo</option></select></div>'+
-   '<div><label>Foco muscular</label><select id="pfFocus">'+
-     '<option value="geral"'+(p.focus==='geral'?' selected':'')+'>Equilibrado</option>'+
-     '<option value="gluteos"'+(p.focus==='gluteos'?' selected':'')+'>Glúteos & pernas</option>'+
-     '<option value="tronco"'+(p.focus==='tronco'?' selected':'')+'>Tronco & braços</option></select></div>'+
+   '<div style="grid-column:span 2"><label>Objetivo</label><select id="pfGoal">'+
+     Object.keys(KB.goals).map(function(gid){ var gsel=(p.goalId||GOAL_LEGACY[p.goal]||'endurance_health')===gid; return '<option value="'+(GOAL_SELECT_VALUE[gid]||gid)+'"'+(gsel?' selected':'')+'>'+esc(kbLabel(gid))+'</option>'; }).join('')+'</select></div>'+
+   profileHealthHTML(p)+
    '<div><label>Experiência de treino</label><select id="pfExp">'+
      '<option value="iniciante"'+((p.exp||'intermedio')==='iniciante'?' selected':'')+'>Iniciante (&lt;1 ano)</option>'+
      '<option value="intermedio"'+((p.exp||'intermedio')==='intermedio'?' selected':'')+'>Intermédio</option>'+
@@ -2755,7 +3226,8 @@ function vGuia(){
    '<div class="note">Recalcula BMR (Katch-McArdle se houver %MG, senão Mifflin-St Jeor), calorias, proteína (2,2 g/kg a cortar; 1,8 a ganhar), '+
    'água e défice. Foco "Glúteos & pernas" troca os dias de pernas por versões com hip thrust, búlgaro passo longo, abduções e kickbacks — '+
    'ideal para quem quer perder peso com prioridade no rabo. O treino pesado é igual para mulheres: mesmos princípios, mesma evidência. '+
-   'Para dares a app a outra pessoa: envia o ficheiro HTML limpo (sem os teus dados) e ela preenche este perfil.</div></div></details>';
+   'Para dares a app a outra pessoa: envia o ficheiro HTML limpo (sem os teus dados) e ela preenche este perfil.</div>'+
+   '<div class="note" style="color:var(--muted)">'+esc(KB.disclaimer_pt)+'</div></div></details>';
   h+='<h3 class="sec">Família</h3>'+familyCard();
   h+='<h3 class="sec">Definições</h3>';
   h+='<details><summary>Backup dos dados</summary><div style="margin-top:8px"><div class="row">'+
@@ -2771,6 +3243,8 @@ function vGuia(){
    '<div><label>Água (L/dia)</label><input type="number" step="0.25" value="'+DB.cfg.water+'" onchange="DB.cfg.water=parseFloat(this.value)||3;save();render()"></div>'+
    '</div><div class="note">Na semana de pausa da dieta: muda kcal para 3 000. No fim do bloco, volta a descer.</div></div></details>';
   h+='<h3 class="sec">Guia</h3>';
+  h+='<details><summary>Base de conhecimento e aviso</summary><div class="in">'+esc(KB.disclaimer_pt)+'<br><br>'+esc(KB_SOURCES_NOTE)+' Versão da base: '+esc(KB.version)+'. '+
+     'Ordem de aplicação: faixa etária → rastreio PAR-Q+ → condições → objetivo → foco muscular → equipamento; em conflito ganha sempre a regra mais restritiva.</div></details>';
   h+='<details><summary>As 8 regras</summary><div class="in">'+
    '1 · ~2 600 kcal/dia em média semanal.<br>2 · 4 refeições com 40–50 g proteína (195 g/dia).<br>'+
    '3 · Refeições-tipo repetidas, zero planeamento.<br>4 · Convívios: contas à semana; 2–3 bebidas máx.<br>'+
@@ -2830,6 +3304,167 @@ function vGuia(){
    '<b>Opcional:</b> Cafeína ~200 mg pré-treino (nunca depois das 15h)<br>'+
    '<b>Parados:</b> Ashwagandha. Zinco — só se comeres pouca carne.</div></details>';
   h+='<div class="note" style="text-align:center">This Little Coach · versão '+APPV+'</div>';
+  return h;
+}
+/* ============ COACH: rastreio, cartão, perguntas ============ */
+var PARQ_TMP={};
+function needsParq(){ var p=DB.cfg.profile; return !!p&&!isYouth()&&!p.screened; }
+function parqCard(){
+  if(!needsParq()) return '';
+  var qs=KB.screening.parq_questions_pt;
+  var h='<div class="card" style="border:1.5px solid var(--ink)" id="parqCard"><h2>Rastreio PAR-Q+ (1 minuto)</h2>'+
+    '<div class="note" style="margin:0 0 4px">Sete perguntas antes do primeiro treino. Serve só para ajustar a intensidade — responde com honestidade.</div>';
+  qs.forEach(function(q,i){
+    h+='<div class="note" style="margin:8px 0 4px">'+(i+1)+' · '+esc(q)+'</div><div class="row">'+
+       '<button class="modechip'+(PARQ_TMP[i]===true?' on':'')+'" onclick="parqAns('+i+',true)">sim</button>'+
+       '<button class="modechip'+(PARQ_TMP[i]===false?' on':'')+'" onclick="parqAns('+i+',false)">não</button></div>';
+  });
+  h+='<button style="width:100%;margin-top:8px" onclick="parqSave()">Guardar rastreio</button>';
+  h+='<div class="note">'+esc(KB.disclaimer_pt)+'</div></div>';
+  return h;
+}
+function parqAns(i,v){ PARQ_TMP[i]=v; render(); }
+function parqSave(){
+  var qs=KB.screening.parq_questions_pt, ans=[];
+  for(var i=0;i<qs.length;i++){ if(PARQ_TMP[i]!==true&&PARQ_TMP[i]!==false){ toastSave('Responde às 7 perguntas'); return; } ans.push(PARQ_TMP[i]); }
+  var p=DB.cfg.profile; p.parq=ans; p.parqPositive=ans.some(function(a){ return a; }); p.screened=today();
+  PARQ_TMP={}; WK=buildWK(p); curWK=null; save();
+  toastSave(p.parqPositive?'Rastreio guardado — modo suave até aval médico':'Rastreio guardado — sem restrições');
+  render(); window.scrollTo(0,0);
+}
+function setClearance(v){ var p=DB.cfg.profile; if(!p) return; p.clearance=!!v; WK=buildWK(p); curWK=null; save(); render(); }
+function screeningCard(){ // sinais de alarme + aval médico (PAR-Q positivo ou condição que pede aval)
+  var p=DB.cfg.profile, r=coachRules(); if(!p||!r||isYouth()) return '';
+  if(!(p.parqPositive||r.needClearance)) return '';
+  var h='<div class="card" style="border:1.5px solid var(--ink)"><h2>'+(r.soft?'Modo suave ativo':'Aval médico confirmado')+'</h2>';
+  if(p.parqPositive) h+='<div class="note" style="margin:0">'+esc(KB.screening.parq_positive_action_pt)+'</div>';
+  if(r.needClearance) h+='<div class="note">Fala com o teu médico antes de treinar com esta condição: <b>'+esc(r.clearanceLabels.join(', '))+'</b>.</div>';
+  h+='<div class="note"><b>Sinais de alarme — para e procura ajuda médica:</b></div>';
+  KB.screening.universal_red_flags_pt.forEach(function(f){ h+='<div class="note" style="margin:2px 0 0">· '+esc(f)+'</div>'; });
+  h+='<div class="note" style="margin-top:8px">Autorização médica: <button class="modechip'+(p.clearance?' on':'')+'" onclick="setClearance(true)">sim</button>'+
+     '<button class="modechip'+(!p.clearance?' on':'')+'" onclick="setClearance(false)">ainda não</button></div>';
+  if(r.soft) h+='<div class="note">Enquanto isso o plano corre em <b>modo suave</b>: RIR ≥3, sem impacto, sem intervalos intensos ('+esc(r.softWhy)+').</div>';
+  return h+'</div>';
+}
+function coachLine(){ // resumo de uma linha (Hoje)
+  var r=coachRules(); if(!r||isYouth()) return '';
+  var n=r.conds.length;
+  return '<div class="note" style="margin:0 0 10px;cursor:pointer" onclick="go(\'guia\')">Coach: <b>'+esc(kbLabel(r.goalId))+'</b> · foco '+
+    (r.muscles.length?esc(r.muscles.map(kbLabel).join(' + ')):'equilibrado')+' · '+n+(n===1?' condição':' condições')+(r.soft?' · <b>modo suave</b>':'')+'</div>';
+}
+function cardioBiasCard(){ // condições com cardio_bias: sugestão de cardio à cabeça do dia
+  var r=coachRules(); if(!r||!r.cardioBias||isYouth()) return '';
+  var wk=DB.workouts[curDate]; if(wk&&wk.type!=='REST') return '';
+  var c=r.cardio||{};
+  return '<div class="card"><h2>Cardio primeiro</h2><div class="note" style="margin:0">Pelas tuas condições o coach põe o cardio à cabeça: <b>'+esc(c.type||'moderado')+'</b>'+
+    (c.minutes?' · '+c.minutes.join('–')+' min':'')+(c.sessions_per_week?' · '+c.sessions_per_week.join('–')+'×/semana':'')+(c.steps_per_day?' · '+c.steps_per_day.toLocaleString('pt-PT')+' passos/dia':'')+
+    '. Regista em Treino → Cardio.</div></div>';
+}
+function coachCard(){
+  var p=DB.cfg.profile;
+  if(!p) return '<div class="card"><h2>Coach</h2><div class="note" style="margin:0">Cria o teu perfil (abaixo) e o coach aplica a base de conhecimento: objetivo, foco muscular, faixa etária e condições de saúde.</div></div>';
+  var r=coachRules(), g=r.goal;
+  var h='<div class="card"><h2>Coach — o teu plano explicado</h2>';
+  h+='<div style="font-size:16px;font-weight:700">'+esc(kbLabel(r.goalId))+'</div>';
+  (g.notes||[]).slice(0,3).forEach(function(n){ h+='<div class="note" style="margin:4px 0 0">· '+esc(n)+'</div>'; });
+  if(r.muscles.length){
+    r.muscles.forEach(function(m){
+      var mus=kbMuscle(m), prio=mus.priority_exercises.filter(function(x){ return equipOk(x.equipment,p.equip); });
+      h+='<div class="note" style="margin-top:10px"><b>Foco: '+esc(kbLabel(m))+'</b> · '+mus.weekly_sets_specialisation.join('–')+' séries/semana neste bloco (restantes grupos 4–6). Este plano: ~<b>'+focusWeeklySets(m)+'</b>/semana.</div>';
+      prio.slice(0,4).forEach(function(x){ h+='<div class="note" style="margin:2px 0 0">· <b>'+esc(x.name_pt)+'</b> — '+esc(x.why)+'</div>'; });
+      (mus.cues||[]).slice(0,2).forEach(function(c){ h+='<div class="note" style="margin:2px 0 0">Dica: '+esc(c)+'</div>'; });
+      if(DB.cfg.focusStart){ var wk=Math.floor((new Date(today())-new Date(DB.cfg.focusStart))/(7*86400000)); h+='<div class="note" style="margin:2px 0 0">Bloco de foco: semana '+(wk+1)+' de 8'+(wk>=8?' — <b>hora de rodar o foco</b> ou voltar ao equilíbrio.':'.')+'</div>'; }
+    });
+  } else h+='<div class="note">Foco muscular: equilibrado. Podes escolher até 2 músculos no perfil — o coach dá-lhes um bloco de especialização.</div>';
+  if(r.conds.length){
+    h+='<div class="note" style="margin-top:10px"><b>Condições ativas</b></div>';
+    r.conds.forEach(function(c){
+      h+='<details><summary style="font-size:14px">'+esc(kbLabel(c.id))+(c.requires_clearance?' · pede aval médico':'')+'</summary><div class="in">'+
+         '<div>'+esc(c.explain_pt)+'</div>';
+      if(c.requires_clearance) h+='<div class="note">Fala com o teu médico antes de treinar com esta condição.'+(p.clearance?' Aval médico: confirmado.':' Aval médico: ainda não — modo suave.')+'</div>';
+      h+='<div class="note"><b>Ajuda:</b></div>'; (c.helpful||[]).forEach(function(x){ h+='<div class="note" style="margin:2px 0 0">· '+esc(x)+'</div>'; });
+      if((c.avoid_exercises_pt||[]).length) h+='<div class="note"><b>Evitar:</b> '+esc(c.avoid_exercises_pt.join(' · '))+'</div>';
+      if((c.prefer_exercises_pt||[]).length) h+='<div class="note"><b>Preferir:</b> '+esc(c.prefer_exercises_pt.join(' · '))+'</div>';
+      h+='<div class="note"><b>Sinais de alarme:</b></div>'; (c.red_flags||[]).forEach(function(x){ h+='<div class="note" style="margin:2px 0 0">· '+esc(x)+'</div>'; });
+      h+='</div></details>';
+    });
+  }
+  var IMPT={ok:'normal',low:'baixo (step-ups e heel drops em vez de saltos)',none:'nenhum'};
+  h+='<div class="note" style="margin-top:10px"><b>Regras aplicadas:</b> reps '+r.repRange[0]+'–'+r.repRange[1]+' · '+rirLabel(r)+' · máx. '+r.maxSets+' séries/exercício · impacto '+IMPT[r.impact]+
+     ' · sessão ≤ '+r.minutesMax+' min · '+esc(r.band.label)+(r.noBreathHold?' · respira, não bloqueies':'')+(r.avoidSupine?' · sem deitar de costas':'')+(r.noHIIT?' · sem intervalos intensos':'')+
+     (r.energyWhy?' · '+esc(r.energyWhy):'')+'</div>';
+  var c=r.cardio||{};
+  h+='<div class="note"><b>Cardio (objetivo):</b> '+esc(c.type||'moderado')+(c.minutes?' · '+c.minutes.join('–')+' min':'')+(c.sessions_per_week?' · '+c.sessions_per_week.join('–')+'×/semana':'')+(c.steps_per_day?' · '+c.steps_per_day.toLocaleString('pt-PT')+' passos/dia':'')+
+     ' · força '+r.strengthSessions.join('–')+'×/semana · '+r.setsWeek.join('–')+' séries/músculo/semana</div>';
+  if(r.otherAvoid.length) h+='<div class="note">Também a evitar (fora do plano de exercícios): '+esc(r.otherAvoid.map(function(x){ return x.replace(/_/g,' '); }).join(' · '))+'</div>';
+  if(r.soft) h+='<div class="note"><b>Modo suave</b> — '+esc(r.softWhy)+'. Confirma o aval médico no cartão acima para voltar ao plano completo.</div>';
+  var pr=KB.programming.progression_rules, want=['double_progression','rir_autoregulation'];
+  if(r.msk) want.push('pain_rule'); if(r.muscles.length) want.push('specialisation_block'); if(p.equip==='casa') want.push('bodyweight_progression'); if(r.goalId==='return_after_break') want.push('return_rule');
+  h+='<div class="note" style="margin-top:10px"><b>Progressão:</b></div>';
+  pr.filter(function(x){ return want.indexOf(x.id)>=0; }).slice(0,5).forEach(function(x){ h+='<div class="note" style="margin:2px 0 0">· '+esc(x.rule_pt)+'</div>'; });
+  h+='<div class="note">Descanso: compostos '+KB.programming.rest_seconds.compound.join('–')+' s · isolamentos '+KB.programming.rest_seconds.isolation.join('–')+' s. Deload reativo (máx. a cada '+KB.programming.deload.every_weeks_max+' semanas): '+esc(KB.programming.deload.signals.join(', '))+'.</div>';
+  h+='<div class="note">'+esc(KB_SOURCES_NOTE)+'</div>';
+  h+='<h2 style="margin-top:14px">Perguntar ao coach</h2><input id="askIn" placeholder="ex.: glúteo, proteína, joelho, sono" oninput="coachAsk(this.value)"><div id="askRes"></div>';
+  h+='<div class="note" style="margin-top:10px">'+esc(KB.disclaimer_pt)+'</div></div>';
+  return h;
+}
+var ASK_IDX=null;
+function askIndex(){
+  if(ASK_IDX) return ASK_IDX;
+  var ix=[]; function add(sec,txt){ if(txt) ix.push({sec:sec,txt:String(txt),n:nrm(txt)+' '+nrm(sec)}); }
+  var g,m,c;
+  for(g in KB.goals){ var G=KB.goals[g]; (G.notes||[]).forEach(function(n){ add('Objetivo · '+kbLabel(g),n); }); add('Objetivo · '+kbLabel(g),'Proteína '+G.protein_g_per_kg.join('–')+' g/kg · reps '+G.rep_range.join('–')+' · RIR '+G.rir.join('–')+' · '+G.sets_per_muscle_week.join('–')+' séries/músculo/semana · força '+G.strength_sessions_per_week.join('–')+'×/semana'); }
+  for(m in KB.muscle_focus){ var M=KB.muscle_focus[m]; M.priority_exercises.forEach(function(x){ add('Músculo · '+kbLabel(m),x.name_pt+' — '+x.why); }); (M.cues||[]).forEach(function(x){ add('Dica · '+kbLabel(m),x); }); (M.mistakes||[]).forEach(function(x){ add('Erro comum · '+kbLabel(m),x); }); add('Progressão sem material · '+kbLabel(m),(M.bodyweight_progression||[]).join(' → ')); }
+  for(c in KB.conditions){ var C=KB.conditions[c]; add('Condição · '+kbLabel(c),C.explain_pt); (C.helpful||[]).forEach(function(x){ add('Ajuda · '+kbLabel(c),x); }); add('Evitar · '+kbLabel(c),(C.avoid_exercises_pt||[]).join(', ')); add('Preferir · '+kbLabel(c),(C.prefer_exercises_pt||[]).join(', ')); add('Sinais de alarme · '+kbLabel(c),(C.red_flags||[]).join(', ')); }
+  (KB.nutrition.myths||[]).forEach(function(x){ add('Mito',x.myth_pt+' — '+x.truth_pt); });
+  (KB.nutrition.supplements_with_evidence||[]).forEach(function(x){ add('Suplemento · '+x.name_pt,x.dose+'. '+x.evidence_pt); });
+  add('Nutrição',KB.nutrition.vegetarian_note_pt);
+  for(g in KB.nutrition.by_goal){ add('Nutrição · '+kbLabel(g),KB.nutrition.by_goal[g].carbs_note_pt); }
+  (KB.programming.progression_rules||[]).forEach(function(x){ add('Progressão',x.rule_pt); });
+  add('Deload','Sinais: '+KB.programming.deload.signals.join(', ')+'. Reduzir volume '+KB.programming.deload.volume_reduction_pct.join('–')+' % durante '+KB.programming.deload.duration_days+' dias.');
+  add('Aquecimento','3–5 min geral + 2–3 min mobilidade; séries de aproximação 50/70/85 % no primeiro exercício; sem alongamento estático antes.');
+  for(var b in KB.age_bands){ (KB.age_bands[b].rules||[]).forEach(function(x){ add('Idade · '+KB.age_bands[b].label,x); }); }
+  add('Sinais de alarme',KB.screening.universal_red_flags_pt.join(', '));
+  return ASK_IDX=ix;
+}
+function coachAsk(q){ // pesquisa determinística, sem rede: substring sem acentos sobre a base de conhecimento
+  var el=document.getElementById('askRes'); if(!el) return;
+  var qn=nrm(q); if(qn.length<2){ el.innerHTML=''; return; }
+  var words=qn.split(' ').filter(function(w){ return w.length>1; }), ix=askIndex();
+  var res=ix.filter(function(it){ return words.every(function(w){ return it.n.indexOf(w)>=0; }); });
+  if(!res.length) res=ix.filter(function(it){ return words.some(function(w){ return w.length>=4&&it.n.indexOf(w.slice(0,-1))>=0; }); });
+  el.innerHTML=res.slice(0,8).map(function(it){ return '<div class="note" style="margin:6px 0 0"><b>'+esc(it.sec)+'</b> — '+esc(it.txt)+'</div>'; }).join('')||
+    '<div class="note">Nada encontrado — tenta outra palavra (ex.: joelho, proteína, sono).</div>';
+}
+/* formulário do perfil: foco muscular (máx. 2) e condições de saúde */
+function musToggle(el){
+  var on=document.querySelectorAll('.pfMus:checked');
+  if(on.length>2){ el.checked=false; toastSave('Máximo 2 músculos em foco'); }
+}
+function condToggle(el){
+  var x=document.getElementById('condx_'+el.value); if(x) x.style.display=el.checked?'block':'none';
+  var need=[].slice.call(document.querySelectorAll('.pfCond:checked')).some(function(c){ return !!(kbCondition(c.value)||{}).requires_clearance; });
+  var cb=document.getElementById('clearBox'); if(cb) cb.style.display=need?'block':'none';
+}
+function profileHealthHTML(p){
+  var mus=p.muscles||[], conds=p.conditions||[];
+  var h='<div style="grid-column:span 2"><label>Foco muscular (máx. 2) — bloco de especialização de 6–8 semanas</label><div class="row">';
+  for(var m in KB.muscle_focus) h+='<label style="display:flex;align-items:center;gap:6px;white-space:normal;text-transform:none;font-size:13px;margin:0 8px 4px 0;width:auto"><input type="checkbox" class="pfMus" value="'+m+'"'+(mus.indexOf(m)>=0?' checked':'')+' onchange="musToggle(this)"> '+esc(kbLabel(m))+'</label>';
+  h+='</div></div>';
+  var cats=['musculoskeletal','cardiometabolic','womens_health','respiratory','mental_health','other'];
+  var anyClear=conds.some(function(c){ return !!(kbCondition(c)||{}).requires_clearance; });
+  h+='<div style="grid-column:span 2"><details'+(conds.length?' open':'')+'><summary style="font-size:14px">Saúde e limitações'+(conds.length?' ('+conds.length+')':'')+'</summary><div class="in">'+
+     '<div class="note" style="margin:0 0 6px">Marca o que se aplica — o coach adapta exercícios, intensidade e nutrição. Nada sai deste telemóvel.</div>';
+  cats.forEach(function(cat){
+    h+='<div class="note" style="margin:8px 0 4px"><b>'+esc(kbLabel(cat))+'</b></div>';
+    for(var cid in KB.conditions){ var c=KB.conditions[cid]; if(c.category!==cat) continue;
+      var on=conds.indexOf(cid)>=0;
+      h+='<label style="display:flex;align-items:center;gap:8px;white-space:normal;text-transform:none;font-size:13px;margin:0 0 6px"><input type="checkbox" class="pfCond" value="'+cid+'"'+(on?' checked':'')+' onchange="condToggle(this)"> '+esc(kbLabel(cid))+'</label>'+
+         '<div id="condx_'+cid+'" class="note" style="margin:-2px 0 8px 26px;display:'+(on?'block':'none')+'">'+esc(c.explain_pt)+(c.requires_clearance?'<br><span style="color:var(--muted)">Fala com o teu médico antes de treinar com esta condição.</span>':'')+'</div>';
+    }
+  });
+  h+='<div id="clearBox" style="display:'+(anyClear?'block':'none')+'"><label style="display:flex;align-items:center;gap:8px;white-space:normal;text-transform:none;font-size:13px;margin-top:6px"><input type="checkbox" id="pfClear"'+(p.clearance?' checked':'')+'> Autorização médica: sim (sem marcar = ainda não, e o plano corre em modo suave)</label></div>';
+  h+='</div></details></div>';
   return h;
 }
 /* ============ FAMÍLIA ============ */
