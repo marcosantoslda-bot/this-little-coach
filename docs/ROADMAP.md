@@ -12,6 +12,7 @@
 | App Expo (auth, onboarding, gerador, player, progresso) | feito (typecheck e export web verdes), por testar em dispositivo |
 | Protótipo PWA a preto e branco       | feito  |
 | PWA com regras científicas por perfil (mulher 40+, adulto, jovem) e 3 pessoas | feito |
+| PWA "coach de bolso": base de conhecimento (10 objetivos, 11 grupos musculares, 30 condições), rastreio PAR-Q+, foco muscular, pergunta ao coach | feito |
 | Deploy (Dockerfile API, EAS)         | por fazer |
 | Testes E2E em dispositivo            | por fazer |
 

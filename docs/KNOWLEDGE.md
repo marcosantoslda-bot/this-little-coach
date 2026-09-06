@@ -150,738 +150,3185 @@ Para cada uma: ajuda / evitar-modificar / progressão / sinais de alarme. Contra
   "goals": {
     "muscle_gain": {
       "label": "Ganhar músculo",
-      "protein_g_per_kg": [1.6, 2.2],
+      "protein_g_per_kg": [
+        1.6,
+        2.2
+      ],
       "energy_balance": "surplus_small",
-      "weekly_kg_change": [0.002, 0.005],
+      "weekly_kg_change": [
+        0.002,
+        0.005
+      ],
       "weekly_kg_change_unit": "fraction_of_bodyweight",
-      "strength_sessions_per_week": [3, 5],
-      "cardio": {"sessions_per_week": [1, 2], "type": "moderado ou intervalos curtos", "minutes": [15, 30], "steps_per_day": 7000},
-      "rep_range": [6, 15],
-      "rir": [1, 3],
-      "sets_per_muscle_week": [10, 20],
-      "notes": ["Superavit 10-20 % kcal; ganho de 0,25-0,5 % do peso por semana.", "Se ganhar mais de 0,5 %/semana durante 3 semanas, reduzir 100-150 kcal.", "Progressão dupla: subir reps ate ao topo do intervalo, depois +2,5-5 % carga."],
-      "sources": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC6680710/", "https://pubmed.ncbi.nlm.nih.gov/35291645/", "https://link.springer.com/article/10.1007/s40279-025-02344-w"]
+      "strength_sessions_per_week": [
+        3,
+        5
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          1,
+          2
+        ],
+        "type": "moderado ou intervalos curtos",
+        "minutes": [
+          15,
+          30
+        ],
+        "steps_per_day": 7000
+      },
+      "rep_range": [
+        6,
+        15
+      ],
+      "rir": [
+        1,
+        3
+      ],
+      "sets_per_muscle_week": [
+        10,
+        20
+      ],
+      "notes": [
+        "Superávit 10-20 % kcal; ganho de 0,25-0,5 % do peso por semana.",
+        "Se ganhar mais de 0,5 %/semana durante 3 semanas, reduzir 100-150 kcal.",
+        "Progressão dupla: subir reps até ao topo do intervalo, depois +2,5-5 % carga."
+      ],
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6680710/",
+        "https://pubmed.ncbi.nlm.nih.gov/35291645/",
+        "https://link.springer.com/article/10.1007/s40279-025-02344-w"
+      ]
     },
     "fat_loss": {
       "label": "Perder gordura",
-      "protein_g_per_kg": [1.8, 2.4],
+      "protein_g_per_kg": [
+        1.8,
+        2.4
+      ],
       "energy_balance": "deficit_moderate",
-      "weekly_kg_change": [-0.01, -0.005],
+      "weekly_kg_change": [
+        -0.01,
+        -0.005
+      ],
       "weekly_kg_change_unit": "fraction_of_bodyweight",
-      "strength_sessions_per_week": [2, 4],
-      "cardio": {"sessions_per_week": [2, 4], "type": "baixo impacto + 1 sessao de intervalos", "minutes": [20, 45], "steps_per_day": 8000},
-      "rep_range": [6, 15],
-      "rir": [1, 3],
-      "sets_per_muscle_week": [6, 12],
-      "notes": ["Defice 10-25 %; perder 0,5-1 % do peso por semana.", "Manter cargas (nao volume alto) para proteger massa magra.", "Pausa de dieta de 1-2 semanas a cada 4-8 semanas de defice.", "Platos de 2-4 semanas sao normais; verificar registo antes de cortar mais."],
-      "sources": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC4033492/", "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0082853", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8953094/"]
+      "strength_sessions_per_week": [
+        2,
+        4
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          2,
+          4
+        ],
+        "type": "baixo impacto + 1 sessão de intervalos",
+        "minutes": [
+          20,
+          45
+        ],
+        "steps_per_day": 8000
+      },
+      "rep_range": [
+        6,
+        15
+      ],
+      "rir": [
+        1,
+        3
+      ],
+      "sets_per_muscle_week": [
+        6,
+        12
+      ],
+      "notes": [
+        "Défice 10-25 %; perder 0,5-1 % do peso por semana.",
+        "Manter cargas (não volume alto) para proteger massa magra.",
+        "Pausa de dieta de 1-2 semanas a cada 4-8 semanas de défice.",
+        "Platôs de 2-4 semanas são normais; verificar registo antes de cortar mais."
+      ],
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4033492/",
+        "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0082853",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8953094/"
+      ]
     },
     "recomposition": {
-      "label": "Recomposicao (perder gordura e ganhar musculo)",
-      "protein_g_per_kg": [2.0, 2.4],
+      "label": "Recomposição (perder gordura e ganhar músculo)",
+      "protein_g_per_kg": [
+        2.0,
+        2.4
+      ],
       "energy_balance": "deficit_small",
-      "weekly_kg_change": [-0.005, 0.0],
+      "weekly_kg_change": [
+        -0.005,
+        0.0
+      ],
       "weekly_kg_change_unit": "fraction_of_bodyweight",
-      "strength_sessions_per_week": [3, 4],
-      "cardio": {"sessions_per_week": [1, 3], "type": "moderado", "minutes": [20, 40], "steps_per_day": 8000},
-      "rep_range": [6, 15],
-      "rir": [1, 3],
-      "sets_per_muscle_week": [10, 16],
-      "notes": ["Indicado para iniciantes, regresso apos pausa e gordura corporal media-alta.", "Defice de 200-300 kcal ou manutencao; a balanca pode nao mexer 8-12 semanas: medir cintura, fotos e cargas.", "Sem progresso em nenhum marcador as 12 semanas: escolher cut ou lean bulk."],
-      "sources": ["https://journals.lww.com/nsca-scj/Fulltext/2020/10000/Body_Recomposition__Can_Trained_Individuals_Build.3.aspx", "https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext"]
+      "strength_sessions_per_week": [
+        3,
+        4
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          1,
+          3
+        ],
+        "type": "moderado",
+        "minutes": [
+          20,
+          40
+        ],
+        "steps_per_day": 8000
+      },
+      "rep_range": [
+        6,
+        15
+      ],
+      "rir": [
+        1,
+        3
+      ],
+      "sets_per_muscle_week": [
+        10,
+        16
+      ],
+      "notes": [
+        "Indicado para iniciantes, regresso após pausa e gordura corporal média-alta.",
+        "Défice de 200-300 kcal ou manutenção; a balança pode não mexer 8-12 semanas: medir cintura, fotos e cargas.",
+        "Sem progresso em nenhum marcador às 12 semanas: escolher cut ou lean bulk."
+      ],
+      "sources": [
+        "https://journals.lww.com/nsca-scj/Fulltext/2020/10000/Body_Recomposition__Can_Trained_Individuals_Build.3.aspx",
+        "https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext"
+      ]
     },
     "glute_focus": {
-      "label": "Foco nos gluteos",
+      "label": "Foco nos glúteos",
       "uses_muscle_focus": "glutes",
-      "protein_g_per_kg": [1.6, 2.2],
+      "protein_g_per_kg": [
+        1.6,
+        2.2
+      ],
       "energy_balance": "maintenance",
       "weekly_kg_change": null,
-      "strength_sessions_per_week": [3, 4],
-      "cardio": {"sessions_per_week": [1, 2], "type": "moderado", "minutes": [15, 30], "steps_per_day": 7000},
-      "rep_range": [6, 20],
-      "rir": [1, 3],
-      "sets_per_muscle_week": [14, 20],
-      "notes": ["Bloco de especializacao de 6-8 semanas: gluteos 14-20 series/semana, restantes musculos 4-6 series de manutencao.", "Combinar um exercicio em extensao completa (hip thrust/ponte) com um em flexao profunda (RDL, agachamento, step-up) e um de abducao.", "Balanco energetico segue o objetivo secundario do utilizador (defice pequeno ou manutencao)."],
-      "sources": ["https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full", "https://pmc.ncbi.nlm.nih.gov/articles/PMC7039033/", "https://pubmed.ncbi.nlm.nih.gov/21131862/"]
+      "strength_sessions_per_week": [
+        3,
+        4
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          1,
+          2
+        ],
+        "type": "moderado",
+        "minutes": [
+          15,
+          30
+        ],
+        "steps_per_day": 7000
+      },
+      "rep_range": [
+        6,
+        20
+      ],
+      "rir": [
+        1,
+        3
+      ],
+      "sets_per_muscle_week": [
+        14,
+        20
+      ],
+      "notes": [
+        "Bloco de especialização de 6-8 semanas: glúteos 14-20 séries/semana, restantes músculos 4-6 séries de manutenção.",
+        "Combinar um exercício em extensão completa (hip thrust/ponte) com um em flexão profunda (RDL, agachamento, step-up) e um de abdução.",
+        "Balanço energético segue o objetivo secundário do utilizador (défice pequeno ou manutenção)."
+      ],
+      "sources": [
+        "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7039033/",
+        "https://pubmed.ncbi.nlm.nih.gov/21131862/"
+      ]
     },
     "strength": {
-      "label": "Forca",
-      "protein_g_per_kg": [1.6, 2.2],
+      "label": "Força",
+      "protein_g_per_kg": [
+        1.6,
+        2.2
+      ],
       "energy_balance": "maintenance",
       "weekly_kg_change": null,
-      "strength_sessions_per_week": [3, 4],
-      "cardio": {"sessions_per_week": [1, 2], "type": "moderado, separado da forca por 3 h ou apos", "minutes": [15, 30], "steps_per_day": 7000},
-      "rep_range": [3, 8],
-      "rir": [1, 4],
-      "sets_per_muscle_week": [6, 12],
-      "notes": ["Exercicio prioritario primeiro na sessao; descanso 2-3 min.", "Autorregular carga por RIR; sem testes de 1RM em menores de 16 anos nem em iniciantes.", "Sem Valsalva se hipertensao, gravidez, doenca cardiaca ou retinopatia."],
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/32077380/", "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2018.00247/full", "https://pubmed.ncbi.nlm.nih.gov/35044672/"]
+      "strength_sessions_per_week": [
+        3,
+        4
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          1,
+          2
+        ],
+        "type": "moderado, separado da força por 3 h ou após",
+        "minutes": [
+          15,
+          30
+        ],
+        "steps_per_day": 7000
+      },
+      "rep_range": [
+        3,
+        8
+      ],
+      "rir": [
+        1,
+        4
+      ],
+      "sets_per_muscle_week": [
+        6,
+        12
+      ],
+      "notes": [
+        "Exercício prioritário primeiro na sessão; descanso 2-3 min.",
+        "Autorregular carga por RIR; sem testes de 1RM em menores de 16 anos nem em iniciantes.",
+        "Sem Valsalva se hipertensão, gravidez, doença cardíaca ou retinopatia."
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/32077380/",
+        "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2018.00247/full",
+        "https://pubmed.ncbi.nlm.nih.gov/35044672/"
+      ]
     },
     "endurance_health": {
-      "label": "Resistencia e saude",
-      "protein_g_per_kg": [1.2, 1.6],
+      "label": "Resistência e saúde",
+      "protein_g_per_kg": [
+        1.2,
+        1.6
+      ],
       "energy_balance": "maintenance",
       "weekly_kg_change": null,
-      "strength_sessions_per_week": [2, 3],
-      "cardio": {"sessions_per_week": [3, 5], "type": "150-300 min moderado ou 75-150 vigoroso; 1 sessao de intervalos", "minutes": [20, 60], "steps_per_day": 8000},
-      "rep_range": [8, 15],
-      "rir": [2, 4],
-      "sets_per_muscle_week": [4, 10],
-      "notes": ["Forca 2x/semana e obrigatoria nas recomendacoes OMS.", "Progressao de cardio: +10 % de minutos por semana."],
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/33239350/", "https://pubmed.ncbi.nlm.nih.gov/35476184/"]
+      "strength_sessions_per_week": [
+        2,
+        3
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          3,
+          5
+        ],
+        "type": "150-300 min moderado ou 75-150 vigoroso; 1 sessão de intervalos",
+        "minutes": [
+          20,
+          60
+        ],
+        "steps_per_day": 8000
+      },
+      "rep_range": [
+        8,
+        15
+      ],
+      "rir": [
+        2,
+        4
+      ],
+      "sets_per_muscle_week": [
+        4,
+        10
+      ],
+      "notes": [
+        "Força 2x/semana é obrigatória nas recomendações OMS.",
+        "Progressão de cardio: +10 % de minutos por semana."
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/33239350/",
+        "https://pubmed.ncbi.nlm.nih.gov/35476184/"
+      ]
     },
     "longevity_65plus": {
       "label": "Autonomia e longevidade (65+)",
-      "protein_g_per_kg": [1.2, 1.6],
+      "protein_g_per_kg": [
+        1.2,
+        1.6
+      ],
       "energy_balance": "maintenance",
       "weekly_kg_change": null,
-      "strength_sessions_per_week": [2, 3],
-      "cardio": {"sessions_per_week": [3, 5], "type": "marcha, bicicleta, agua; equilibrio 3 h/semana somadas", "minutes": [20, 45], "steps_per_day": 6000},
-      "rep_range": [8, 15],
-      "rir": [2, 4],
-      "sets_per_muscle_week": [6, 12],
-      "notes": ["Incluir 1-2 exercicios de potencia (sit-to-stand rapido, step-up rapido, lancamento de bola) por sessao.", "Equilibrio em todas as sessoes: apoio unipodal, tandem, marcha com viragens.", "Testar sit-to-stand 30 s e velocidade de marcha a cada 8 semanas.", "Creatina 3-5 g/dia e vitamina D so se deficiencia documentada."],
-      "sources": ["https://journals.lww.com/nsca-jscr/fulltext/2019/08000/resistance_training_for_older_adults__position.1.aspx", "https://pubmed.ncbi.nlm.nih.gov/31792067/", "https://pubmed.ncbi.nlm.nih.gov/23867520/", "https://pubmed.ncbi.nlm.nih.gov/35953775/"]
+      "strength_sessions_per_week": [
+        2,
+        3
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          3,
+          5
+        ],
+        "type": "marcha, bicicleta, água; equilíbrio 3 h/semana somadas",
+        "minutes": [
+          20,
+          45
+        ],
+        "steps_per_day": 6000
+      },
+      "rep_range": [
+        8,
+        15
+      ],
+      "rir": [
+        2,
+        4
+      ],
+      "sets_per_muscle_week": [
+        6,
+        12
+      ],
+      "notes": [
+        "Incluir 1-2 exercícios de potência (sit-to-stand rápido, step-up rápido, lançamento de bola) por sessão.",
+        "Equilíbrio em todas as sessões: apoio unipodal, tandem, marcha com viragens.",
+        "Testar sit-to-stand 30 s e velocidade de marcha a cada 8 semanas.",
+        "Creatina 3-5 g/dia e vitamina D só se deficiência documentada."
+      ],
+      "sources": [
+        "https://journals.lww.com/nsca-jscr/fulltext/2019/08000/resistance_training_for_older_adults__position.1.aspx",
+        "https://pubmed.ncbi.nlm.nih.gov/31792067/",
+        "https://pubmed.ncbi.nlm.nih.gov/23867520/",
+        "https://pubmed.ncbi.nlm.nih.gov/35953775/"
+      ]
     },
     "return_after_break": {
-      "label": "Regresso apos pausa",
-      "protein_g_per_kg": [1.6, 2.2],
+      "label": "Regresso após pausa",
+      "protein_g_per_kg": [
+        1.6,
+        2.2
+      ],
       "energy_balance": "maintenance",
       "weekly_kg_change": null,
-      "strength_sessions_per_week": [2, 3],
-      "cardio": {"sessions_per_week": [1, 3], "type": "moderado", "minutes": [15, 30], "steps_per_day": 7000},
-      "rep_range": [8, 15],
-      "rir": [3, 4],
-      "sets_per_muscle_week": [4, 8],
-      "notes": ["Semanas 1-2: 50 % das cargas antigas, RIR 3-4, 2 series por exercicio.", "Semanas 3-4: 70-80 %; a partir da semana 5 progressao normal.", "A forca regressa mais depressa do que foi ganha (memoria muscular); nao acelerar por causa disso."],
-      "sources": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12673669/", "https://pubmed.ncbi.nlm.nih.gov/32017951/"]
+      "strength_sessions_per_week": [
+        2,
+        3
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          1,
+          3
+        ],
+        "type": "moderado",
+        "minutes": [
+          15,
+          30
+        ],
+        "steps_per_day": 7000
+      },
+      "rep_range": [
+        8,
+        15
+      ],
+      "rir": [
+        3,
+        4
+      ],
+      "sets_per_muscle_week": [
+        4,
+        8
+      ],
+      "notes": [
+        "Semanas 1-2: 50 % das cargas antigas, RIR 3-4, 2 séries por exercício.",
+        "Semanas 3-4: 70-80 %; a partir da semana 5 progressão normal.",
+        "A força regressa mais depressa do que foi ganha (memória muscular); não acelerar por causa disso."
+      ],
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12673669/",
+        "https://pubmed.ncbi.nlm.nih.gov/32017951/"
+      ]
     },
     "postpartum_return": {
-      "label": "Regresso pos-parto",
-      "protein_g_per_kg": [1.4, 1.8],
+      "label": "Regresso pós-parto",
+      "protein_g_per_kg": [
+        1.4,
+        1.8
+      ],
       "energy_balance": "maintenance",
       "weekly_kg_change": null,
-      "strength_sessions_per_week": [2, 3],
-      "cardio": {"sessions_per_week": [3, 5], "type": "marcha; sem corrida antes das 12 semanas", "minutes": [10, 40], "steps_per_day": 6000},
-      "rep_range": [10, 15],
-      "rir": [3, 4],
-      "sets_per_muscle_week": [4, 8],
-      "notes": ["Semanas 0-2: pavimento pelvico, respiracao, marcha.", "Semanas 2-6 (cesariana: 6+): forca de baixo impacto sem coning nem sintomas pelvicos.", "Semanas 6-12: progressao de carga; impacto so apos 12 semanas e avaliacao do pavimento pelvico.", "Em amamentacao: sem defice agressivo; hidratar."],
-      "sources": ["https://absolute.physio/wp-content/uploads/2019/09/returning-to-running-postnatal-guidelines.pdf", "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2020/04/physical-activity-and-exercise-during-pregnancy-and-the-postpartum-period"]
+      "strength_sessions_per_week": [
+        2,
+        3
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          3,
+          5
+        ],
+        "type": "marcha; sem corrida antes das 12 semanas",
+        "minutes": [
+          10,
+          40
+        ],
+        "steps_per_day": 6000
+      },
+      "rep_range": [
+        10,
+        15
+      ],
+      "rir": [
+        3,
+        4
+      ],
+      "sets_per_muscle_week": [
+        4,
+        8
+      ],
+      "notes": [
+        "Semanas 0-2: pavimento pélvico, respiração, marcha.",
+        "Semanas 2-6 (cesariana: 6+): força de baixo impacto sem coning nem sintomas pélvicos.",
+        "Semanas 6-12: progressão de carga; impacto só após 12 semanas e avaliação do pavimento pélvico.",
+        "Em amamentação: sem défice agressivo; hidratar."
+      ],
+      "sources": [
+        "https://absolute.physio/wp-content/uploads/2019/09/returning-to-running-postnatal-guidelines.pdf",
+        "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2020/04/physical-activity-and-exercise-during-pregnancy-and-the-postpartum-period"
+      ]
     },
     "pregnancy_maintenance": {
       "label": "Manter a forma na gravidez",
-      "protein_g_per_kg": [1.2, 1.5],
+      "protein_g_per_kg": [
+        1.2,
+        1.5
+      ],
       "energy_balance": "maintenance",
       "weekly_kg_change": null,
-      "strength_sessions_per_week": [2, 3],
-      "cardio": {"sessions_per_week": [3, 5], "type": "moderado; teste da fala", "minutes": [20, 40], "steps_per_day": 6000},
-      "rep_range": [10, 15],
-      "rir": [3, 4],
-      "sets_per_muscle_week": [4, 8],
-      "notes": ["150 min/semana de moderado; quem ja era ativa pode manter intensidade habitual sem exaustao.", "Sem aumentar cargas maximas; sem Valsalva; sem contacto ou risco de queda.", "Apos o 1.o trimestre, supino inclinado ou de lado se houver tonturas em decubito dorsal."],
-      "sources": ["https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2020/04/physical-activity-and-exercise-during-pregnancy-and-the-postpartum-period", "https://pubmed.ncbi.nlm.nih.gov/30297272/", "https://pubmed.ncbi.nlm.nih.gov/32378735/"]
+      "strength_sessions_per_week": [
+        2,
+        3
+      ],
+      "cardio": {
+        "sessions_per_week": [
+          3,
+          5
+        ],
+        "type": "moderado; teste da fala",
+        "minutes": [
+          20,
+          40
+        ],
+        "steps_per_day": 6000
+      },
+      "rep_range": [
+        10,
+        15
+      ],
+      "rir": [
+        3,
+        4
+      ],
+      "sets_per_muscle_week": [
+        4,
+        8
+      ],
+      "notes": [
+        "150 min/semana de moderado; quem já era ativa pode manter intensidade habitual sem exaustão.",
+        "Sem aumentar cargas máximas; sem Valsalva; sem contacto ou risco de queda.",
+        "Após o 1.o trimestre, supino inclinado ou de lado se houver tonturas em decúbito dorsal."
+      ],
+      "sources": [
+        "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2020/04/physical-activity-and-exercise-during-pregnancy-and-the-postpartum-period",
+        "https://pubmed.ncbi.nlm.nih.gov/30297272/",
+        "https://pubmed.ncbi.nlm.nih.gov/32378735/"
+      ]
     }
   },
   "muscle_focus": {
     "glutes": {
-      "label": "Gluteos",
+      "label": "Glúteos",
       "priority_exercises": [
-        {"name_pt": "Hip thrust com barra", "equipment": ["barbell", "bench"], "why": "Maior ativacao do gluteo maximo e hipertrofia igual ou ligeiramente superior ao agachamento", "level": 2},
-        {"name_pt": "Agachamento profundo", "equipment": ["barbell", "dumbbells"], "why": "Hipertrofia glutea semelhante ao thrust e cresce tambem quadriceps", "level": 2},
-        {"name_pt": "Peso morto romeno", "equipment": ["barbell", "dumbbells", "kettlebell"], "why": "Carrega gluteo e isquios em alongamento", "level": 2},
-        {"name_pt": "Step-up alto", "equipment": ["bench", "dumbbells", "none"], "why": "Ativacao muito alta do gluteo maximo; unilateral", "level": 1},
-        {"name_pt": "Agachamento bulgaro", "equipment": ["bench", "dumbbells", "none"], "why": "Unilateral, longo alongamento", "level": 2},
-        {"name_pt": "Abducao de anca com banda ou deitada", "equipment": ["band", "none"], "why": "Gluteo medio e minimo", "level": 1},
-        {"name_pt": "Ponte glutea unilateral", "equipment": ["none"], "why": "Regressao do hip thrust sem material", "level": 1}
+        {
+          "name_pt": "Hip thrust com barra",
+          "equipment": [
+            "barbell",
+            "bench"
+          ],
+          "why": "Maior ativação do glúteo máximo e hipertrofia igual ou ligeiramente superior ao agachamento",
+          "level": 2
+        },
+        {
+          "name_pt": "Agachamento profundo",
+          "equipment": [
+            "barbell",
+            "dumbbells"
+          ],
+          "why": "Hipertrofia glútea semelhante ao thrust e cresce também quadríceps",
+          "level": 2
+        },
+        {
+          "name_pt": "Peso morto romeno",
+          "equipment": [
+            "barbell",
+            "dumbbells",
+            "kettlebell"
+          ],
+          "why": "Carrega glúteo e ísquios em alongamento",
+          "level": 2
+        },
+        {
+          "name_pt": "Step-up alto",
+          "equipment": [
+            "bench",
+            "dumbbells",
+            "none"
+          ],
+          "why": "Ativação muito alta do glúteo máximo; unilateral",
+          "level": 1
+        },
+        {
+          "name_pt": "Agachamento búlgaro",
+          "equipment": [
+            "bench",
+            "dumbbells",
+            "none"
+          ],
+          "why": "Unilateral, longo alongamento",
+          "level": 2
+        },
+        {
+          "name_pt": "Abdução de anca com banda ou deitada",
+          "equipment": [
+            "band",
+            "none"
+          ],
+          "why": "Glúteo médio e mínimo",
+          "level": 1
+        },
+        {
+          "name_pt": "Ponte glútea unilateral",
+          "equipment": [
+            "none"
+          ],
+          "why": "Regressão do hip thrust sem material",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Ponte glutea", "Ponte glutea unilateral", "Hip thrust com ombros no sofa (unilateral)", "Step-up alto", "Agachamento bulgaro", "Single-leg RDL", "Pistol assistido"],
-      "weekly_sets_specialisation": [14, 20],
-      "cues": ["Queixo para o peito e costelas em baixo no topo do thrust", "Apertar 1 s no topo", "No RDL, anca para tras e barra rente as pernas", "Joelhos alinhados com os dedos dos pes"],
-      "mistakes": ["Hiperextensao lombar no topo", "Amplitude curta no RDL", "Deixar o joelho colapsar para dentro", "So treinar em extensao (thrust) sem exercicios em flexao profunda"],
-      "sources": ["https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full", "https://pubmed.ncbi.nlm.nih.gov/26214739/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC7039033/"]
+      "bodyweight_progression": [
+        "Ponte glútea",
+        "Ponte glútea unilateral",
+        "Hip thrust com ombros no sofá (unilateral)",
+        "Step-up alto",
+        "Agachamento búlgaro",
+        "Single-leg RDL",
+        "Pistol assistido"
+      ],
+      "weekly_sets_specialisation": [
+        14,
+        20
+      ],
+      "cues": [
+        "Queixo para o peito e costelas em baixo no topo do thrust",
+        "Apertar 1 s no topo",
+        "No RDL, anca para trás e barra rente às pernas",
+        "Joelhos alinhados com os dedos dos pés"
+      ],
+      "mistakes": [
+        "Hiperextensão lombar no topo",
+        "Amplitude curta no RDL",
+        "Deixar o joelho colapsar para dentro",
+        "Só treinar em extensão (thrust) sem exercícios em flexão profunda"
+      ],
+      "sources": [
+        "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full",
+        "https://pubmed.ncbi.nlm.nih.gov/26214739/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7039033/"
+      ]
     },
     "quads": {
-      "label": "Quadriceps",
+      "label": "Quadríceps",
       "priority_exercises": [
-        {"name_pt": "Agachamento (barra ou goblet)", "equipment": ["barbell", "dumbbells", "kettlebell"], "why": "Composto com maior crescimento de quadriceps", "level": 2},
-        {"name_pt": "Prensa de pernas", "equipment": ["machine"], "why": "Carga alta com pouca exigencia tecnica", "level": 1},
-        {"name_pt": "Extensao de joelho (parcial em alongamento)", "equipment": ["machine"], "why": "Parciais em alongamento deram mais hipertrofia distal", "level": 1},
-        {"name_pt": "Afundo / agachamento bulgaro", "equipment": ["dumbbells", "none"], "why": "Unilateral", "level": 2},
-        {"name_pt": "Agachamento bulgaro com pausa em baixo", "equipment": ["none", "bench"], "why": "Alongamento sem material", "level": 2}
+        {
+          "name_pt": "Agachamento (barra ou goblet)",
+          "equipment": [
+            "barbell",
+            "dumbbells",
+            "kettlebell"
+          ],
+          "why": "Composto com maior crescimento de quadríceps",
+          "level": 2
+        },
+        {
+          "name_pt": "Prensa de pernas",
+          "equipment": [
+            "machine"
+          ],
+          "why": "Carga alta com pouca exigência técnica",
+          "level": 1
+        },
+        {
+          "name_pt": "Extensão de joelho (parcial em alongamento)",
+          "equipment": [
+            "machine"
+          ],
+          "why": "Parciais em alongamento deram mais hipertrofia distal",
+          "level": 1
+        },
+        {
+          "name_pt": "Afundo / agachamento búlgaro",
+          "equipment": [
+            "dumbbells",
+            "none"
+          ],
+          "why": "Unilateral",
+          "level": 2
+        },
+        {
+          "name_pt": "Agachamento búlgaro com pausa em baixo",
+          "equipment": [
+            "none",
+            "bench"
+          ],
+          "why": "Alongamento sem material",
+          "level": 2
+        }
       ],
-      "bodyweight_progression": ["Agachamento a cadeira", "Agachamento profundo", "Agachamento com pausa 3 s", "Split squat", "Agachamento bulgaro", "Sissy squat assistido", "Pistol assistido"],
-      "weekly_sets_specialisation": [14, 20],
-      "cues": ["Peito alto, calcanhares no chao", "Descer ate a anca ficar abaixo do joelho se sem dor", "Joelhos na direcao dos dedos"],
-      "mistakes": ["Amplitude curta", "Tronco a cair para a frente", "Calcanhares a levantar"],
-      "sources": ["https://peerj.com/articles/18904/", "https://journal.iusca.org/index.php/Journal/article/view/182", "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full"]
+      "bodyweight_progression": [
+        "Agachamento à cadeira",
+        "Agachamento profundo",
+        "Agachamento com pausa 3 s",
+        "Split squat",
+        "Agachamento búlgaro",
+        "Sissy squat assistido",
+        "Pistol assistido"
+      ],
+      "weekly_sets_specialisation": [
+        14,
+        20
+      ],
+      "cues": [
+        "Peito alto, calcanhares no chão",
+        "Descer até a anca ficar abaixo do joelho se sem dor",
+        "Joelhos na direção dos dedos"
+      ],
+      "mistakes": [
+        "Amplitude curta",
+        "Tronco a cair para a frente",
+        "Calcanhares a levantar"
+      ],
+      "sources": [
+        "https://peerj.com/articles/18904/",
+        "https://journal.iusca.org/index.php/Journal/article/view/182",
+        "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full"
+      ]
     },
     "hamstrings": {
       "label": "Isquiotibiais",
       "priority_exercises": [
-        {"name_pt": "Leg curl sentado", "equipment": ["machine"], "why": "Mais hipertrofia do que deitado (anca fletida)", "level": 1},
-        {"name_pt": "Peso morto romeno / stiff", "equipment": ["barbell", "dumbbells", "kettlebell"], "why": "Cresce semimembranoso; alongamento", "level": 2},
-        {"name_pt": "Nordico (assistido)", "equipment": ["none", "band"], "why": "Cresce semitendinoso; reduz lesoes", "level": 3},
-        {"name_pt": "Sliding leg curl", "equipment": ["none"], "why": "Alternativa sem maquina", "level": 2}
+        {
+          "name_pt": "Leg curl sentado",
+          "equipment": [
+            "machine"
+          ],
+          "why": "Mais hipertrofia do que deitado (anca fletida)",
+          "level": 1
+        },
+        {
+          "name_pt": "Peso morto romeno / stiff",
+          "equipment": [
+            "barbell",
+            "dumbbells",
+            "kettlebell"
+          ],
+          "why": "Cresce semimembranoso; alongamento",
+          "level": 2
+        },
+        {
+          "name_pt": "Nórdico (assistido)",
+          "equipment": [
+            "none",
+            "band"
+          ],
+          "why": "Cresce semitendinoso; reduz lesões",
+          "level": 3
+        },
+        {
+          "name_pt": "Sliding leg curl",
+          "equipment": [
+            "none"
+          ],
+          "why": "Alternativa sem máquina",
+          "level": 2
+        }
       ],
-      "bodyweight_progression": ["Ponte com pes na cadeira", "Ponte unilateral com pes na cadeira", "Sliding leg curl", "Nordico com banda", "Nordico"],
-      "weekly_sets_specialisation": [10, 16],
-      "cues": ["Anca para tras, joelhos ligeiramente fletidos", "Sentir o alongamento antes de subir", "No nordico, descer devagar com anca estendida"],
-      "mistakes": ["Costas redondas no RDL", "Joelhos bloqueados", "Nordico a dobrar na anca"],
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/33009197/", "https://journals.physiology.org/doi/full/10.1152/japplphysiol.00237.2025"]
+      "bodyweight_progression": [
+        "Ponte com pés na cadeira",
+        "Ponte unilateral com pés na cadeira",
+        "Sliding leg curl",
+        "Nórdico com banda",
+        "Nórdico"
+      ],
+      "weekly_sets_specialisation": [
+        10,
+        16
+      ],
+      "cues": [
+        "Anca para trás, joelhos ligeiramente fletidos",
+        "Sentir o alongamento antes de subir",
+        "No nórdico, descer devagar com anca estendida"
+      ],
+      "mistakes": [
+        "Costas redondas no RDL",
+        "Joelhos bloqueados",
+        "Nórdico a dobrar na anca"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/33009197/",
+        "https://journals.physiology.org/doi/full/10.1152/japplphysiol.00237.2025"
+      ]
     },
     "calves": {
-      "label": "Gemeos",
+      "label": "Gémeos",
       "priority_exercises": [
-        {"name_pt": "Elevacao de gemeos em pe com pausa em alongamento", "equipment": ["machine", "dumbbells", "none"], "why": "Em pe cresce mais gastrocnemio; pausa em baixo aumenta hipertrofia", "level": 1},
-        {"name_pt": "Elevacao de gemeos sentado", "equipment": ["machine", "dumbbells"], "why": "Solear", "level": 1},
-        {"name_pt": "Elevacao unilateral num degrau", "equipment": ["none"], "why": "Carga suficiente sem material", "level": 1}
+        {
+          "name_pt": "Elevação de gémeos em pé com pausa em alongamento",
+          "equipment": [
+            "machine",
+            "dumbbells",
+            "none"
+          ],
+          "why": "Em pé cresce mais gastrocnémio; pausa em baixo aumenta hipertrofia",
+          "level": 1
+        },
+        {
+          "name_pt": "Elevação de gémeos sentado",
+          "equipment": [
+            "machine",
+            "dumbbells"
+          ],
+          "why": "Solear",
+          "level": 1
+        },
+        {
+          "name_pt": "Elevação unilateral num degrau",
+          "equipment": [
+            "none"
+          ],
+          "why": "Carga suficiente sem material",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Bilateral no chao", "Bilateral no degrau com pausa 2 s", "Unilateral no degrau", "Unilateral com mochila"],
-      "weekly_sets_specialisation": [12, 20],
-      "cues": ["2 s de pausa em baixo", "Subir ate a ponta dos pes, sem ressaltar"],
-      "mistakes": ["Ressaltar", "Amplitude curta", "Joelhos a dobrar"],
-      "sources": ["https://journals.lww.com/nsca-jscr/fulltext/2023/09000/greater_gastrocnemius_muscle_hypertrophy_after.3.aspx", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10753835"]
+      "bodyweight_progression": [
+        "Bilateral no chão",
+        "Bilateral no degrau com pausa 2 s",
+        "Unilateral no degrau",
+        "Unilateral com mochila"
+      ],
+      "weekly_sets_specialisation": [
+        12,
+        20
+      ],
+      "cues": [
+        "2 s de pausa em baixo",
+        "Subir até à ponta dos pés, sem ressaltar"
+      ],
+      "mistakes": [
+        "Ressaltar",
+        "Amplitude curta",
+        "Joelhos a dobrar"
+      ],
+      "sources": [
+        "https://journals.lww.com/nsca-jscr/fulltext/2023/09000/greater_gastrocnemius_muscle_hypertrophy_after.3.aspx",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10753835"
+      ]
     },
     "chest": {
       "label": "Peito",
       "priority_exercises": [
-        {"name_pt": "Supino plano (barra/halteres)", "equipment": ["barbell", "dumbbells", "bench"], "why": "Peito medio e inferior", "level": 2},
-        {"name_pt": "Supino inclinado", "equipment": ["barbell", "dumbbells", "bench"], "why": "Mais crescimento do peito superior", "level": 2},
-        {"name_pt": "Flexoes com carga", "equipment": ["none"], "why": "Progressao equivalente ao supino", "level": 1},
-        {"name_pt": "Crossover / fly com alongamento", "equipment": ["cable", "dumbbells", "band"], "why": "Isolamento em alongamento", "level": 1}
+        {
+          "name_pt": "Supino plano (barra/halteres)",
+          "equipment": [
+            "barbell",
+            "dumbbells",
+            "bench"
+          ],
+          "why": "Peito médio e inferior",
+          "level": 2
+        },
+        {
+          "name_pt": "Supino inclinado",
+          "equipment": [
+            "barbell",
+            "dumbbells",
+            "bench"
+          ],
+          "why": "Mais crescimento do peito superior",
+          "level": 2
+        },
+        {
+          "name_pt": "Flexões com carga",
+          "equipment": [
+            "none"
+          ],
+          "why": "Progressão equivalente ao supino",
+          "level": 1
+        },
+        {
+          "name_pt": "Crossover / fly com alongamento",
+          "equipment": [
+            "cable",
+            "dumbbells",
+            "band"
+          ],
+          "why": "Isolamento em alongamento",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Flexoes na parede", "Flexoes inclinadas", "Flexoes de joelhos", "Flexoes", "Flexoes com pes elevados", "Flexoes com mochila", "Flexoes em deficit/argolas"],
-      "weekly_sets_specialisation": [12, 20],
-      "cues": ["Omoplatas retraidas e para baixo", "Cotovelos a 45-60 graus", "Descer ate sentir alongamento"],
-      "mistakes": ["Ombros a subir", "Amplitude curta", "Ressaltar a barra no peito"],
-      "sources": ["https://digitalcommons.wku.edu/ijes/vol13/iss6/12"]
+      "bodyweight_progression": [
+        "Flexões na parede",
+        "Flexões inclinadas",
+        "Flexões de joelhos",
+        "Flexões",
+        "Flexões com pés elevados",
+        "Flexões com mochila",
+        "Flexões em deficit/argolas"
+      ],
+      "weekly_sets_specialisation": [
+        12,
+        20
+      ],
+      "cues": [
+        "Omoplatas retraídas e para baixo",
+        "Cotovelos a 45-60 graus",
+        "Descer até sentir alongamento"
+      ],
+      "mistakes": [
+        "Ombros a subir",
+        "Amplitude curta",
+        "Ressaltar a barra no peito"
+      ],
+      "sources": [
+        "https://digitalcommons.wku.edu/ijes/vol13/iss6/12"
+      ]
     },
     "back": {
       "label": "Costas (dorsais e superior)",
       "priority_exercises": [
-        {"name_pt": "Puxada / pull-up pronado", "equipment": ["machine", "cable", "none"], "why": "Pega pronada ativa mais o grande dorsal", "level": 2},
-        {"name_pt": "Remada (barra, halter, cabo)", "equipment": ["barbell", "dumbbells", "cable"], "why": "Trapezio medio, romboides, deltoide posterior", "level": 2},
-        {"name_pt": "Remada invertida", "equipment": ["none"], "why": "Horizontal sem material", "level": 1},
-        {"name_pt": "Pull-over com halter", "equipment": ["dumbbells", "bench"], "why": "Dorsal em alongamento", "level": 1}
+        {
+          "name_pt": "Puxada / pull-up pronado",
+          "equipment": [
+            "machine",
+            "cable",
+            "none"
+          ],
+          "why": "Pega pronada ativa mais o grande dorsal",
+          "level": 2
+        },
+        {
+          "name_pt": "Remada (barra, halter, cabo)",
+          "equipment": [
+            "barbell",
+            "dumbbells",
+            "cable"
+          ],
+          "why": "Trapézio médio, romboides, deltoide posterior",
+          "level": 2
+        },
+        {
+          "name_pt": "Remada invertida",
+          "equipment": [
+            "none"
+          ],
+          "why": "Horizontal sem material",
+          "level": 1
+        },
+        {
+          "name_pt": "Pull-over com halter",
+          "equipment": [
+            "dumbbells",
+            "bench"
+          ],
+          "why": "Dorsal em alongamento",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Remada invertida na mesa/lencol", "Remada invertida pes elevados", "Pull-up negativo", "Pull-up com banda", "Pull-up"],
-      "weekly_sets_specialisation": [12, 20],
-      "cues": ["Cotovelos para os bolsos", "Peito para a barra", "Puxar com as omoplatas antes dos bracos"],
-      "mistakes": ["Encolher os ombros", "Balancar", "Puxar so com biceps"],
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/24662157/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/"]
+      "bodyweight_progression": [
+        "Remada invertida na mesa/lençol",
+        "Remada invertida pés elevados",
+        "Pull-up negativo",
+        "Pull-up com banda",
+        "Pull-up"
+      ],
+      "weekly_sets_specialisation": [
+        12,
+        20
+      ],
+      "cues": [
+        "Cotovelos para os bolsos",
+        "Peito para a barra",
+        "Puxar com as omoplatas antes dos braços"
+      ],
+      "mistakes": [
+        "Encolher os ombros",
+        "Balançar",
+        "Puxar só com bíceps"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/24662157/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/"
+      ]
     },
     "shoulders": {
-      "label": "Ombros (anterior, medio, posterior)",
+      "label": "Ombros (anterior, médio, posterior)",
       "priority_exercises": [
-        {"name_pt": "Press militar / halteres", "equipment": ["barbell", "dumbbells"], "why": "Deltoide anterior e medio", "level": 2},
-        {"name_pt": "Elevacao lateral", "equipment": ["dumbbells", "cable", "band"], "why": "Maior ativacao do deltoide medio; tolera muito volume", "level": 1},
-        {"name_pt": "Elevacao posterior / face pull", "equipment": ["dumbbells", "cable", "band"], "why": "Deltoide posterior e saude do ombro", "level": 1},
-        {"name_pt": "Pike push-up", "equipment": ["none"], "why": "Press sem material", "level": 2}
+        {
+          "name_pt": "Press militar / halteres",
+          "equipment": [
+            "barbell",
+            "dumbbells"
+          ],
+          "why": "Deltoide anterior e médio",
+          "level": 2
+        },
+        {
+          "name_pt": "Elevação lateral",
+          "equipment": [
+            "dumbbells",
+            "cable",
+            "band"
+          ],
+          "why": "Maior ativação do deltoide médio; tolera muito volume",
+          "level": 1
+        },
+        {
+          "name_pt": "Elevação posterior / face pull",
+          "equipment": [
+            "dumbbells",
+            "cable",
+            "band"
+          ],
+          "why": "Deltoide posterior e saúde do ombro",
+          "level": 1
+        },
+        {
+          "name_pt": "Pike push-up",
+          "equipment": [
+            "none"
+          ],
+          "why": "Press sem material",
+          "level": 2
+        }
       ],
-      "bodyweight_progression": ["Pike push-up", "Pike com pes elevados", "Handstand push-up na parede (parcial)", "Laterais com garrafas"],
-      "weekly_sets_specialisation": [12, 20],
-      "cues": ["Ombros longe das orelhas", "Nas laterais, ligeira rotacao interna e cotovelo quase estendido", "Press: costelas em baixo, gluteos apertados"],
-      "mistakes": ["Balancar o tronco", "Arquear a lombar no press", "Laterais acima do ombro com dor"],
-      "sources": ["https://www.sciencedirect.com/science/article/abs/pii/S1360859222001607", "https://johk.pl/wp-content/uploads/2023/04/10078-75-2020-v75-2020-01.pdf"]
+      "bodyweight_progression": [
+        "Pike push-up",
+        "Pike com pés elevados",
+        "Handstand push-up na parede (parcial)",
+        "Laterais com garrafas"
+      ],
+      "weekly_sets_specialisation": [
+        12,
+        20
+      ],
+      "cues": [
+        "Ombros longe das orelhas",
+        "Nas laterais, ligeira rotação interna e cotovelo quase estendido",
+        "Press: costelas em baixo, glúteos apertados"
+      ],
+      "mistakes": [
+        "Balançar o tronco",
+        "Arquear a lombar no press",
+        "Laterais acima do ombro com dor"
+      ],
+      "sources": [
+        "https://www.sciencedirect.com/science/article/abs/pii/S1360859222001607",
+        "https://johk.pl/wp-content/uploads/2023/04/10078-75-2020-v75-2020-01.pdf"
+      ]
     },
     "biceps": {
-      "label": "Biceps",
+      "label": "Bíceps",
       "priority_exercises": [
-        {"name_pt": "Curl inclinado", "equipment": ["dumbbells", "bench"], "why": "Biceps alongado; cresce porcao proximal", "level": 1},
-        {"name_pt": "Curl Scott (preacher)", "equipment": ["barbell", "dumbbells", "machine", "bench"], "why": "Cresce porcao distal e braquial", "level": 1},
-        {"name_pt": "Chin-up", "equipment": ["none"], "why": "Composto com carga alta", "level": 2},
-        {"name_pt": "Curl com banda ou mochila", "equipment": ["band", "none"], "why": "Sem halteres", "level": 1}
+        {
+          "name_pt": "Curl inclinado",
+          "equipment": [
+            "dumbbells",
+            "bench"
+          ],
+          "why": "Bíceps alongado; cresce porção proximal",
+          "level": 1
+        },
+        {
+          "name_pt": "Curl Scott (preacher)",
+          "equipment": [
+            "barbell",
+            "dumbbells",
+            "machine",
+            "bench"
+          ],
+          "why": "Cresce porção distal e braquial",
+          "level": 1
+        },
+        {
+          "name_pt": "Chin-up",
+          "equipment": [
+            "none"
+          ],
+          "why": "Composto com carga alta",
+          "level": 2
+        },
+        {
+          "name_pt": "Curl com banda ou mochila",
+          "equipment": [
+            "band",
+            "none"
+          ],
+          "why": "Sem halteres",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Curl isometrico com toalha", "Remada invertida supinada", "Chin-up negativo", "Chin-up"],
-      "weekly_sets_specialisation": [10, 18],
-      "cues": ["Cotovelos fixos", "Descer ate estender", "Metade inferior do movimento e a mais importante"],
-      "mistakes": ["Balancar", "Cotovelos a avancar", "Amplitude curta em baixo"],
-      "sources": ["https://www.researchgate.net/publication/388004281_Distinct_muscle_growth_and_strength_adaptations_after_preacher_and_incline_biceps_curl", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9960616/"]
+      "bodyweight_progression": [
+        "Curl isométrico com toalha",
+        "Remada invertida supinada",
+        "Chin-up negativo",
+        "Chin-up"
+      ],
+      "weekly_sets_specialisation": [
+        10,
+        18
+      ],
+      "cues": [
+        "Cotovelos fixos",
+        "Descer até estender",
+        "Metade inferior do movimento é a mais importante"
+      ],
+      "mistakes": [
+        "Balançar",
+        "Cotovelos a avançar",
+        "Amplitude curta em baixo"
+      ],
+      "sources": [
+        "https://www.researchgate.net/publication/388004281_Distinct_muscle_growth_and_strength_adaptations_after_preacher_and_incline_biceps_curl",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9960616/"
+      ]
     },
     "triceps": {
-      "label": "Triceps",
+      "label": "Tríceps",
       "priority_exercises": [
-        {"name_pt": "Extensao de triceps acima da cabeca", "equipment": ["dumbbells", "cable", "band"], "why": "Cabeca longa alongada: ~1,5x mais hipertrofia do que pushdown", "level": 1},
-        {"name_pt": "Press fechado / dips", "equipment": ["barbell", "bench", "none"], "why": "Carga alta", "level": 2},
-        {"name_pt": "Pushdown", "equipment": ["cable", "band"], "why": "Cabecas lateral e medial", "level": 1},
-        {"name_pt": "Flexoes diamante", "equipment": ["none"], "why": "Sem material", "level": 1}
+        {
+          "name_pt": "Extensão de tríceps acima da cabeça",
+          "equipment": [
+            "dumbbells",
+            "cable",
+            "band"
+          ],
+          "why": "Cabeça longa alongada: ~1,5x mais hipertrofia do que pushdown",
+          "level": 1
+        },
+        {
+          "name_pt": "Press fechado / dips",
+          "equipment": [
+            "barbell",
+            "bench",
+            "none"
+          ],
+          "why": "Carga alta",
+          "level": 2
+        },
+        {
+          "name_pt": "Pushdown",
+          "equipment": [
+            "cable",
+            "band"
+          ],
+          "why": "Cabeças lateral e medial",
+          "level": 1
+        },
+        {
+          "name_pt": "Flexões diamante",
+          "equipment": [
+            "none"
+          ],
+          "why": "Sem material",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Flexoes fechadas de joelhos", "Flexoes diamante", "Dips em banco", "Extensao de triceps com o corpo (mesa)", "Dips em paralelas"],
-      "weekly_sets_specialisation": [12, 20],
-      "cues": ["Cotovelos junto a cabeca na extensao", "Estender totalmente", "Descer ate alongar"],
-      "mistakes": ["Cotovelos a abrir", "Amplitude curta", "Ombros a subir"],
-      "sources": ["https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279", "https://pubmed.ncbi.nlm.nih.gov/35291645/"]
+      "bodyweight_progression": [
+        "Flexões fechadas de joelhos",
+        "Flexões diamante",
+        "Dips em banco",
+        "Extensão de tríceps com o corpo (mesa)",
+        "Dips em paralelas"
+      ],
+      "weekly_sets_specialisation": [
+        12,
+        20
+      ],
+      "cues": [
+        "Cotovelos junto à cabeça na extensão",
+        "Estender totalmente",
+        "Descer até alongar"
+      ],
+      "mistakes": [
+        "Cotovelos a abrir",
+        "Amplitude curta",
+        "Ombros a subir"
+      ],
+      "sources": [
+        "https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279",
+        "https://pubmed.ncbi.nlm.nih.gov/35291645/"
+      ]
     },
     "core": {
       "label": "Core / abdominais",
       "priority_exercises": [
-        {"name_pt": "Crunch com carga / cabo", "equipment": ["cable", "dumbbells", "none"], "why": "Ativacao proporcional a carga; segmento superior", "level": 1},
-        {"name_pt": "Elevacao de pernas / reverse crunch", "equipment": ["none", "bench"], "why": "Segmento inferior", "level": 2},
-        {"name_pt": "Prancha e prancha lateral", "equipment": ["none"], "why": "Anti-extensao e anti-flexao lateral; lombar", "level": 1},
-        {"name_pt": "Pallof press", "equipment": ["band", "cable"], "why": "Anti-rotacao", "level": 1},
-        {"name_pt": "Farmer carry", "equipment": ["dumbbells", "kettlebell"], "why": "Core e preensao", "level": 1}
+        {
+          "name_pt": "Crunch com carga / cabo",
+          "equipment": [
+            "cable",
+            "dumbbells",
+            "none"
+          ],
+          "why": "Ativação proporcional à carga; segmento superior",
+          "level": 1
+        },
+        {
+          "name_pt": "Elevação de pernas / reverse crunch",
+          "equipment": [
+            "none",
+            "bench"
+          ],
+          "why": "Segmento inferior",
+          "level": 2
+        },
+        {
+          "name_pt": "Prancha e prancha lateral",
+          "equipment": [
+            "none"
+          ],
+          "why": "Anti-extensão e anti-flexão lateral; lombar",
+          "level": 1
+        },
+        {
+          "name_pt": "Pallof press",
+          "equipment": [
+            "band",
+            "cable"
+          ],
+          "why": "Anti-rotação",
+          "level": 1
+        },
+        {
+          "name_pt": "Farmer carry",
+          "equipment": [
+            "dumbbells",
+            "kettlebell"
+          ],
+          "why": "Core e preensão",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Dead bug", "Prancha", "Hollow hold", "Ab wheel de joelhos", "Hanging knee raise", "Dragon flag negativo"],
-      "weekly_sets_specialisation": [6, 12],
-      "cues": ["Costelas para a bacia", "Expirar ao subir", "Lombar neutra nas pranchas"],
-      "mistakes": ["Flexores da anca a dominar", "Apneia", "Pescoco a puxar"],
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/19376473/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10824285/"]
+      "bodyweight_progression": [
+        "Dead bug",
+        "Prancha",
+        "Hollow hold",
+        "Ab wheel de joelhos",
+        "Hanging knee raise",
+        "Dragon flag negativo"
+      ],
+      "weekly_sets_specialisation": [
+        6,
+        12
+      ],
+      "cues": [
+        "Costelas para a bacia",
+        "Expirar ao subir",
+        "Lombar neutra nas pranchas"
+      ],
+      "mistakes": [
+        "Flexores da anca a dominar",
+        "Apneia",
+        "Pescoço a puxar"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/19376473/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10824285/"
+      ]
     },
     "forearms": {
-      "label": "Antebracos e preensao",
+      "label": "Antebraços e preensão",
       "priority_exercises": [
-        {"name_pt": "Curl de punho e curl de punho invertido", "equipment": ["dumbbells", "barbell", "band"], "why": "Maior hipertrofia de flexores/extensores", "level": 1},
-        {"name_pt": "Dead hang", "equipment": ["none"], "why": "Preensao isometrica e ombro", "level": 1},
-        {"name_pt": "Farmer carry", "equipment": ["dumbbells", "kettlebell"], "why": "Preensao sob carga", "level": 1},
-        {"name_pt": "Curl invertido / martelo", "equipment": ["dumbbells", "barbell"], "why": "Braquiorradial", "level": 1}
+        {
+          "name_pt": "Curl de punho e curl de punho invertido",
+          "equipment": [
+            "dumbbells",
+            "barbell",
+            "band"
+          ],
+          "why": "Maior hipertrofia de flexores/extensores",
+          "level": 1
+        },
+        {
+          "name_pt": "Dead hang",
+          "equipment": [
+            "none"
+          ],
+          "why": "Preensão isométrica e ombro",
+          "level": 1
+        },
+        {
+          "name_pt": "Farmer carry",
+          "equipment": [
+            "dumbbells",
+            "kettlebell"
+          ],
+          "why": "Preensão sob carga",
+          "level": 1
+        },
+        {
+          "name_pt": "Curl invertido / martelo",
+          "equipment": [
+            "dumbbells",
+            "barbell"
+          ],
+          "why": "Braquiorradial",
+          "level": 1
+        }
       ],
-      "bodyweight_progression": ["Dead hang 20 s", "Dead hang 60 s", "Dead hang unilateral assistido", "Carry com sacos de compras"],
-      "weekly_sets_specialisation": [6, 12],
-      "cues": ["Amplitude completa no punho", "Ombros ativos no dead hang"],
-      "mistakes": ["Amplitude curta", "Usar straps em tudo"],
-      "sources": ["https://www.strongerbyscience.com/grip/"]
+      "bodyweight_progression": [
+        "Dead hang 20 s",
+        "Dead hang 60 s",
+        "Dead hang unilateral assistido",
+        "Carry com sacos de compras"
+      ],
+      "weekly_sets_specialisation": [
+        6,
+        12
+      ],
+      "cues": [
+        "Amplitude completa no punho",
+        "Ombros ativos no dead hang"
+      ],
+      "mistakes": [
+        "Amplitude curta",
+        "Usar straps em tudo"
+      ],
+      "sources": [
+        "https://www.strongerbyscience.com/grip/"
+      ]
     }
   },
   "age_bands": {
     "child_6_12": {
-      "min": 6, "max": 12, "label": "Crianca (6-12)",
-      "rules": ["Formato de jogo e circuitos curtos; habilidades de movimento antes de carga.", "1-2 series de 8-15 reps, cargas leves, tecnica perfeita, supervisao de adulto.", "Meta OMS: 60 min/dia de atividade; forca/osso 3 dias/semana.", "Sem balanca, calorias, metas de peso ou linguagem de corpo.", "Sessoes de 15-25 min."],
-      "caps": {"max_sets_per_exercise": 2, "rir_min": 3, "no_max_tests": true, "plyo_sessions_per_week_max": 2, "no_calorie_counting": true, "session_minutes_max": 30},
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/24055781/", "https://pubmed.ncbi.nlm.nih.gov/22109781/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC7691077/"]
+      "min": 6,
+      "max": 12,
+      "label": "Criança (6-12)",
+      "rules": [
+        "Formato de jogo e circuitos curtos; habilidades de movimento antes de carga.",
+        "1-2 séries de 8-15 reps, cargas leves, técnica perfeita, supervisão de adulto.",
+        "Meta OMS: 60 min/dia de atividade; força/osso 3 dias/semana.",
+        "Sem balança, calorias, metas de peso ou linguagem de corpo.",
+        "Sessões de 15-25 min."
+      ],
+      "caps": {
+        "max_sets_per_exercise": 2,
+        "rir_min": 3,
+        "no_max_tests": true,
+        "plyo_sessions_per_week_max": 2,
+        "no_calorie_counting": true,
+        "session_minutes_max": 30
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/24055781/",
+        "https://pubmed.ncbi.nlm.nih.gov/22109781/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7691077/"
+      ]
     },
     "teen_13_17": {
-      "min": 13, "max": 17, "label": "Adolescente (13-17)",
-      "rules": ["Ver SCIENCE.md (d): 2-3 sessoes nao consecutivas, 1-3 series de 6-15, tecnica validada antes de carga.", "Sem 1RM antes dos 16; sem contagem de calorias nem metas de peso.", "Surto de crescimento ou dor no joelho/calcanhar (Osgood/Sever): reduzir saltos e corrida, manter forca, dor aceitavel ate 3-5/10 que passa em 24 h.", "Horas de treino organizado por semana nao devem exceder a idade."],
-      "caps": {"max_sets_per_exercise": 3, "rir_min": 2, "no_max_tests": true, "plyo_sessions_per_week_max": 2, "no_calorie_counting": true, "session_minutes_max": 60},
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/24055781/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC11032598/"]
+      "min": 13,
+      "max": 17,
+      "label": "Adolescente (13-17)",
+      "rules": [
+        "Ver SCIENCE.md (d): 2-3 sessões não consecutivas, 1-3 séries de 6-15, técnica validada antes de carga.",
+        "Sem 1RM antes dos 16; sem contagem de calorias nem metas de peso.",
+        "Surto de crescimento ou dor no joelho/calcanhar (Osgood/Sever): reduzir saltos e corrida, manter força, dor aceitável até 3-5/10 que passa em 24 h.",
+        "Horas de treino organizado por semana não devem exceder a idade."
+      ],
+      "caps": {
+        "max_sets_per_exercise": 3,
+        "rir_min": 2,
+        "no_max_tests": true,
+        "plyo_sessions_per_week_max": 2,
+        "no_calorie_counting": true,
+        "session_minutes_max": 60
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/24055781/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC11032598/"
+      ]
     },
     "adult_18_39": {
-      "min": 18, "max": 39, "label": "Adulto (18-39)",
-      "rules": ["Regras gerais de SCIENCE.md (a).", "Fase ideal para construir massa muscular e ossea."],
-      "caps": {"max_sets_per_exercise": 5, "rir_min": 0, "no_max_tests": false, "plyo_sessions_per_week_max": 3, "no_calorie_counting": false, "session_minutes_max": 90},
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/33239350/"]
+      "min": 18,
+      "max": 39,
+      "label": "Adulto (18-39)",
+      "rules": [
+        "Regras gerais de SCIENCE.md (a).",
+        "Fase ideal para construir massa muscular e óssea."
+      ],
+      "caps": {
+        "max_sets_per_exercise": 5,
+        "rir_min": 0,
+        "no_max_tests": false,
+        "plyo_sessions_per_week_max": 3,
+        "no_calorie_counting": false,
+        "session_minutes_max": 90
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/33239350/"
+      ]
     },
     "adult_40_64": {
-      "min": 40, "max": 64, "label": "Adulto (40-64)",
-      "rules": ["Mulheres: regras de perimenopausa de SCIENCE.md (b).", "Homens: marcadores metabolicos (cintura, PA, preensao, sit-to-stand).", "Preferir 2-3 sessoes full-body; progressao de carga mais gradual em tendoes (+2,5 % em vez de 5 %).", "Impacto so apos 4 semanas de forca e sem sintomas pelvicos/articulares."],
-      "caps": {"max_sets_per_exercise": 4, "rir_min": 1, "no_max_tests": false, "plyo_sessions_per_week_max": 2, "no_calorie_counting": false, "session_minutes_max": 75},
-      "sources": ["https://ncbi.nlm.nih.gov/pmc/articles/PMC5577843", "https://pubmed.ncbi.nlm.nih.gov/28975661/"]
+      "min": 40,
+      "max": 64,
+      "label": "Adulto (40-64)",
+      "rules": [
+        "Mulheres: regras de perimenopausa de SCIENCE.md (b).",
+        "Homens: marcadores metabólicos (cintura, PA, preensão, sit-to-stand).",
+        "Preferir 2-3 sessões full-body; progressão de carga mais gradual em tendões (+2,5 % em vez de 5 %).",
+        "Impacto só após 4 semanas de força e sem sintomas pélvicos/articulares."
+      ],
+      "caps": {
+        "max_sets_per_exercise": 4,
+        "rir_min": 1,
+        "no_max_tests": false,
+        "plyo_sessions_per_week_max": 2,
+        "no_calorie_counting": false,
+        "session_minutes_max": 75
+      },
+      "sources": [
+        "https://ncbi.nlm.nih.gov/pmc/articles/PMC5577843",
+        "https://pubmed.ncbi.nlm.nih.gov/28975661/"
+      ]
     },
     "older_65plus": {
-      "min": 65, "max": 120, "label": "65+",
-      "rules": ["Forca 2-3x/semana, 2-3 series x 8-12, comecar a 20-30 % 1RM e progredir ate 80 %.", "Potencia: concentrica rapida em 1-2 exercicios por sessao.", "Equilibrio e funcional em todas as sessoes; 3 h/semana somadas para prevencao de quedas.", "Proteina 1,2-1,6 g/kg; sem defices agressivos (>0,5 %/semana) sem aval.", "Sit-to-stand 30 s abaixo da norma ou marcha <0,8 m/s: modo cadeira e encaminhar a medico/fisioterapeuta.", "Manutencao requer mais volume do que em jovens (nao descer abaixo de 1/3 do volume habitual)."],
-      "caps": {"max_sets_per_exercise": 3, "rir_min": 2, "no_max_tests": true, "plyo_sessions_per_week_max": 1, "no_calorie_counting": false, "session_minutes_max": 60},
-      "sources": ["https://journals.lww.com/nsca-jscr/fulltext/2019/08000/resistance_training_for_older_adults__position.1.aspx", "https://pubmed.ncbi.nlm.nih.gov/31792067/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC6322506/", "https://www.cdc.gov/steadi/media/pdfs/STEADI-Assessment-30Sec-508.pdf", "https://pubmed.ncbi.nlm.nih.gov/21131862/"]
+      "min": 65,
+      "max": 120,
+      "label": "65+",
+      "rules": [
+        "Força 2-3x/semana, 2-3 séries x 8-12, começar a 20-30 % 1RM e progredir até 80 %.",
+        "Potência: concêntrica rápida em 1-2 exercícios por sessão.",
+        "Equilíbrio e funcional em todas as sessões; 3 h/semana somadas para prevenção de quedas.",
+        "Proteína 1,2-1,6 g/kg; sem défices agressivos (>0,5 %/semana) sem aval.",
+        "Sit-to-stand 30 s abaixo da norma ou marcha <0,8 m/s: modo cadeira e encaminhar a médico/fisioterapeuta.",
+        "Manutenção requer mais volume do que em jovens (não descer abaixo de 1/3 do volume habitual)."
+      ],
+      "caps": {
+        "max_sets_per_exercise": 3,
+        "rir_min": 2,
+        "no_max_tests": true,
+        "plyo_sessions_per_week_max": 1,
+        "no_calorie_counting": false,
+        "session_minutes_max": 60
+      },
+      "sources": [
+        "https://journals.lww.com/nsca-jscr/fulltext/2019/08000/resistance_training_for_older_adults__position.1.aspx",
+        "https://pubmed.ncbi.nlm.nih.gov/31792067/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6322506/",
+        "https://www.cdc.gov/steadi/media/pdfs/STEADI-Assessment-30Sec-508.pdf",
+        "https://pubmed.ncbi.nlm.nih.gov/21131862/"
+      ]
     }
   },
   "conditions": {
     "chronic_low_back_pain": {
-      "label": "Lombalgia cronica nao especifica", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["loaded_spinal_flexion_early", "max_valsalva", "end_range_extension_loaded"],
-      "avoid_exercises_pt": ["Good morning com carga", "Sit-up com carga", "Peso morto pesado nas primeiras 4 semanas"],
-      "prefer_exercises_pt": ["Bird-dog", "Prancha lateral", "Curl-up McGill", "Hip hinge com bastao", "RDL com kettlebell", "Caminhada", "Prensa de pernas", "Remada com apoio do peito"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "pain_free", "cardio_bias": true, "session_minutes_max": 60},
-      "helpful": ["Forca, Pilates, estabilizacao e aerobio sao todos eficazes; manter-se ativo e melhor do que repouso.", "Dor ate 3-5/10 que baixa em 24 h e aceitavel.", "Progredir o hinge ao longo de 6-8 semanas ate peso morto."],
-      "red_flags": ["Dor noturna que nao alivia", "Perda de peso ou febre", "Alteracoes urinarias/intestinais ou anestesia em sela", "Fraqueza progressiva nas pernas"],
-      "explain_pt": "Mexer e fortalecer e o melhor tratamento para a lombalgia. Comecamos com exercicios de resistencia do tronco e um padrao de dobrar a anca seguro, e subimos a carga devagar.",
-      "sources": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC7588406/", "https://www.nice.org.uk/guidance/ng59/chapter/recommendations", "https://www.acefitness.org/resources/pros/expert-articles/7077/low-back-exercises-stuart-mcgill-s-big-three/"]
+      "label": "Lombalgia crónica não específica",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "loaded_spinal_flexion_early",
+        "max_valsalva",
+        "end_range_extension_loaded"
+      ],
+      "avoid_exercises_pt": [
+        "Good morning com carga",
+        "Sit-up com carga",
+        "Peso morto pesado nas primeiras 4 semanas"
+      ],
+      "prefer_exercises_pt": [
+        "Bird-dog",
+        "Prancha lateral",
+        "Curl-up McGill",
+        "Hip hinge com bastão",
+        "RDL com kettlebell",
+        "Caminhada",
+        "Prensa de pernas",
+        "Remada com apoio do peito"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "pain_free",
+        "cardio_bias": true,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Força, Pilates, estabilização e aeróbio são todos eficazes; manter-se ativo é melhor do que repouso.",
+        "Dor até 3-5/10 que baixa em 24 h é aceitável.",
+        "Progredir o hinge ao longo de 6-8 semanas até peso morto."
+      ],
+      "red_flags": [
+        "Dor noturna que não alivia",
+        "Perda de peso ou febre",
+        "Alterações urinárias/intestinais ou anestesia em sela",
+        "Fraqueza progressiva nas pernas"
+      ],
+      "explain_pt": "Mexer e fortalecer é o melhor tratamento para a lombalgia. Começamos com exercícios de resistência do tronco e um padrão de dobrar a anca seguro, e subimos a carga devagar.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7588406/",
+        "https://www.nice.org.uk/guidance/ng59/chapter/recommendations",
+        "https://www.acefitness.org/resources/pros/expert-articles/7077/low-back-exercises-stuart-mcgill-s-big-three/"
+      ]
     },
     "disc_herniation_symptomatic": {
-      "label": "Hernia discal sintomatica", "category": "musculoskeletal", "requires_clearance": true,
-      "avoid_patterns": ["loaded_spinal_flexion", "flexion_rotation_loaded", "impact", "prolonged_sitting"],
-      "avoid_exercises_pt": ["Peso morto convencional pesado", "Crunch e sit-up", "Remada curvada sem apoio", "Saltos", "Twist russo com carga"],
-      "prefer_exercises_pt": ["Caminhada", "Extensao em decubito ventral (se centraliza a dor)", "Bird-dog", "Prancha lateral", "Prensa de pernas com amplitude confortavel", "Remada com apoio do peito", "Puxada"],
-      "modifiers": {"intensity_cap_rir_min": 3, "no_breath_hold": true, "avoid_supine": false, "impact": "none", "range_of_motion": "pain_free", "cardio_bias": true, "session_minutes_max": 45},
-      "helpful": ["Conservador 6-8 semanas resolve a maioria; exercicio e manter-se ativo tem efeito semelhante.", "Progredir carga axial so quando a dor na perna desaparece."],
-      "red_flags": ["Anestesia em sela", "Retencao ou incontinencia urinaria/fecal", "Fraqueza progressiva do pe ou perna", "Dor bilateral nas pernas"],
-      "explain_pt": "Com hernia sintomatica evitamos dobrar e rodar a coluna com carga e saltos. Caminhar e fortalecer o tronco sem dor ajuda a recuperar.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/24239490/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10882128/", "https://www.researchgate.net/publication/280061492_Advice_to_Stay_Active_or_Structured_Exercise_in_the_Management_of_Sciatica_A_Systematic_Review_and_Meta-Analysis"]
+      "label": "Hérnia discal sintomática",
+      "category": "musculoskeletal",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "loaded_spinal_flexion",
+        "flexion_rotation_loaded",
+        "impact",
+        "prolonged_sitting"
+      ],
+      "avoid_exercises_pt": [
+        "Peso morto convencional pesado",
+        "Crunch e sit-up",
+        "Remada curvada sem apoio",
+        "Saltos",
+        "Twist russo com carga"
+      ],
+      "prefer_exercises_pt": [
+        "Caminhada",
+        "Extensão em decúbito ventral (se centraliza a dor)",
+        "Bird-dog",
+        "Prancha lateral",
+        "Prensa de pernas com amplitude confortável",
+        "Remada com apoio do peito",
+        "Puxada"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 3,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "none",
+        "range_of_motion": "pain_free",
+        "cardio_bias": true,
+        "session_minutes_max": 45
+      },
+      "helpful": [
+        "Conservador 6-8 semanas resolve a maioria; exercício e manter-se ativo têm efeito semelhante.",
+        "Progredir carga axial só quando a dor na perna desaparece."
+      ],
+      "red_flags": [
+        "Anestesia em sela",
+        "Retenção ou incontinência urinária/fecal",
+        "Fraqueza progressiva do pé ou perna",
+        "Dor bilateral nas pernas"
+      ],
+      "explain_pt": "Com hérnia sintomática evitamos dobrar e rodar a coluna com carga e saltos. Caminhar e fortalecer o tronco sem dor ajuda a recuperar.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/24239490/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10882128/",
+        "https://www.researchgate.net/publication/280061492_Advice_to_Stay_Active_or_Structured_Exercise_in_the_Management_of_Sciatica_A_Systematic_Review_and_Meta-Analysis"
+      ]
     },
     "sciatica": {
-      "label": "Ciatica", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["loaded_spinal_flexion", "impact", "prolonged_sitting"],
-      "avoid_exercises_pt": ["Peso morto pesado", "Crunch", "Saltos", "Alongamento agressivo do nervo"],
-      "prefer_exercises_pt": ["Caminhada", "Bird-dog", "Prancha lateral", "Ponte glutea", "Prensa de pernas", "Deslizamento neural suave"],
-      "modifiers": {"intensity_cap_rir_min": 3, "no_breath_hold": true, "avoid_supine": false, "impact": "none", "range_of_motion": "pain_free", "cardio_bias": true, "session_minutes_max": 45},
-      "helpful": ["Manter-se ativo e tao eficaz como exercicio estruturado; evitar repouso na cama.", "Se a dor 'centraliza' (sobe da perna para a coluna) o exercicio esta a ajudar."],
-      "red_flags": ["Anestesia em sela", "Incontinencia", "Fraqueza progressiva", "Dor bilateral"],
-      "explain_pt": "Na ciatica o objetivo e manter-se a andar e forte sem carregar a coluna em flexao. Os sintomas devem melhorar ao longo de 6 semanas.",
-      "sources": ["https://www.nice.org.uk/guidance/ng59/chapter/recommendations", "https://www.researchgate.net/publication/280061492_Advice_to_Stay_Active_or_Structured_Exercise_in_the_Management_of_Sciatica_A_Systematic_Review_and_Meta-Analysis"]
+      "label": "Ciática",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "loaded_spinal_flexion",
+        "impact",
+        "prolonged_sitting"
+      ],
+      "avoid_exercises_pt": [
+        "Peso morto pesado",
+        "Crunch",
+        "Saltos",
+        "Alongamento agressivo do nervo"
+      ],
+      "prefer_exercises_pt": [
+        "Caminhada",
+        "Bird-dog",
+        "Prancha lateral",
+        "Ponte glútea",
+        "Prensa de pernas",
+        "Deslizamento neural suave"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 3,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "none",
+        "range_of_motion": "pain_free",
+        "cardio_bias": true,
+        "session_minutes_max": 45
+      },
+      "helpful": [
+        "Manter-se ativo é tão eficaz como exercício estruturado; evitar repouso na cama.",
+        "Se a dor 'centraliza' (sobe da perna para a coluna) o exercício está a ajudar."
+      ],
+      "red_flags": [
+        "Anestesia em sela",
+        "Incontinência",
+        "Fraqueza progressiva",
+        "Dor bilateral"
+      ],
+      "explain_pt": "Na ciática o objetivo é manter-se a andar e forte sem carregar a coluna em flexão. Os sintomas devem melhorar ao longo de 6 semanas.",
+      "sources": [
+        "https://www.nice.org.uk/guidance/ng59/chapter/recommendations",
+        "https://www.researchgate.net/publication/280061492_Advice_to_Stay_Active_or_Structured_Exercise_in_the_Management_of_Sciatica_A_Systematic_Review_and_Meta-Analysis"
+      ]
     },
     "patellofemoral_pain": {
-      "label": "Dor patelofemoral (joelho anterior)", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["deep_knee_flexion_loaded_early", "impact", "downhill"],
-      "avoid_exercises_pt": ["Agachamento profundo com carga (fase dolorosa)", "Saltos", "Extensao de joelho em amplitude completa com carga alta", "Afundos profundos"],
-      "prefer_exercises_pt": ["Abducao de anca com banda", "Monster walk", "Clamshell", "Agachamento parcial 0-45 graus", "Prensa de pernas parcial", "Step-up baixo", "Hip thrust", "Isometrico de quadriceps a 60 graus"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "limited", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["Fortalecer anca e joelho e a recomendacao mais forte.", "Progredir profundidade 15 graus por semana se dor <=3/10.", "Bicicleta com selim alto e boa alternativa de cardio."],
-      "red_flags": ["Derrame ou inchaco do joelho", "Bloqueio ou falha do joelho", "Trauma recente"],
-      "explain_pt": "A dor a frente do joelho melhora com forca da anca e do quadriceps e com gestao da profundidade. Vamos aumentar a amplitude a medida que a dor baixa.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/29925502/"]
+      "label": "Dor patelofemoral (joelho anterior)",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "deep_knee_flexion_loaded_early",
+        "impact",
+        "downhill"
+      ],
+      "avoid_exercises_pt": [
+        "Agachamento profundo com carga (fase dolorosa)",
+        "Saltos",
+        "Extensão de joelho em amplitude completa com carga alta",
+        "Afundos profundos"
+      ],
+      "prefer_exercises_pt": [
+        "Abdução de anca com banda",
+        "Monster walk",
+        "Clamshell",
+        "Agachamento parcial 0-45 graus",
+        "Prensa de pernas parcial",
+        "Step-up baixo",
+        "Hip thrust",
+        "Isométrico de quadríceps a 60 graus"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "limited",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Fortalecer anca e joelho é a recomendação mais forte.",
+        "Progredir profundidade 15 graus por semana se dor <=3/10.",
+        "Bicicleta com selim alto é boa alternativa de cardio."
+      ],
+      "red_flags": [
+        "Derrame ou inchaço do joelho",
+        "Bloqueio ou falha do joelho",
+        "Trauma recente"
+      ],
+      "explain_pt": "A dor à frente do joelho melhora com força da anca e do quadríceps e com gestão da profundidade. Vamos aumentar a amplitude à medida que a dor baixa.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/29925502/"
+      ]
     },
     "knee_hip_osteoarthritis": {
-      "label": "Artrose do joelho ou anca", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["impact_in_flare", "deep_loaded_flexion_in_flare"],
-      "avoid_exercises_pt": ["Saltos", "Corrida em fase dolorosa", "Afundos profundos com dor"],
-      "prefer_exercises_pt": ["Sit-to-stand", "Prensa de pernas", "Bicicleta", "Marcha", "Exercicio em agua", "Step-up baixo", "Hip thrust", "Abducao de anca"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "pain_free", "cardio_bias": true, "session_minutes_max": 60},
-      "helpful": ["Exercicio de forca e aerobio e o tratamento central (OARSI).", "Perder >=10 % do peso reduz dor e carga articular; dieta + exercicio reduziu dor em 51 %.", "Dor ate 5/10 durante o exercicio e aceitavel se volta ao basal em 24 h."],
-      "red_flags": ["Articulacao quente e vermelha", "Derrame subito", "Febre"],
-      "explain_pt": "Na artrose o exercicio nao gasta a articulacao: fortalecer os musculos a volta e manter-se ativo reduz a dor. Escolhemos opcoes de baixo impacto.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/31278997/", "https://pubmed.ncbi.nlm.nih.gov/24065013/"]
+      "label": "Artrose do joelho ou anca",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "impact_in_flare",
+        "deep_loaded_flexion_in_flare"
+      ],
+      "avoid_exercises_pt": [
+        "Saltos",
+        "Corrida em fase dolorosa",
+        "Afundos profundos com dor"
+      ],
+      "prefer_exercises_pt": [
+        "Sit-to-stand",
+        "Prensa de pernas",
+        "Bicicleta",
+        "Marcha",
+        "Exercício em água",
+        "Step-up baixo",
+        "Hip thrust",
+        "Abdução de anca"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "pain_free",
+        "cardio_bias": true,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Exercício de força e aeróbio é o tratamento central (OARSI).",
+        "Perder >=10 % do peso reduz dor e carga articular; dieta + exercício reduziu dor em 51 %.",
+        "Dor até 5/10 durante o exercício é aceitável se volta ao basal em 24 h."
+      ],
+      "red_flags": [
+        "Articulação quente e vermelha",
+        "Derrame súbito",
+        "Febre"
+      ],
+      "explain_pt": "Na artrose o exercício não gasta a articulação: fortalecer os músculos à volta e manter-se ativo reduz a dor. Escolhemos opções de baixo impacto.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/31278997/",
+        "https://pubmed.ncbi.nlm.nih.gov/24065013/"
+      ]
     },
     "shoulder_rotator_cuff": {
-      "label": "Ombro (coifa dos rotadores / impingement)", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["overhead_in_flare", "behind_neck", "deep_horizontal_press_in_flare", "lateral_raise_above_shoulder_in_flare"],
-      "avoid_exercises_pt": ["Press militar (fase dolorosa)", "Puxada atras da nuca", "Elevacao lateral acima do ombro", "Supino profundo com barra", "Dips"],
-      "prefer_exercises_pt": ["Rotacao externa com banda", "Face pull", "Remada", "Press inclinado ligeiro com halteres", "Landmine press", "Elevacao escapular (Y, T)", "Flexoes na parede"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "ok", "range_of_motion": "pain_free", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["Exercicio e a primeira linha; nenhum programa e claramente superior.", "Progressao: isometricos -> banda -> halteres -> overhead quando dor <=3/10.", "Manter equilibrio 1:1 entre empurrar e puxar."],
-      "red_flags": ["Perda de forca subita apos trauma", "Dor noturna intensa e persistente", "Deformidade ou luxacao"],
-      "explain_pt": "O ombro melhora com exercicio progressivo. Evitamos movimentos acima da cabeca enquanto doi e reforcamos rotadores e omoplata.",
-      "sources": ["https://www.jospt.org/doi/10.2519/jospt.2024.12453", "https://www.sciencedirect.com/science/article/pii/S2666639124000129"]
+      "label": "Ombro (coifa dos rotadores / impingement)",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "overhead_in_flare",
+        "behind_neck",
+        "deep_horizontal_press_in_flare",
+        "lateral_raise_above_shoulder_in_flare"
+      ],
+      "avoid_exercises_pt": [
+        "Press militar (fase dolorosa)",
+        "Puxada atrás da nuca",
+        "Elevação lateral acima do ombro",
+        "Supino profundo com barra",
+        "Dips"
+      ],
+      "prefer_exercises_pt": [
+        "Rotação externa com banda",
+        "Face pull",
+        "Remada",
+        "Press inclinado ligeiro com halteres",
+        "Landmine press",
+        "Elevação escapular (Y, T)",
+        "Flexões na parede"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "pain_free",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Exercício é a primeira linha; nenhum programa é claramente superior.",
+        "Progressão: isométricos -> banda -> halteres -> overhead quando dor <=3/10.",
+        "Manter equilíbrio 1:1 entre empurrar e puxar."
+      ],
+      "red_flags": [
+        "Perda de força súbita após trauma",
+        "Dor noturna intensa e persistente",
+        "Deformidade ou luxação"
+      ],
+      "explain_pt": "O ombro melhora com exercício progressivo. Evitamos movimentos acima da cabeça enquanto dói e reforçamos rotadores e omoplata.",
+      "sources": [
+        "https://www.jospt.org/doi/10.2519/jospt.2024.12453",
+        "https://www.sciencedirect.com/science/article/pii/S2666639124000129"
+      ]
     },
     "tendinopathy": {
-      "label": "Tendinopatia (Aquiles, rotuliano, gluteo, cotovelo)", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["plyometrics_in_flare", "aggressive_stretching", "tendon_compression", "sudden_volume_spikes"],
-      "avoid_exercises_pt": ["Saltos e sprints (fase dolorosa)", "Alongamento estatico agressivo do tendao", "Cruzar pernas / deitar sobre a anca dolorosa (gluteo)"],
-      "prefer_exercises_pt": ["Isometricos 5x45 s a 70 % (dor)", "Heavy slow resistance 3 s/3 s", "Elevacao de gemeos lenta com carga", "Agachamento lento em declive", "Curl de punho lento"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "pain_free", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["Carga lenta e pesada 3x/semana durante 12 semanas iguala o excentrico com mais adesao.", "Isometricos reduzem a dor por 45 min e servem de aquecimento.", "Dor ate 3-5/10 que passa em 24 h e aceitavel; nao mudar muitas variaveis de uma vez."],
-      "red_flags": ["Dor subita com 'estalo'", "Incapacidade de suportar carga", "Inchaco subito"],
-      "explain_pt": "Os tendoes gostam de carga lenta e pesada. Comecamos com isometricos para a dor e progredimos para series lentas ao longo de 12 semanas.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/26018970/", "https://www.semanticscholar.org/paper/cff216ee0ba7739391e60aaff3f1bddb29638123"]
+      "label": "Tendinopatia (Aquiles, rotuliano, glúteo, cotovelo)",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "plyometrics_in_flare",
+        "aggressive_stretching",
+        "tendon_compression",
+        "sudden_volume_spikes"
+      ],
+      "avoid_exercises_pt": [
+        "Saltos e sprints (fase dolorosa)",
+        "Alongamento estático agressivo do tendão",
+        "Cruzar pernas / deitar sobre a anca dolorosa (glúteo)"
+      ],
+      "prefer_exercises_pt": [
+        "Isométricos 5x45 s a 70 % (dor)",
+        "Heavy slow resistance 3 s/3 s",
+        "Elevação de gémeos lenta com carga",
+        "Agachamento lento em declive",
+        "Curl de punho lento"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "pain_free",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Carga lenta e pesada 3x/semana durante 12 semanas iguala o excêntrico com mais adesão.",
+        "Isométricos reduzem a dor por 45 min e servem de aquecimento.",
+        "Dor até 3-5/10 que passa em 24 h é aceitável; não mudar muitas variáveis de uma vez."
+      ],
+      "red_flags": [
+        "Dor súbita com 'estalo'",
+        "Incapacidade de suportar carga",
+        "Inchaço súbito"
+      ],
+      "explain_pt": "Os tendões gostam de carga lenta e pesada. Começamos com isométricos para a dor e progredimos para séries lentas ao longo de 12 semanas.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/26018970/",
+        "https://www.semanticscholar.org/paper/cff216ee0ba7739391e60aaff3f1bddb29638123"
+      ]
     },
     "plantar_fasciitis": {
-      "label": "Fascite plantar", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["impact_in_flare", "sudden_walking_volume_increase"],
-      "avoid_exercises_pt": ["Corrida e saltos (fase dolorosa)", "Burpees"],
-      "prefer_exercises_pt": ["Elevacao de gemeos unilateral com toalha sob os dedos (3 s/2 s/3 s)", "Bicicleta", "Remo", "Forca de membros inferiores sentada"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "none", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["Forca de alta carga em dias alternados, progressao 12RM -> 8RM, superou o alongamento aos 3 meses.", "Calcado com suporte; reduzir volume de marcha temporariamente."],
-      "red_flags": ["Dormencia no pe", "Dor noturna em repouso", "Inchaco"],
-      "explain_pt": "A fascite plantar responde a forca lenta e pesada dos gemeos com os dedos elevados, feita em dias alternados.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/25145882/"]
+      "label": "Fascite plantar",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "impact_in_flare",
+        "sudden_walking_volume_increase"
+      ],
+      "avoid_exercises_pt": [
+        "Corrida e saltos (fase dolorosa)",
+        "Burpees"
+      ],
+      "prefer_exercises_pt": [
+        "Elevação de gémeos unilateral com toalha sob os dedos (3 s/2 s/3 s)",
+        "Bicicleta",
+        "Remo",
+        "Força de membros inferiores sentada"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "none",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Força de alta carga em dias alternados, progressão 12RM -> 8RM, superou o alongamento aos 3 meses.",
+        "Calçado com suporte; reduzir volume de marcha temporariamente."
+      ],
+      "red_flags": [
+        "Dormência no pé",
+        "Dor noturna em repouso",
+        "Inchaço"
+      ],
+      "explain_pt": "A fascite plantar responde a força lenta e pesada dos gémeos com os dedos elevados, feita em dias alternados.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/25145882/"
+      ]
     },
     "neck_pain_desk": {
-      "label": "Dor cervical (trabalho sentado)", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["axial_neck_loading", "behind_neck"],
-      "avoid_exercises_pt": ["Puxada atras da nuca", "Ponte de pescoco", "Agachamento com barra alta se dor aguda"],
-      "prefer_exercises_pt": ["Elevacao lateral com banda ate a falha (2 min/dia)", "Face pull", "Remada", "Shrug", "Retracao cervical", "Pausas de movimento a cada 30-60 min"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": false, "avoid_supine": false, "impact": "ok", "range_of_motion": "pain_free", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["2 min/dia de elevacao lateral com banda, 5x/semana, reduz dor em 10 semanas.", "Forca de ombro/trapezio e mais eficaz do que alongamento."],
-      "red_flags": ["Dormencia ou fraqueza nos bracos", "Dor apos trauma", "Cefaleia subita intensa"],
-      "explain_pt": "A dor cervical de secretaria melhora com forca dos ombros e trapezio, mesmo em doses minusculas diarias.",
-      "sources": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC3892746/", "https://pubmed.ncbi.nlm.nih.gov/18461010/"]
+      "label": "Dor cervical (trabalho sentado)",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "axial_neck_loading",
+        "behind_neck"
+      ],
+      "avoid_exercises_pt": [
+        "Puxada atrás da nuca",
+        "Ponte de pescoço",
+        "Agachamento com barra alta se dor aguda"
+      ],
+      "prefer_exercises_pt": [
+        "Elevação lateral com banda até à falha (2 min/dia)",
+        "Face pull",
+        "Remada",
+        "Shrug",
+        "Retração cervical",
+        "Pausas de movimento a cada 30-60 min"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "pain_free",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "2 min/dia de elevação lateral com banda, 5x/semana, reduz dor em 10 semanas.",
+        "Força de ombro/trapézio é mais eficaz do que alongamento."
+      ],
+      "red_flags": [
+        "Dormência ou fraqueza nos braços",
+        "Dor após trauma",
+        "Cefaleia súbita intensa"
+      ],
+      "explain_pt": "A dor cervical de secretária melhora com força dos ombros e trapézio, mesmo em doses minúsculas diárias.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3892746/",
+        "https://pubmed.ncbi.nlm.nih.gov/18461010/"
+      ]
     },
     "hypertension": {
-      "label": "Hipertensao", "category": "cardiometabolic", "requires_clearance": false,
-      "avoid_patterns": ["valsalva", "max_isometrics", "loads_below_5RM_early", "inverted_positions"],
-      "avoid_exercises_pt": ["Testes de 1RM", "Isometricos maximos prolongados", "Prensa com pernas acima da cabeca", "Handstand"],
-      "prefer_exercises_pt": ["Marcha rapida", "Bicicleta", "Circuito de forca 8-12 reps", "Remada", "Prensa de pernas", "Isometrico de preensao submaximo (2 min x4)"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": true, "avoid_supine": false, "impact": "ok", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 60},
-      "helpful": ["Aerobio e/ou forca reduzem a PA 5-8 mmHg; 90-150 min/semana.", "Expirar sempre na fase de esforco.", "Medir PA antes: >=180/110 nao treinar; >160/100 requer aval medico.", "Sodio <2 g/dia."],
-      "red_flags": ["Dor toracica", "Cefaleia intensa", "Visao turva", "Dispneia desproporcionada", "PA >=180/110"],
-      "explain_pt": "O exercicio baixa a pressao arterial tanto como alguns medicamentos. Evitamos suster a respiracao e cargas maximas, e medimos a pressao antes de treinar.",
-      "sources": ["https://acsm.org/exercise-hypertension/", "https://www.acsm.org/wp-content/uploads/2025/01/fitt-recommendations-for-hypertension_update.pdf", "https://www.who.int/news-room/fact-sheets/detail/sodium-reduction"]
+      "label": "Hipertensão",
+      "category": "cardiometabolic",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "valsalva",
+        "max_isometrics",
+        "loads_below_5RM_early",
+        "inverted_positions"
+      ],
+      "avoid_exercises_pt": [
+        "Testes de 1RM",
+        "Isométricos máximos prolongados",
+        "Prensa com pernas acima da cabeça",
+        "Handstand"
+      ],
+      "prefer_exercises_pt": [
+        "Marcha rápida",
+        "Bicicleta",
+        "Circuito de força 8-12 reps",
+        "Remada",
+        "Prensa de pernas",
+        "Isométrico de preensão submáximo (2 min x4)"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Aeróbio e/ou força reduzem a PA 5-8 mmHg; 90-150 min/semana.",
+        "Expirar sempre na fase de esforço.",
+        "Medir PA antes: >=180/110 não treinar; >160/100 requer aval médico.",
+        "Sódio <2 g/dia."
+      ],
+      "red_flags": [
+        "Dor torácica",
+        "Cefaleia intensa",
+        "Visão turva",
+        "Dispneia desproporcionada",
+        "PA >=180/110"
+      ],
+      "explain_pt": "O exercício baixa a pressão arterial tanto como alguns medicamentos. Evitamos suster a respiração e cargas máximas, e medimos a pressão antes de treinar.",
+      "sources": [
+        "https://acsm.org/exercise-hypertension/",
+        "https://www.acsm.org/wp-content/uploads/2025/01/fitt-recommendations-for-hypertension_update.pdf",
+        "https://www.who.int/news-room/fact-sheets/detail/sodium-reduction"
+      ]
     },
     "type2_diabetes": {
-      "label": "Diabetes tipo 2", "category": "cardiometabolic", "requires_clearance": true,
-      "avoid_patterns": ["valsalva_if_retinopathy", "impact_if_neuropathy", "fasting_training_on_insulin"],
-      "avoid_exercises_pt": ["Saltos com neuropatia periferica", "Treino em jejum com insulina/sulfonilureias", "Isometricos maximos com retinopatia proliferativa"],
-      "prefer_exercises_pt": ["Marcha 2-5 min apos refeicoes", "Forca 2-3x/semana em dias nao consecutivos", "Bicicleta", "Circuito de forca antes do aerobio"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": true, "avoid_supine": false, "impact": "low", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 75},
-      "helpful": ["150 min aerobio + forca 2-3x/semana; nunca mais de 2 dias seguidos sem atividade; interromper o sentar a cada 30 min.", "Glicemia <90 mg/dL antes: comer 15-30 g de hidratos; >250 com cetonas ou >300: nao treinar.", "Forca antes do aerobio reduz hipoglicemia.", "Verificar os pes apos cada sessao."],
-      "red_flags": ["Hipoglicemia recorrente", "Feridas nos pes", "Dor toracica", "Visao subitamente turva"],
-      "explain_pt": "Forca e caminhadas apos as refeicoes sao dos melhores 'medicamentos' para a diabetes. Se usa insulina, vamos verificar a glicemia antes de treinar.",
-      "sources": ["https://diabetesjournals.org/care/article/39/11/2065/37249/"]
+      "label": "Diabetes tipo 2",
+      "category": "cardiometabolic",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "valsalva_if_retinopathy",
+        "impact_if_neuropathy",
+        "fasting_training_on_insulin"
+      ],
+      "avoid_exercises_pt": [
+        "Saltos com neuropatia periférica",
+        "Treino em jejum com insulina/sulfonilureias",
+        "Isométricos máximos com retinopatia proliferativa"
+      ],
+      "prefer_exercises_pt": [
+        "Marcha 2-5 min após refeições",
+        "Força 2-3x/semana em dias não consecutivos",
+        "Bicicleta",
+        "Circuito de força antes do aeróbio"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 75
+      },
+      "helpful": [
+        "150 min aeróbio + força 2-3x/semana; nunca mais de 2 dias seguidos sem atividade; interromper o sentar a cada 30 min.",
+        "Glicemia <90 mg/dL antes: comer 15-30 g de hidratos; >250 com cetonas ou >300: não treinar.",
+        "Força antes do aeróbio reduz hipoglicemia.",
+        "Verificar os pés após cada sessão."
+      ],
+      "red_flags": [
+        "Hipoglicemia recorrente",
+        "Feridas nos pés",
+        "Dor torácica",
+        "Visão subitamente turva"
+      ],
+      "explain_pt": "Força e caminhadas após as refeições são dos melhores 'medicamentos' para a diabetes. Se usa insulina, vamos verificar a glicemia antes de treinar.",
+      "sources": [
+        "https://diabetesjournals.org/care/article/39/11/2065/37249/"
+      ]
     },
     "prediabetes_metabolic_syndrome": {
-      "label": "Pre-diabetes / sindrome metabolica", "category": "cardiometabolic", "requires_clearance": false,
+      "label": "Pré-diabetes / síndrome metabólica",
+      "category": "cardiometabolic",
+      "requires_clearance": false,
       "avoid_patterns": [],
       "avoid_exercises_pt": [],
-      "prefer_exercises_pt": ["Marcha rapida 150 min/semana", "Forca 2-3x/semana", "Intervalos 10x1", "Marcha apos refeicoes"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": false, "avoid_supine": false, "impact": "ok", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 75},
-      "helpful": ["Perder 7 % do peso + 150 min/semana reduz a incidencia de diabetes 58 % (71 % em >60 anos).", "Aerobio + forca reduz a cintura ~3,8 cm."],
-      "red_flags": ["Sede e poliuria intensas", "Perda de peso involuntaria"],
-      "explain_pt": "Nesta fase o exercicio e a alimentacao podem reverter o risco. O foco e cintura, caminhadas e forca.",
-      "sources": ["https://diabetesjournals.org/care/article/25/12/2165/22085/", "https://ncbi.nlm.nih.gov/pmc/articles/PMC5577843"]
+      "prefer_exercises_pt": [
+        "Marcha rápida 150 min/semana",
+        "Força 2-3x/semana",
+        "Intervalos 10x1",
+        "Marcha após refeições"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 75
+      },
+      "helpful": [
+        "Perder 7 % do peso + 150 min/semana reduz a incidência de diabetes 58 % (71 % em >60 anos).",
+        "Aeróbio + força reduz a cintura ~3,8 cm."
+      ],
+      "red_flags": [
+        "Sede e poliúria intensas",
+        "Perda de peso involuntária"
+      ],
+      "explain_pt": "Nesta fase o exercício e a alimentação podem reverter o risco. O foco é cintura, caminhadas e força.",
+      "sources": [
+        "https://diabetesjournals.org/care/article/25/12/2165/22085/",
+        "https://ncbi.nlm.nih.gov/pmc/articles/PMC5577843"
+      ]
     },
     "obesity": {
-      "label": "Obesidade (IMC >=30)", "category": "cardiometabolic", "requires_clearance": false,
-      "avoid_patterns": ["high_impact", "prone_positions_if_uncomfortable", "long_sessions_early"],
-      "avoid_exercises_pt": ["Burpees", "Saltos", "Corrida (fase inicial)", "Flexoes no chao (usar parede/banco)"],
-      "prefer_exercises_pt": ["Marcha", "Bicicleta", "Remo", "Exercicio em agua", "Sit-to-stand", "Prensa de pernas", "Remada sentada", "Flexoes na parede", "Hip thrust"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "none", "range_of_motion": "pain_free", "cardio_bias": true, "session_minutes_max": 45},
-      "helpful": ["Forca + aerobio e a combinacao mais eficaz para composicao corporal.", "Comecar por 10 min e progredir tempo antes de intensidade; passos +1000/semana.", "Proteina 1,6-2,4 g/kg de peso ajustado; ritmo 0,5-1 %/semana.", "Exercicio na manutencao reduz o reganho em ~2,8 kg."],
-      "red_flags": ["Dispneia desproporcionada", "Dor toracica", "Dor articular aguda com inchaco", "IMC >=40 com sintomas: aval medico"],
-      "explain_pt": "Comecamos por opcoes que poupam as articulacoes e construimos o habito. A forca protege o musculo enquanto a gordura desce.",
-      "sources": ["https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0082853", "https://pubmed.ncbi.nlm.nih.gov/24065013/", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8953094/"]
+      "label": "Obesidade (IMC >=30)",
+      "category": "cardiometabolic",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "high_impact",
+        "prone_positions_if_uncomfortable",
+        "long_sessions_early"
+      ],
+      "avoid_exercises_pt": [
+        "Burpees",
+        "Saltos",
+        "Corrida (fase inicial)",
+        "Flexões no chão (usar parede/banco)"
+      ],
+      "prefer_exercises_pt": [
+        "Marcha",
+        "Bicicleta",
+        "Remo",
+        "Exercício em água",
+        "Sit-to-stand",
+        "Prensa de pernas",
+        "Remada sentada",
+        "Flexões na parede",
+        "Hip thrust"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "none",
+        "range_of_motion": "pain_free",
+        "cardio_bias": true,
+        "session_minutes_max": 45
+      },
+      "helpful": [
+        "Força + aeróbio é a combinação mais eficaz para composição corporal.",
+        "Começar por 10 min e progredir tempo antes de intensidade; passos +1000/semana.",
+        "Proteína 1,6-2,4 g/kg de peso ajustado; ritmo 0,5-1 %/semana.",
+        "Exercício na manutenção reduz o reganho em ~2,8 kg."
+      ],
+      "red_flags": [
+        "Dispneia desproporcionada",
+        "Dor torácica",
+        "Dor articular aguda com inchaço",
+        "IMC >=40 com sintomas: aval médico"
+      ],
+      "explain_pt": "Começamos por opções que poupam as articulações e construímos o hábito. A força protege o músculo enquanto a gordura desce.",
+      "sources": [
+        "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0082853",
+        "https://pubmed.ncbi.nlm.nih.gov/24065013/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8953094/"
+      ]
     },
     "glp1_medication": {
-      "label": "Em medicacao GLP-1 (semaglutido, tirzepatido)", "category": "cardiometabolic", "requires_clearance": false,
-      "avoid_patterns": ["aggressive_deficit", "training_dehydrated"],
-      "avoid_exercises_pt": ["HIIT intenso em dias de nausea"],
-      "prefer_exercises_pt": ["Forca 2-3x/semana full-body", "Marcha diaria", "Sit-to-stand", "Remada", "Prensa de pernas"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["15-40 % do peso perdido pode ser massa magra sem forca e proteina.", "Proteina >=1,2-1,6 g/kg, primeiro no prato; forca 2-3x/semana reduz a perda muscular para ~3 %.", "Hidratar; se nausea, sessao curta de forca em vez de cardio."],
-      "red_flags": ["Vomitos persistentes", "Dor abdominal intensa", "Tonturas ao levantar"],
-      "explain_pt": "Com estes medicamentos o apetite baixa muito; a prioridade e proteina e treino de forca para que o peso perdido seja gordura e nao musculo.",
-      "sources": ["https://dom-pubs.onlinelibrary.wiley.com/doi/10.1111/dom.15728", "https://pmc.ncbi.nlm.nih.gov/articles/PMC12536186/"]
+      "label": "Em medicação GLP-1 (semaglutido, tirzepatido)",
+      "category": "cardiometabolic",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "aggressive_deficit",
+        "training_dehydrated"
+      ],
+      "avoid_exercises_pt": [
+        "HIIT intenso em dias de náusea"
+      ],
+      "prefer_exercises_pt": [
+        "Força 2-3x/semana full-body",
+        "Marcha diária",
+        "Sit-to-stand",
+        "Remada",
+        "Prensa de pernas"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "15-40 % do peso perdido pode ser massa magra sem força e proteína.",
+        "Proteína >=1,2-1,6 g/kg, primeiro no prato; força 2-3x/semana reduz a perda muscular para ~3 %.",
+        "Hidratar; se náusea, sessão curta de força em vez de cardio."
+      ],
+      "red_flags": [
+        "Vómitos persistentes",
+        "Dor abdominal intensa",
+        "Tonturas ao levantar"
+      ],
+      "explain_pt": "Com estes medicamentos o apetite baixa muito; a prioridade é proteína e treino de força para que o peso perdido seja gordura e não músculo.",
+      "sources": [
+        "https://dom-pubs.onlinelibrary.wiley.com/doi/10.1111/dom.15728",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC12536186/"
+      ]
     },
     "osteoporosis": {
-      "label": "Osteoporose / osteopenia", "category": "musculoskeletal", "requires_clearance": true,
-      "avoid_patterns": ["loaded_spinal_flexion", "ballistic_rotation", "fall_risk_exercises", "high_impact_if_severe"],
-      "avoid_exercises_pt": ["Crunch e sit-up com carga", "Toe-touch com peso", "Twist russo", "Saltos de caixa (osteoporose grave)", "Remada curvada com costas redondas"],
-      "prefer_exercises_pt": ["Peso morto com hinge neutro", "Agachamento", "Press", "Puxada", "Bird-dog", "Prancha", "Saltos com queda (osteopenia)", "Marcha rapida", "Equilibrio"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["LIFTMOR: 2x/semana, 5x5 a >85 % 1RM + impacto, 8 meses, aumentou DMO sem fraturas sob supervisao.", "4-8 semanas de tecnica antes de cargas altas.", "Substituir flexao lombar carregada por anti-flexao."],
-      "red_flags": ["Dor dorsal subita (fratura vertebral)", "Perda de altura >2 cm", "Queda com dor persistente"],
-      "explain_pt": "O osso responde a carga pesada e a impacto bem feitos. Evitamos dobrar a coluna com peso e construimos a tecnica antes de carregar.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/28975661/"]
+      "label": "Osteoporose / osteopenia",
+      "category": "musculoskeletal",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "loaded_spinal_flexion",
+        "ballistic_rotation",
+        "fall_risk_exercises",
+        "high_impact_if_severe"
+      ],
+      "avoid_exercises_pt": [
+        "Crunch e sit-up com carga",
+        "Toe-touch com peso",
+        "Twist russo",
+        "Saltos de caixa (osteoporose grave)",
+        "Remada curvada com costas redondas"
+      ],
+      "prefer_exercises_pt": [
+        "Peso morto com hinge neutro",
+        "Agachamento",
+        "Press",
+        "Puxada",
+        "Bird-dog",
+        "Prancha",
+        "Saltos com queda (osteopenia)",
+        "Marcha rápida",
+        "Equilíbrio"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "LIFTMOR: 2x/semana, 5x5 a >85 % 1RM + impacto, 8 meses, aumentou DMO sem fraturas sob supervisão.",
+        "4-8 semanas de técnica antes de cargas altas.",
+        "Substituir flexão lombar carregada por anti-flexão."
+      ],
+      "red_flags": [
+        "Dor dorsal súbita (fratura vertebral)",
+        "Perda de altura >2 cm",
+        "Queda com dor persistente"
+      ],
+      "explain_pt": "O osso responde à carga pesada e a impacto bem feitos. Evitamos dobrar a coluna com peso e construímos a técnica antes de carregar.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/28975661/"
+      ]
     },
     "pregnancy": {
-      "label": "Gravidez", "category": "womens_health", "requires_clearance": true,
-      "avoid_patterns": ["contact", "fall_risk", "valsalva", "prolonged_supine_after_T1_if_symptomatic", "heat", "max_loads", "loaded_flexion_with_coning", "scuba"],
-      "avoid_exercises_pt": ["Desportos de contacto", "Equitacao, esqui, ciclismo de estrada tardio", "Testes de 1RM", "Crunch e prancha com coning", "Hot yoga", "Mergulho"],
-      "prefer_exercises_pt": ["Marcha", "Bicicleta estatica", "Natacao", "Agachamento", "Hip thrust", "Remada", "Press inclinado com halteres", "Pavimento pelvico", "Bird-dog"],
-      "modifiers": {"intensity_cap_rir_min": 3, "no_breath_hold": true, "avoid_supine": true, "impact": "low", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 45},
-      "helpful": ["150 min/semana moderado com forca; teste da fala / RPE 12-14.", "Quem ja era ativa pode manter intensidade habitual.", "Pavimento pelvico iniciado na gravidez previne incontinencia.", "Hidratar e evitar calor."],
-      "red_flags": ["Hemorragia vaginal", "Contracoes regulares dolorosas", "Perda de liquido", "Dispneia antes do esforco", "Tonturas ou desmaio", "Cefaleia", "Dor toracica", "Fraqueza muscular que afeta equilibrio", "Dor ou edema na barriga da perna", "Reducao de movimentos fetais"],
-      "explain_pt": "Exercicio na gravidez e seguro e recomendado quando nao ha complicacoes. Mantemos intensidade em que consegue falar, sem suster a respiracao nem risco de queda.",
-      "sources": ["https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2020/04/physical-activity-and-exercise-during-pregnancy-and-the-postpartum-period", "https://pubmed.ncbi.nlm.nih.gov/30297272/", "https://pubmed.ncbi.nlm.nih.gov/32378735/"]
+      "label": "Gravidez",
+      "category": "womens_health",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "contact",
+        "fall_risk",
+        "valsalva",
+        "prolonged_supine_after_T1_if_symptomatic",
+        "heat",
+        "max_loads",
+        "loaded_flexion_with_coning",
+        "scuba"
+      ],
+      "avoid_exercises_pt": [
+        "Desportos de contacto",
+        "Equitação, esqui, ciclismo de estrada tardio",
+        "Testes de 1RM",
+        "Crunch e prancha com coning",
+        "Hot yoga",
+        "Mergulho"
+      ],
+      "prefer_exercises_pt": [
+        "Marcha",
+        "Bicicleta estática",
+        "Natação",
+        "Agachamento",
+        "Hip thrust",
+        "Remada",
+        "Press inclinado com halteres",
+        "Pavimento pélvico",
+        "Bird-dog"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 3,
+        "no_breath_hold": true,
+        "avoid_supine": true,
+        "impact": "low",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 45
+      },
+      "helpful": [
+        "150 min/semana moderado com força; teste da fala / RPE 12-14.",
+        "Quem já era ativa pode manter intensidade habitual.",
+        "Pavimento pélvico iniciado na gravidez previne incontinência.",
+        "Hidratar e evitar calor."
+      ],
+      "red_flags": [
+        "Hemorragia vaginal",
+        "Contrações regulares dolorosas",
+        "Perda de líquido",
+        "Dispneia antes do esforço",
+        "Tonturas ou desmaio",
+        "Cefaleia",
+        "Dor torácica",
+        "Fraqueza muscular que afeta equilíbrio",
+        "Dor ou edema na barriga da perna",
+        "Redução de movimentos fetais"
+      ],
+      "explain_pt": "Exercício na gravidez é seguro e recomendado quando não há complicações. Mantemos intensidade em que consegue falar, sem suster a respiração nem risco de queda.",
+      "sources": [
+        "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2020/04/physical-activity-and-exercise-during-pregnancy-and-the-postpartum-period",
+        "https://pubmed.ncbi.nlm.nih.gov/30297272/",
+        "https://pubmed.ncbi.nlm.nih.gov/32378735/"
+      ]
     },
     "postpartum": {
-      "label": "Pos-parto (ate 6 meses)", "category": "womens_health", "requires_clearance": true,
-      "avoid_patterns": ["impact_before_12_weeks", "loaded_flexion_with_coning", "valsalva", "max_loads"],
-      "avoid_exercises_pt": ["Corrida e saltos antes das 12 semanas", "Crunch/sit-up com coning", "Testes de 1RM", "Burpees"],
-      "prefer_exercises_pt": ["Pavimento pelvico", "Respiracao diafragmatica", "Marcha", "Ponte glutea", "Agachamento", "Remada", "Dead bug", "Bird-dog", "Sit-to-stand unilateral"],
-      "modifiers": {"intensity_cap_rir_min": 3, "no_breath_hold": true, "avoid_supine": false, "impact": "none", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 40},
-      "helpful": ["Corrida so apos 12 semanas e avaliacao do pavimento pelvico; criterios: 20 sit-to-stand unilaterais, 30 s de corrida no lugar, 10 single-leg hops sem sintomas.", "Diastase: exercicio de transverso e pavimento pelvico; evitar coning.", "Cesariana: forca a partir das 6 semanas com aval."],
-      "red_flags": ["Hemorragia que aumenta", "Febre", "Dor pelvica intensa", "Incontinencia ou peso pelvico que nao melhora ate 12 semanas", "Sintomas de depressao pos-parto"],
-      "explain_pt": "Depois do parto reconstruimos o pavimento pelvico e o tronco antes de voltar a carga e ao impacto. A corrida espera pelas 12 semanas e por uma avaliacao.",
-      "sources": ["https://absolute.physio/wp-content/uploads/2019/09/returning-to-running-postnatal-guidelines.pdf", "https://pubmed.ncbi.nlm.nih.gov/34391661/"]
+      "label": "Pós-parto (até 6 meses)",
+      "category": "womens_health",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "impact_before_12_weeks",
+        "loaded_flexion_with_coning",
+        "valsalva",
+        "max_loads"
+      ],
+      "avoid_exercises_pt": [
+        "Corrida e saltos antes das 12 semanas",
+        "Crunch/sit-up com coning",
+        "Testes de 1RM",
+        "Burpees"
+      ],
+      "prefer_exercises_pt": [
+        "Pavimento pélvico",
+        "Respiração diafragmática",
+        "Marcha",
+        "Ponte glútea",
+        "Agachamento",
+        "Remada",
+        "Dead bug",
+        "Bird-dog",
+        "Sit-to-stand unilateral"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 3,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "none",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 40
+      },
+      "helpful": [
+        "Corrida só após 12 semanas e avaliação do pavimento pélvico; critérios: 20 sit-to-stand unilaterais, 30 s de corrida no lugar, 10 single-leg hops sem sintomas.",
+        "Diástase: exercício de transverso e pavimento pélvico; evitar coning.",
+        "Cesariana: força a partir das 6 semanas com aval."
+      ],
+      "red_flags": [
+        "Hemorragia que aumenta",
+        "Febre",
+        "Dor pélvica intensa",
+        "Incontinência ou peso pélvico que não melhora até 12 semanas",
+        "Sintomas de depressão pós-parto"
+      ],
+      "explain_pt": "Depois do parto reconstruímos o pavimento pélvico e o tronco antes de voltar à carga e ao impacto. A corrida espera pelas 12 semanas e por uma avaliação.",
+      "sources": [
+        "https://absolute.physio/wp-content/uploads/2019/09/returning-to-running-postnatal-guidelines.pdf",
+        "https://pubmed.ncbi.nlm.nih.gov/34391661/"
+      ]
     },
     "pelvic_floor_incontinence": {
-      "label": "Pavimento pelvico / incontinencia", "category": "womens_health", "requires_clearance": false,
-      "avoid_patterns": ["impact_until_controlled", "valsalva", "max_loads"],
-      "avoid_exercises_pt": ["Saltos e corrida (ate controlo)", "Saltar a corda", "Testes de 1RM", "Sit-up com carga"],
-      "prefer_exercises_pt": ["Treino do pavimento pelvico 3x8-12 contracoes/dia", "Step-up", "Agachamento", "Hip thrust", "Remada", "Bicicleta", "Natacao"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": true, "avoid_supine": false, "impact": "none", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["Treino do pavimento pelvico: 8x mais probabilidade de cura na incontinencia de esforco; >=12 semanas.", "Expirar no esforco; contrair o pavimento antes de levantar carga.", "Encaminhar a fisioterapia pelvica."],
-      "red_flags": ["Prolapso sintomatico", "Dor pelvica", "Sangue na urina"],
-      "explain_pt": "Os musculos do pavimento pelvico treinam-se como qualquer outro. Substituimos o impacto por forca ate haver controlo, e recomendamos fisioterapia pelvica.",
-      "sources": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC6428911/", "https://link.springer.com/article/10.2165/00007256-200434070-00004"]
+      "label": "Pavimento pélvico / incontinência",
+      "category": "womens_health",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "impact_until_controlled",
+        "valsalva",
+        "max_loads"
+      ],
+      "avoid_exercises_pt": [
+        "Saltos e corrida (até controlo)",
+        "Saltar à corda",
+        "Testes de 1RM",
+        "Sit-up com carga"
+      ],
+      "prefer_exercises_pt": [
+        "Treino do pavimento pélvico 3x8-12 contrações/dia",
+        "Step-up",
+        "Agachamento",
+        "Hip thrust",
+        "Remada",
+        "Bicicleta",
+        "Natação"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "none",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Treino do pavimento pélvico: 8x mais probabilidade de cura na incontinência de esforço; >=12 semanas.",
+        "Expirar no esforço; contrair o pavimento antes de levantar carga.",
+        "Encaminhar à fisioterapia pélvica."
+      ],
+      "red_flags": [
+        "Prolapso sintomático",
+        "Dor pélvica",
+        "Sangue na urina"
+      ],
+      "explain_pt": "Os músculos do pavimento pélvico treinam-se como qualquer outro. Substituímos o impacto por força até haver controlo, e recomendamos fisioterapia pélvica.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6428911/",
+        "https://link.springer.com/article/10.2165/00007256-200434070-00004"
+      ]
     },
     "asthma_eib": {
-      "label": "Asma / broncoconstricao induzida pelo exercicio", "category": "respiratory", "requires_clearance": false,
-      "avoid_patterns": ["cold_dry_air_unprotected", "sudden_max_effort_without_warmup"],
-      "avoid_exercises_pt": ["Sprints sem aquecimento", "Corrida ao ar livre em ar frio sem protecao"],
-      "prefer_exercises_pt": ["Aquecimento intervalado 10-15 min", "Natacao", "Bicicleta", "Forca", "Intervalos curtos apos aquecimento"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": false, "avoid_supine": false, "impact": "ok", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 75},
-      "helpful": ["Aquecimento intervalado cria periodo refratario de ~2 h.", "Broncodilatador pre-exercicio quando prescrito; inalador de alivio sempre a mao."],
-      "red_flags": ["Sibilancia que nao responde ao inalador", "Labios azulados", "Incapacidade de falar frases"],
-      "explain_pt": "Com asma pode treinar a intensidade alta; a chave e um aquecimento progressivo e ter o inalador a mao.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/23634861/"]
+      "label": "Asma / broncoconstrição induzida pelo exercício",
+      "category": "respiratory",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "cold_dry_air_unprotected",
+        "sudden_max_effort_without_warmup"
+      ],
+      "avoid_exercises_pt": [
+        "Sprints sem aquecimento",
+        "Corrida ao ar livre em ar frio sem proteção"
+      ],
+      "prefer_exercises_pt": [
+        "Aquecimento intervalado 10-15 min",
+        "Natação",
+        "Bicicleta",
+        "Força",
+        "Intervalos curtos após aquecimento"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 75
+      },
+      "helpful": [
+        "Aquecimento intervalado cria período refratário de ~2 h.",
+        "Broncodilatador pré-exercício quando prescrito; inalador de alívio sempre à mão."
+      ],
+      "red_flags": [
+        "Sibilância que não responde ao inalador",
+        "Lábios azulados",
+        "Incapacidade de falar frases"
+      ],
+      "explain_pt": "Com asma pode treinar a intensidade alta; a chave é um aquecimento progressivo e ter o inalador à mão.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/23634861/"
+      ]
     },
     "stable_heart_disease": {
-      "label": "Doenca cardiaca estavel", "category": "cardiometabolic", "requires_clearance": true,
-      "avoid_patterns": ["valsalva", "max_loads", "training_with_symptoms", "extreme_heat_cold", "hr_guided_if_beta_blocker"],
-      "avoid_exercises_pt": ["Testes de 1RM", "Isometricos maximos", "HIIT sem aval", "Handstand"],
-      "prefer_exercises_pt": ["Marcha", "Bicicleta", "Circuito de forca 30-60 % 1RM, 10-15 reps", "Remada sentada", "Prensa de pernas", "Aquecimento e arrefecimento de 10 min"],
-      "modifiers": {"intensity_cap_rir_min": 3, "no_breath_hold": true, "avoid_supine": false, "impact": "low", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 45},
-      "helpful": ["Requer aval medico e idealmente reabilitacao cardiaca.", "150 min moderado + forca >=3x/semana; RPE <=13.", "Betabloqueantes: usar RPE, nao FC.", "Nao treinar com sintomas nem 2 h apos refeicao pesada."],
-      "red_flags": ["Dor ou pressao toracica", "Dispneia subita", "Palpitacoes sustentadas", "Tontura ou sincope", "Sudacao fria"],
-      "explain_pt": "Com doenca cardiaca estavel o exercicio prolonga a vida, mas precisa de aval medico. Treinamos a intensidade moderada, sem suster a respiracao.",
-      "sources": ["https://academic.oup.com/eurheartj/article/42/1/17/5898937", "https://pubmed.ncbi.nlm.nih.gov/26473759/"]
+      "label": "Doença cardíaca estável",
+      "category": "cardiometabolic",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "valsalva",
+        "max_loads",
+        "training_with_symptoms",
+        "extreme_heat_cold",
+        "hr_guided_if_beta_blocker"
+      ],
+      "avoid_exercises_pt": [
+        "Testes de 1RM",
+        "Isométricos máximos",
+        "HIIT sem aval",
+        "Handstand"
+      ],
+      "prefer_exercises_pt": [
+        "Marcha",
+        "Bicicleta",
+        "Circuito de força 30-60 % 1RM, 10-15 reps",
+        "Remada sentada",
+        "Prensa de pernas",
+        "Aquecimento e arrefecimento de 10 min"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 3,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 45
+      },
+      "helpful": [
+        "Requer aval médico e idealmente reabilitação cardíaca.",
+        "150 min moderado + força >=3x/semana; RPE <=13.",
+        "Betabloqueantes: usar RPE, não FC.",
+        "Não treinar com sintomas nem 2 h após refeição pesada."
+      ],
+      "red_flags": [
+        "Dor ou pressão torácica",
+        "Dispneia súbita",
+        "Palpitações sustentadas",
+        "Tontura ou síncope",
+        "Sudação fria"
+      ],
+      "explain_pt": "Com doença cardíaca estável o exercício prolonga a vida, mas precisa de aval médico. Treinamos a intensidade moderada, sem suster a respiração.",
+      "sources": [
+        "https://academic.oup.com/eurheartj/article/42/1/17/5898937",
+        "https://pubmed.ncbi.nlm.nih.gov/26473759/"
+      ]
     },
     "anxiety_depression": {
-      "label": "Ansiedade / depressao", "category": "mental_health", "requires_clearance": false,
-      "avoid_patterns": ["all_or_nothing_scheduling"],
+      "label": "Ansiedade / depressão",
+      "category": "mental_health",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "all_or_nothing_scheduling"
+      ],
       "avoid_exercises_pt": [],
-      "prefer_exercises_pt": ["Marcha ao ar livre", "Forca 2-3x/semana", "Intervalos curtos", "Sessoes de 10 min quando a motivacao e baixa", "Treino em grupo/familia"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": false, "avoid_supine": false, "impact": "ok", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 75},
-      "helpful": ["Efeito medio na depressao (-0,43) e ansiedade (-0,42); maior com intensidade mais alta e programas de <=12 semanas.", "Complemento ao tratamento, nao substituto.", "Sessao minima conta; sem culpa por falhar."],
-      "red_flags": ["Ideacao suicida", "Incapacidade de cuidar de si", "Agravamento rapido"],
-      "explain_pt": "O exercicio e um tratamento com efeito real na ansiedade e depressao. Mantemos as sessoes curtas e faceis de cumprir nos dias dificeis.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/36796860/"]
+      "prefer_exercises_pt": [
+        "Marcha ao ar livre",
+        "Força 2-3x/semana",
+        "Intervalos curtos",
+        "Sessões de 10 min quando a motivação é baixa",
+        "Treino em grupo/família"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 75
+      },
+      "helpful": [
+        "Efeito médio na depressão (-0,43) e ansiedade (-0,42); maior com intensidade mais alta e programas de <=12 semanas.",
+        "Complemento ao tratamento, não substituto.",
+        "Sessão mínima conta; sem culpa por falhar."
+      ],
+      "red_flags": [
+        "Ideação suicida",
+        "Incapacidade de cuidar de si",
+        "Agravamento rápido"
+      ],
+      "explain_pt": "O exercício é um tratamento com efeito real na ansiedade e depressão. Mantemos as sessões curtas e fáceis de cumprir nos dias difíceis.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/36796860/"
+      ]
     },
     "insomnia": {
-      "label": "Insonia", "category": "mental_health", "requires_clearance": false,
-      "avoid_patterns": ["vigorous_within_1h_of_bed", "caffeine_within_6h_of_bed"],
-      "avoid_exercises_pt": ["HIIT na hora antes de deitar"],
-      "prefer_exercises_pt": ["Forca 2-3x/semana", "Marcha matinal a luz do dia", "Exercicio moderado ao fim da tarde"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": false, "avoid_supine": false, "impact": "ok", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 75},
-      "helpful": ["Forca 12 semanas melhora qualidade de sono e insonia.", "Exercicio ao fim do dia nao prejudica se termina 1-2 h antes de deitar.", "Nao agendar HIIT se sono <6 h registado."],
-      "red_flags": ["Sonolencia diurna com apneias (encaminhar)", "Insonia >3 meses sem avaliacao"],
-      "explain_pt": "Treinar regularmente melhora o sono. So evitamos treinos muito intensos mesmo antes de deitar.",
-      "sources": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9736460/", "https://www.dovepress.com/different-intensities-of-evening-exercise-on-sleep-in-healthy-adults-a-peer-reviewed-fulltext-article-NSS"]
+      "label": "Insónia",
+      "category": "mental_health",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "vigorous_within_1h_of_bed",
+        "caffeine_within_6h_of_bed"
+      ],
+      "avoid_exercises_pt": [
+        "HIIT na hora antes de deitar"
+      ],
+      "prefer_exercises_pt": [
+        "Força 2-3x/semana",
+        "Marcha matinal à luz do dia",
+        "Exercício moderado ao fim da tarde"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 75
+      },
+      "helpful": [
+        "Força 12 semanas melhora qualidade de sono e insónia.",
+        "Exercício ao fim do dia não prejudica se termina 1-2 h antes de deitar.",
+        "Não agendar HIIT se sono <6 h registado."
+      ],
+      "red_flags": [
+        "Sonolência diurna com apneias (encaminhar)",
+        "Insónia >3 meses sem avaliação"
+      ],
+      "explain_pt": "Treinar regularmente melhora o sono. Só evitamos treinos muito intensos mesmo antes de deitar.",
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9736460/",
+        "https://www.dovepress.com/different-intensities-of-evening-exercise-on-sleep-in-healthy-adults-a-peer-reviewed-fulltext-article-NSS"
+      ]
     },
     "hypermobility_heds": {
-      "label": "Hipermobilidade / SED hipermovel", "category": "musculoskeletal", "requires_clearance": false,
-      "avoid_patterns": ["end_range_loading", "joint_locking", "passive_stretching", "ballistic_loads", "rapid_position_changes_if_dysautonomia"],
-      "avoid_exercises_pt": ["Alongamento passivo", "Kipping pull-ups", "Snatch", "Bloquear cotovelos/joelhos com carga", "Yoga de amplitude extrema"],
-      "prefer_exercises_pt": ["Cadeia fechada (agachamento a cadeira, flexoes na parede)", "Maquinas", "Halteres leves com controlo", "Propriocepcao unipodal", "Remada", "Isometricos em amplitude media"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "limited", "cardio_bias": false, "session_minutes_max": 45},
-      "helpful": ["Forca e propriocepcao melhoram dor e estabilidade; ate forca pesada de ombro e tolerada com progressao.", "Parar 10-20 graus antes do fim da amplitude.", "Subir de posicao devagar e hidratar se disautonomia."],
-      "red_flags": ["Subluxacoes repetidas", "Taquicardia postural marcada", "Dor toracica"],
-      "explain_pt": "Nas articulacoes hipermoveis o objetivo e controlo, nao amplitude. Treinamos forca em amplitude media, com progressao lenta.",
-      "sources": ["https://www.ehlers-danlos.org/information/exercise-and-movement-for-adults-with-hypermobile-ehlers-danlos-syndrome-and-hypermobility-spectrum-disorders/", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7705859/"]
+      "label": "Hipermobilidade / SED hipermóvel",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "end_range_loading",
+        "joint_locking",
+        "passive_stretching",
+        "ballistic_loads",
+        "rapid_position_changes_if_dysautonomia"
+      ],
+      "avoid_exercises_pt": [
+        "Alongamento passivo",
+        "Kipping pull-ups",
+        "Snatch",
+        "Bloquear cotovelos/joelhos com carga",
+        "Yoga de amplitude extrema"
+      ],
+      "prefer_exercises_pt": [
+        "Cadeia fechada (agachamento à cadeira, flexões na parede)",
+        "Máquinas",
+        "Halteres leves com controlo",
+        "Propriocepção unipodal",
+        "Remada",
+        "Isométricos em amplitude média"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "limited",
+        "cardio_bias": false,
+        "session_minutes_max": 45
+      },
+      "helpful": [
+        "Força e propriocepção melhoram dor e estabilidade; até força pesada de ombro é tolerada com progressão.",
+        "Parar 10-20 graus antes do fim da amplitude.",
+        "Subir de posição devagar e hidratar se disautonomia."
+      ],
+      "red_flags": [
+        "Subluxações repetidas",
+        "Taquicardia postural marcada",
+        "Dor torácica"
+      ],
+      "explain_pt": "Nas articulações hipermóveis o objetivo é controlo, não amplitude. Treinamos força em amplitude média, com progressão lenta.",
+      "sources": [
+        "https://www.ehlers-danlos.org/information/exercise-and-movement-for-adults-with-hypermobile-ehlers-danlos-syndrome-and-hypermobility-spectrum-disorders/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7705859/"
+      ]
     },
     "scoliosis": {
-      "label": "Escoliose", "category": "musculoskeletal", "requires_clearance": false,
+      "label": "Escoliose",
+      "category": "musculoskeletal",
+      "requires_clearance": false,
       "avoid_patterns": [],
       "avoid_exercises_pt": [],
-      "prefer_exercises_pt": ["Forca geral simetrica", "Exercicios unilaterais equilibrados dos dois lados", "Prancha lateral", "Remada unilateral", "Natacao"],
-      "modifiers": {"intensity_cap_rir_min": 1, "no_breath_hold": false, "avoid_supine": false, "impact": "ok", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 75},
-      "helpful": ["Treino geral e desporto sao seguros e recomendados.", "Exercicios especificos (Schroth/PSSE) so com especialista, sobretudo em crescimento e curvas >20 graus."],
-      "red_flags": ["Progressao rapida da curva em adolescente", "Dor com sintomas neurologicos"],
-      "explain_pt": "A escoliose nao impede treinar; a forca geral e boa para a coluna. Se tem indicacao de exercicios especificos, fazemo-los em paralelo com o especialista.",
-      "sources": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5795289/"]
+      "prefer_exercises_pt": [
+        "Força geral simétrica",
+        "Exercícios unilaterais equilibrados dos dois lados",
+        "Prancha lateral",
+        "Remada unilateral",
+        "Natação"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 1,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 75
+      },
+      "helpful": [
+        "Treino geral e desporto são seguros e recomendados.",
+        "Exercícios específicos (Schroth/PSSE) só com especialista, sobretudo em crescimento e curvas >20 graus."
+      ],
+      "red_flags": [
+        "Progressão rápida da curva em adolescente",
+        "Dor com sintomas neurológicos"
+      ],
+      "explain_pt": "A escoliose não impede treinar; a força geral é boa para a coluna. Se tem indicação de exercícios específicos, fazemo-los em paralelo com o especialista.",
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5795289/"
+      ]
     },
     "migraine": {
-      "label": "Enxaqueca", "category": "other", "requires_clearance": false,
-      "avoid_patterns": ["sudden_max_effort", "valsalva_in_attack", "training_dehydrated_or_fasted_if_trigger"],
-      "avoid_exercises_pt": ["Sprints sem aquecimento", "Cargas maximas durante a crise"],
-      "prefer_exercises_pt": ["Aerobio moderado 3x/semana (bicicleta, marcha rapida)", "Forca moderada", "Aquecimento gradual de 10 min"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": true, "avoid_supine": false, "impact": "ok", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 60},
-      "helpful": ["Aerobio regular reduz ~0,6 dias de enxaqueca/mes e a intensidade, comparavel a topiramato.", "Hidratar e comer antes se jejum e gatilho."],
-      "red_flags": ["Pior dor de cabeca da vida", "Cefaleia com febre ou rigidez da nuca", "Cefaleia com defices neurologicos"],
-      "explain_pt": "O exercicio aerobio regular previne enxaquecas. Aquecemos devagar para nao desencadear crises.",
-      "sources": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6734345/"]
+      "label": "Enxaqueca",
+      "category": "other",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "sudden_max_effort",
+        "valsalva_in_attack",
+        "training_dehydrated_or_fasted_if_trigger"
+      ],
+      "avoid_exercises_pt": [
+        "Sprints sem aquecimento",
+        "Cargas máximas durante a crise"
+      ],
+      "prefer_exercises_pt": [
+        "Aeróbio moderado 3x/semana (bicicleta, marcha rápida)",
+        "Força moderada",
+        "Aquecimento gradual de 10 min"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "ok",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Aeróbio regular reduz ~0,6 dias de enxaqueca/mês e a intensidade, comparável a topiramato.",
+        "Hidratar e comer antes se jejum é gatilho."
+      ],
+      "red_flags": [
+        "Pior dor de cabeça da vida",
+        "Cefaleia com febre ou rigidez da nuca",
+        "Cefaleia com défices neurológicos"
+      ],
+      "explain_pt": "O exercício aeróbio regular previne enxaquecas. Aquecemos devagar para não desencadear crises.",
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6734345/"
+      ]
     },
     "fibromyalgia": {
-      "label": "Fibromialgia", "category": "other", "requires_clearance": false,
-      "avoid_patterns": ["rapid_progression", "high_intensity_early", "training_to_failure"],
-      "avoid_exercises_pt": ["HIIT (fase inicial)", "Series ate a falha", "Sessoes >45 min"],
-      "prefer_exercises_pt": ["Marcha ou bicicleta 10-20 min", "Exercicio em agua quente", "Forca leve 40-60 % 1RM", "Tai chi/yoga suave"],
-      "modifiers": {"intensity_cap_rir_min": 4, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "pain_free", "cardio_bias": true, "session_minutes_max": 30},
-      "helpful": ["Aerobio 20 min (ou 2x10), 2-3x/semana, melhora dor, depressao e qualidade de vida.", "Aumentar <=10 %/semana; dor pos-exercicio deve baixar em 24 h."],
-      "red_flags": ["Crise que nao cede em dias", "Sintomas novos ou neurologicos"],
-      "explain_pt": "Na fibromialgia o segredo e comecar muito leve e subir muito devagar. Pequenas doses regulares ganham a crises grandes.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/28636204/"]
+      "label": "Fibromialgia",
+      "category": "other",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "rapid_progression",
+        "high_intensity_early",
+        "training_to_failure"
+      ],
+      "avoid_exercises_pt": [
+        "HIIT (fase inicial)",
+        "Séries até à falha",
+        "Sessões >45 min"
+      ],
+      "prefer_exercises_pt": [
+        "Marcha ou bicicleta 10-20 min",
+        "Exercício em água quente",
+        "Força leve 40-60 % 1RM",
+        "Tai chi/yoga suave"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 4,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "pain_free",
+        "cardio_bias": true,
+        "session_minutes_max": 30
+      },
+      "helpful": [
+        "Aeróbio 20 min (ou 2x10), 2-3x/semana, melhora dor, depressão e qualidade de vida.",
+        "Aumentar <=10 %/semana; dor pós-exercício deve baixar em 24 h."
+      ],
+      "red_flags": [
+        "Crise que não cede em dias",
+        "Sintomas novos ou neurológicos"
+      ],
+      "explain_pt": "Na fibromialgia o segredo é começar muito leve e subir muito devagar. Pequenas doses regulares ganham a crises grandes.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/28636204/"
+      ]
     },
     "rheumatoid_arthritis": {
-      "label": "Artrite reumatoide", "category": "musculoskeletal", "requires_clearance": true,
-      "avoid_patterns": ["max_loads_on_deformed_joints", "axial_neck_loading", "impact_in_flare"],
-      "avoid_exercises_pt": ["Puxada atras da nuca", "Ponte de pescoco", "Testes de 1RM", "Saltos em surto"],
-      "prefer_exercises_pt": ["Forca com maquinas e bandas", "Isometricos em surto", "Bicicleta", "Exercicio em agua", "Mobilidade diaria"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "pain_free", "cardio_bias": true, "session_minutes_max": 60},
-      "helpful": ["Atividade fisica nas 4 componentes e segura e parte do tratamento padrao (EULAR).", "Em surto: reduzir carga na articulacao inflamada, manter amplitude e isometricos."],
-      "red_flags": ["Surto com febre", "Dor cervical com dormencia nos bracos", "Articulacao subitamente quente"],
-      "explain_pt": "Com artrite reumatoide o exercicio reduz a dor e a fadiga. Adaptamos a carga nos dias de surto sem parar por completo.",
-      "sources": ["https://ard.eular.org/article/S0003-4967(24)02411-7/abstract"]
+      "label": "Artrite reumatoide",
+      "category": "musculoskeletal",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "max_loads_on_deformed_joints",
+        "axial_neck_loading",
+        "impact_in_flare"
+      ],
+      "avoid_exercises_pt": [
+        "Puxada atrás da nuca",
+        "Ponte de pescoço",
+        "Testes de 1RM",
+        "Saltos em surto"
+      ],
+      "prefer_exercises_pt": [
+        "Força com máquinas e bandas",
+        "Isométricos em surto",
+        "Bicicleta",
+        "Exercício em água",
+        "Mobilidade diária"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "pain_free",
+        "cardio_bias": true,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Atividade física nas 4 componentes é segura e parte do tratamento padrão (EULAR).",
+        "Em surto: reduzir carga na articulação inflamada, manter amplitude e isométricos."
+      ],
+      "red_flags": [
+        "Surto com febre",
+        "Dor cervical com dormência nos braços",
+        "Articulação subitamente quente"
+      ],
+      "explain_pt": "Com artrite reumatoide o exercício reduz a dor e a fadiga. Adaptamos a carga nos dias de surto sem parar por completo.",
+      "sources": [
+        "https://ard.eular.org/article/S0003-4967(24)02411-7/abstract"
+      ]
     },
     "sarcopenia": {
-      "label": "Sarcopenia", "category": "other", "requires_clearance": false,
-      "avoid_patterns": ["aggressive_deficit", "long_detraining"],
-      "avoid_exercises_pt": ["Dietas de restricao sem forca"],
-      "prefer_exercises_pt": ["Sit-to-stand", "Prensa de pernas ou agachamento a cadeira", "Step-up", "Remada", "Press", "Potencia: sit-to-stand rapido", "Marcha"],
-      "modifiers": {"intensity_cap_rir_min": 2, "no_breath_hold": false, "avoid_supine": false, "impact": "low", "range_of_motion": "full", "cardio_bias": false, "session_minutes_max": 60},
-      "helpful": ["Forca e a recomendacao forte (ICFSR); proteina 1,2-1,5 g/kg.", "Potencia declina 2x mais depressa do que forca: incluir movimentos rapidos.", "Creatina 3-5 g/dia ajuda a forca de membros superiores."],
-      "red_flags": ["Perda de peso involuntaria >5 %", "Quedas", "Marcha <0,8 m/s"],
-      "explain_pt": "A perda de musculo com a idade trava-se com forca e proteina. Cada sessao inclui levantar-se da cadeira, empurrar e puxar.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/30498820/", "https://pubmed.ncbi.nlm.nih.gov/23867520/", "https://pubmed.ncbi.nlm.nih.gov/35953775/"]
+      "label": "Sarcopenia",
+      "category": "other",
+      "requires_clearance": false,
+      "avoid_patterns": [
+        "aggressive_deficit",
+        "long_detraining"
+      ],
+      "avoid_exercises_pt": [
+        "Dietas de restrição sem força"
+      ],
+      "prefer_exercises_pt": [
+        "Sit-to-stand",
+        "Prensa de pernas ou agachamento à cadeira",
+        "Step-up",
+        "Remada",
+        "Press",
+        "Potência: sit-to-stand rápido",
+        "Marcha"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 2,
+        "no_breath_hold": false,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "full",
+        "cardio_bias": false,
+        "session_minutes_max": 60
+      },
+      "helpful": [
+        "Força é a recomendação forte (ICFSR); proteína 1,2-1,5 g/kg.",
+        "Potência declina 2x mais depressa do que força: incluir movimentos rápidos.",
+        "Creatina 3-5 g/dia ajuda a força de membros superiores."
+      ],
+      "red_flags": [
+        "Perda de peso involuntária >5 %",
+        "Quedas",
+        "Marcha <0,8 m/s"
+      ],
+      "explain_pt": "A perda de músculo com a idade trava-se com força e proteína. Cada sessão inclui levantar-se da cadeira, empurrar e puxar.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/30498820/",
+        "https://pubmed.ncbi.nlm.nih.gov/23867520/",
+        "https://pubmed.ncbi.nlm.nih.gov/35953775/"
+      ]
     },
     "copd": {
-      "label": "DPOC", "category": "respiratory", "requires_clearance": true,
-      "avoid_patterns": ["valsalva", "training_in_exacerbation", "long_continuous_efforts_if_not_tolerated"],
-      "avoid_exercises_pt": ["Isometricos maximos", "HIIT longo"],
-      "prefer_exercises_pt": ["Marcha intervalada 1 min/1 min", "Bicicleta", "Forca com bandas 8-12 reps", "Sit-to-stand", "Respiracao com labios semicerrados"],
-      "modifiers": {"intensity_cap_rir_min": 3, "no_breath_hold": true, "avoid_supine": false, "impact": "low", "range_of_motion": "full", "cardio_bias": true, "session_minutes_max": 40},
-      "helpful": ["Reabilitacao pulmonar e a intervencao mais eficaz para a dispneia.", "Intensidade por dispneia Borg CR10 4-6; 3-5 sessoes/semana."],
-      "red_flags": ["SpO2 <88 %", "Dispneia em repouso", "Expetoracao purulenta ou febre (exacerbacao)"],
-      "explain_pt": "Na DPOC o exercicio reduz a falta de ar. Usamos intervalos curtos e forca leve, guiados pela sua sensacao de dispneia.",
-      "sources": ["https://publications.ersnet.org/content/errev/22/128/178"]
+      "label": "DPOC",
+      "category": "respiratory",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "valsalva",
+        "training_in_exacerbation",
+        "long_continuous_efforts_if_not_tolerated"
+      ],
+      "avoid_exercises_pt": [
+        "Isométricos máximos",
+        "HIIT longo"
+      ],
+      "prefer_exercises_pt": [
+        "Marcha intervalada 1 min/1 min",
+        "Bicicleta",
+        "Força com bandas 8-12 reps",
+        "Sit-to-stand",
+        "Respiração com lábios semicerrados"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 3,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "low",
+        "range_of_motion": "full",
+        "cardio_bias": true,
+        "session_minutes_max": 40
+      },
+      "helpful": [
+        "Reabilitação pulmonar é a intervenção mais eficaz para a dispneia.",
+        "Intensidade por dispneia Borg CR10 4-6; 3-5 sessões/semana."
+      ],
+      "red_flags": [
+        "SpO2 <88 %",
+        "Dispneia em repouso",
+        "Expetoração purulenta ou febre (exacerbação)"
+      ],
+      "explain_pt": "Na DPOC o exercício reduz a falta de ar. Usamos intervalos curtos e força leve, guiados pela sua sensação de dispneia.",
+      "sources": [
+        "https://publications.ersnet.org/content/errev/22/128/178"
+      ]
     },
     "recent_injury_post_surgery": {
-      "label": "Lesao recente / pos-cirurgia", "category": "musculoskeletal", "requires_clearance": true,
-      "avoid_patterns": ["loading_unreleased_region", "impact", "max_loads", "pain_provoking_ranges"],
-      "avoid_exercises_pt": ["Qualquer exercicio da regiao operada nao liberado pelo fisioterapeuta"],
-      "prefer_exercises_pt": ["Treino do membro contralateral", "Tronco e regioes nao afetadas", "Isometricos liberados", "Marcha ou bicicleta se permitido"],
-      "modifiers": {"intensity_cap_rir_min": 3, "no_breath_hold": true, "avoid_supine": false, "impact": "none", "range_of_motion": "limited", "cardio_bias": false, "session_minutes_max": 40},
-      "helpful": ["Diferir para fisioterapia; a app programa so o que foi liberado.", "Cronograma orientador: 1-3 semanas isometricos, 3-6 carga lenta, 6-12 forca pesada, depois impacto; cirurgia major 3-12 meses.", "Treinar o lado contralateral mantem forca."],
-      "red_flags": ["Dor a aumentar", "Derrame", "Febre", "Ferida com sinais de infecao", "Dormencia nova"],
-      "explain_pt": "Depois de uma lesao ou cirurgia seguimos o plano do fisioterapeuta e mantemos o resto do corpo a treinar.",
-      "sources": ["https://pubmed.ncbi.nlm.nih.gov/26473759/"]
+      "label": "Lesão recente / pós-cirurgia",
+      "category": "musculoskeletal",
+      "requires_clearance": true,
+      "avoid_patterns": [
+        "loading_unreleased_region",
+        "impact",
+        "max_loads",
+        "pain_provoking_ranges"
+      ],
+      "avoid_exercises_pt": [
+        "Qualquer exercício da região operada não liberado pelo fisioterapeuta"
+      ],
+      "prefer_exercises_pt": [
+        "Treino do membro contralateral",
+        "Tronco e regiões não afetadas",
+        "Isométricos liberados",
+        "Marcha ou bicicleta se permitido"
+      ],
+      "modifiers": {
+        "intensity_cap_rir_min": 3,
+        "no_breath_hold": true,
+        "avoid_supine": false,
+        "impact": "none",
+        "range_of_motion": "limited",
+        "cardio_bias": false,
+        "session_minutes_max": 40
+      },
+      "helpful": [
+        "Diferir para fisioterapia; a app programa só o que foi liberado.",
+        "Cronograma orientador: 1-3 semanas isométricos, 3-6 carga lenta, 6-12 força pesada, depois impacto; cirurgia major 3-12 meses.",
+        "Treinar o lado contralateral mantém força."
+      ],
+      "red_flags": [
+        "Dor a aumentar",
+        "Derrame",
+        "Febre",
+        "Ferida com sinais de infeção",
+        "Dormência nova"
+      ],
+      "explain_pt": "Depois de uma lesão ou cirurgia seguimos o plano do fisioterapeuta e mantemos o resto do corpo a treinar.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/26473759/"
+      ]
     }
   },
   "screening": {
     "parq_questions_pt": [
-      "O seu medico ja lhe disse que tem uma doenca cardiaca OU pressao arterial alta?",
-      "Sente dor no peito em repouso, nas atividades do dia a dia OU quando faz atividade fisica?",
-      "Perde o equilibrio por causa de tonturas OU perdeu a consciencia nos ultimos 12 meses?",
-      "Ja lhe foi diagnosticada outra doenca cronica (alem de doenca cardiaca ou pressao alta)?",
-      "Toma atualmente medicamentos receitados para uma doenca cronica?",
-      "Tem atualmente (ou teve nos ultimos 12 meses) um problema osseo, articular ou de tecidos moles que possa agravar com atividade fisica?",
-      "O seu medico ja lhe disse que so deve fazer atividade fisica com supervisao medica?"
+      "O seu médico já lhe disse que tem uma doença cardíaca OU pressão arterial alta?",
+      "Sente dor no peito em repouso, nas atividades do dia a dia OU quando faz atividade física?",
+      "Perde o equilíbrio por causa de tonturas OU perdeu a consciência nos últimos 12 meses?",
+      "Já lhe foi diagnosticada outra doença crónica (além de doença cardíaca ou pressão alta)?",
+      "Toma atualmente medicamentos receitados para uma doença crónica?",
+      "Tem atualmente (ou teve nos últimos 12 meses) um problema ósseo, articular ou de tecidos moles que possa agravar com atividade física?",
+      "O seu médico já lhe disse que só deve fazer atividade física com supervisão médica?"
     ],
-    "parq_positive_action_pt": "Respondeu sim a pelo menos uma pergunta: a app limita a intensidade a moderada (RIR >=3, sem intervalos vigorosos) ate confirmar aval medico ou responder as perguntas de seguimento do PAR-Q+.",
+    "parq_positive_action_pt": "Respondeu sim a pelo menos uma pergunta: a app limita a intensidade a moderada (RIR >=3, sem intervalos vigorosos) até confirmar aval médico ou responder às perguntas de seguimento do PAR-Q+.",
     "universal_red_flags_pt": [
-      "Dor, aperto ou pressao no peito, pescoco, maxilar ou bracos",
+      "Dor, aperto ou pressão no peito, pescoço, maxilar ou braços",
       "Desmaio ou quase desmaio",
-      "Falta de ar inexplicada ou desproporcionada ao esforco",
-      "Palpitacoes ou batimentos irregulares",
-      "Inchaco articular agudo ou articulacao quente",
-      "Febre ou infecao ativa",
+      "Falta de ar inexplicada ou desproporcionada ao esforço",
+      "Palpitações ou batimentos irregulares",
+      "Inchaço articular agudo ou articulação quente",
+      "Febre ou infeção ativa",
       "Hemorragia vaginal na gravidez",
-      "Dor de cabeca subita e muito intensa",
-      "Fraqueza ou dormencia subita",
-      "Inchaco dos tornozelos ou dor nas pernas ao caminhar"
+      "Dor de cabeça súbita e muito intensa",
+      "Fraqueza ou dormência súbita",
+      "Inchaço dos tornozelos ou dor nas pernas ao caminhar"
     ],
-    "sources": ["https://eparmedx.com/wp-content/uploads/2023/12/PARQPlus2024Fillable.pdf", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8350392/", "https://pubmed.ncbi.nlm.nih.gov/26473759/"]
+    "sources": [
+      "https://eparmedx.com/wp-content/uploads/2023/12/PARQPlus2024Fillable.pdf",
+      "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8350392/",
+      "https://pubmed.ncbi.nlm.nih.gov/26473759/"
+    ]
   },
   "programming": {
     "progression_rules": [
-      {"id": "double_progression", "rule_pt": "Quando todas as series atingem o topo do intervalo de reps com RIR >= alvo, subir a carga 2,5-5 % (2,5 % em >40 anos ou tendoes sensiveis) e voltar ao fundo do intervalo."},
-      {"id": "rir_autoregulation", "rule_pt": "Se RIR reportado >= alvo+2 em todas as series, +1 rep ou +2,5-5 % carga na sessao seguinte; se RIR 0 ou RPE >=9 em 2 sessoes seguidas, -20 % volume na semana seguinte."},
-      {"id": "bodyweight_progression", "rule_pt": "Sem carga externa: progredir pela lista bodyweight_progression do musculo quando atingir 15-20 reps limpas com RIR 2."},
-      {"id": "specialisation_block", "rule_pt": "Bloco de 6-8 semanas: musculo alvo +30-50 % series (usar weekly_sets_specialisation), restantes 4-6 series/semana; depois rodar ou voltar ao equilibrio."},
-      {"id": "pain_rule", "rule_pt": "Dor ate 3-5/10 que volta ao basal em 24 h e aceitavel em condicoes musculoesqueleticas; acima disso reduzir amplitude ou carga na sessao seguinte."},
-      {"id": "return_rule", "rule_pt": "Apos pausa >=3 semanas: 50 % das cargas na semana 1-2, 70-80 % na 3-4."}
+      {
+        "id": "double_progression",
+        "rule_pt": "Quando todas as séries atingem o topo do intervalo de reps com RIR >= alvo, subir a carga 2,5-5 % (2,5 % em >40 anos ou tendões sensíveis) e voltar ao fundo do intervalo."
+      },
+      {
+        "id": "rir_autoregulation",
+        "rule_pt": "Se RIR reportado >= alvo+2 em todas as séries, +1 rep ou +2,5-5 % carga na sessão seguinte; se RIR 0 ou RPE >=9 em 2 sessões seguidas, -20 % volume na semana seguinte."
+      },
+      {
+        "id": "bodyweight_progression",
+        "rule_pt": "Sem carga externa: progredir pela lista bodyweight_progression do músculo quando atingir 15-20 reps limpas com RIR 2."
+      },
+      {
+        "id": "specialisation_block",
+        "rule_pt": "Bloco de 6-8 semanas: músculo alvo +30-50 % séries (usar weekly_sets_specialisation), restantes 4-6 séries/semana; depois rodar ou voltar ao equilíbrio."
+      },
+      {
+        "id": "pain_rule",
+        "rule_pt": "Dor até 3-5/10 que volta ao basal em 24 h é aceitável em condições musculoesqueléticas; acima disso reduzir amplitude ou carga na sessão seguinte."
+      },
+      {
+        "id": "return_rule",
+        "rule_pt": "Após pausa >=3 semanas: 50 % das cargas na semana 1-2, 70-80 % na 3-4."
+      }
     ],
-    "ratios": {"push_pull_sets": "1:1", "squat_hinge_sets": "1:1", "vertical_horizontal_pull": "1:1", "unilateral_exercises_per_lower_session_min": 1, "balance_minutes_per_week_65plus": 180},
-    "warmup": {"general_minutes": [3, 5], "mobility_minutes": [2, 3], "ramp_sets_first_exercise": [{"pct_of_working_load": 50, "reps": 8}, {"pct_of_working_load": 70, "reps": 5}, {"pct_of_working_load": 85, "reps": 2}], "ramp_sets_other_exercises": 1, "no_static_stretching_before": true, "asthma_interval_warmup_minutes": [10, 15], "cardiac_warmup_cooldown_minutes": 10},
-    "deload": {"trigger": "reactive", "every_weeks_max": 8, "signals": ["RPE >=9 em 2 sessoes seguidas", "estagnacao 2-3 semanas", "sono <6 h persistente", "dor articular a aumentar"], "volume_reduction_pct": [30, 50], "intensity_reduction_pct": [10, 20], "keep_frequency": true, "duration_days": 7},
-    "exercise_order": ["Aquecimento especifico", "Exercicio prioritario ou de forca (composto, musculo alvo em especializacao)", "Compostos secundarios em superset agonista-antagonista", "Isolamentos e core", "Cardio (se na mesma sessao; forca primeiro em diabetes e para proteger hipertrofia)", "Equilibrio/pavimento pelvico onde aplicavel"],
-    "rest_seconds": {"compound": [90, 180], "isolation": [60, 90], "superset_pairs": [60, 90], "tendon_hsr": [120, 180]},
-    "tempo": {"eccentric_seconds": [1, 3], "concentric": "controlado a rapido (rapido em potencia 65+)", "stretch_pause_seconds": {"calves": 2, "chest": 1, "hamstrings": 1}},
-    "sources": ["https://pubmed.ncbi.nlm.nih.gov/26049792/", "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2018.00247/full", "https://link.springer.com/content/pdf/10.1186/s40798-023-00633-0.pdf", "https://pubmed.ncbi.nlm.nih.gov/32077380/", "https://journals.lww.com/nsca-jscr/Fulltext/2010/01000/Effects_of_Warming_up_on_Physical_Performance__A.21.aspx", "https://pubmed.ncbi.nlm.nih.gov/25601394/", "https://pubmed.ncbi.nlm.nih.gov/35476184/"]
+    "ratios": {
+      "push_pull_sets": "1:1",
+      "squat_hinge_sets": "1:1",
+      "vertical_horizontal_pull": "1:1",
+      "unilateral_exercises_per_lower_session_min": 1,
+      "balance_minutes_per_week_65plus": 180
+    },
+    "warmup": {
+      "general_minutes": [
+        3,
+        5
+      ],
+      "mobility_minutes": [
+        2,
+        3
+      ],
+      "ramp_sets_first_exercise": [
+        {
+          "pct_of_working_load": 50,
+          "reps": 8
+        },
+        {
+          "pct_of_working_load": 70,
+          "reps": 5
+        },
+        {
+          "pct_of_working_load": 85,
+          "reps": 2
+        }
+      ],
+      "ramp_sets_other_exercises": 1,
+      "no_static_stretching_before": true,
+      "asthma_interval_warmup_minutes": [
+        10,
+        15
+      ],
+      "cardiac_warmup_cooldown_minutes": 10
+    },
+    "deload": {
+      "trigger": "reactive",
+      "every_weeks_max": 8,
+      "signals": [
+        "RPE >=9 em 2 sessões seguidas",
+        "estagnação 2-3 semanas",
+        "sono <6 h persistente",
+        "dor articular a aumentar"
+      ],
+      "volume_reduction_pct": [
+        30,
+        50
+      ],
+      "intensity_reduction_pct": [
+        10,
+        20
+      ],
+      "keep_frequency": true,
+      "duration_days": 7
+    },
+    "exercise_order": [
+      "Aquecimento específico",
+      "Exercício prioritário ou de força (composto, músculo alvo em especialização)",
+      "Compostos secundários em superset agonista-antagonista",
+      "Isolamentos e core",
+      "Cardio (se na mesma sessão; força primeiro em diabetes e para proteger hipertrofia)",
+      "Equilíbrio/pavimento pélvico onde aplicável"
+    ],
+    "rest_seconds": {
+      "compound": [
+        90,
+        180
+      ],
+      "isolation": [
+        60,
+        90
+      ],
+      "superset_pairs": [
+        60,
+        90
+      ],
+      "tendon_hsr": [
+        120,
+        180
+      ]
+    },
+    "tempo": {
+      "eccentric_seconds": [
+        1,
+        3
+      ],
+      "concentric": "controlado a rápido (rápido em potência 65+)",
+      "stretch_pause_seconds": {
+        "calves": 2,
+        "chest": 1,
+        "hamstrings": 1
+      }
+    },
+    "sources": [
+      "https://pubmed.ncbi.nlm.nih.gov/26049792/",
+      "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2018.00247/full",
+      "https://link.springer.com/content/pdf/10.1186/s40798-023-00633-0.pdf",
+      "https://pubmed.ncbi.nlm.nih.gov/32077380/",
+      "https://journals.lww.com/nsca-jscr/Fulltext/2010/01000/Effects_of_Warming_up_on_Physical_Performance__A.21.aspx",
+      "https://pubmed.ncbi.nlm.nih.gov/25601394/",
+      "https://pubmed.ncbi.nlm.nih.gov/35476184/"
+    ]
   },
   "nutrition": {
     "by_goal": {
-      "muscle_gain": {"protein_g_per_kg": [1.6, 2.2], "kcal_adjust_pct": [10, 20], "fibre_g": [25, 35], "carbs_note_pt": "Refeicao com hidratos e proteina 1-3 h antes do treino; total diario importa mais do que timing."},
-      "fat_loss": {"protein_g_per_kg": [1.8, 2.4], "kcal_adjust_pct": [-25, -10], "fibre_g": [25, 35], "carbs_note_pt": "Concentrar hidratos a volta do treino ajuda o rendimento; sem regra de horario."},
-      "recomposition": {"protein_g_per_kg": [2.0, 2.4], "kcal_adjust_pct": [-10, 0], "fibre_g": [25, 35], "carbs_note_pt": "Manutencao ou defice pequeno; proteina em 4 refeicoes de ~0,4 g/kg."},
-      "strength": {"protein_g_per_kg": [1.6, 2.2], "kcal_adjust_pct": [0, 10], "fibre_g": [25, 35], "carbs_note_pt": "Hidratos suficientes para sessoes pesadas (3-5 g/kg/dia)."},
-      "endurance_health": {"protein_g_per_kg": [1.2, 1.6], "kcal_adjust_pct": [0, 0], "fibre_g": [25, 30], "carbs_note_pt": "Hidratos 3-5 g/kg; mais em dias de sessoes longas."},
-      "longevity_65plus": {"protein_g_per_kg": [1.2, 1.6], "kcal_adjust_pct": [0, 0], "fibre_g": [25, 30], "carbs_note_pt": "Proteina distribuida em 3-4 refeicoes de >=25-30 g; defices so com aval."},
-      "pregnancy_maintenance": {"protein_g_per_kg": [1.2, 1.5], "kcal_adjust_pct": [0, 15], "fibre_g": [25, 30], "carbs_note_pt": "Sem defice; nao treinar em jejum; hidratar."},
-      "postpartum_return": {"protein_g_per_kg": [1.4, 1.8], "kcal_adjust_pct": [-10, 0], "fibre_g": [25, 30], "carbs_note_pt": "Em amamentacao, defice maximo 10 % e apos 6 semanas."},
-      "return_after_break": {"protein_g_per_kg": [1.6, 2.2], "kcal_adjust_pct": [0, 0], "fibre_g": [25, 35], "carbs_note_pt": "Manutencao nas primeiras 4 semanas."},
-      "glute_focus": {"protein_g_per_kg": [1.6, 2.2], "kcal_adjust_pct": [-10, 10], "fibre_g": [25, 35], "carbs_note_pt": "Segue o objetivo secundario (defice pequeno ou superavit pequeno)."}
+      "muscle_gain": {
+        "protein_g_per_kg": [
+          1.6,
+          2.2
+        ],
+        "kcal_adjust_pct": [
+          10,
+          20
+        ],
+        "fibre_g": [
+          25,
+          35
+        ],
+        "carbs_note_pt": "Refeição com hidratos e proteína 1-3 h antes do treino; total diário importa mais do que timing."
+      },
+      "fat_loss": {
+        "protein_g_per_kg": [
+          1.8,
+          2.4
+        ],
+        "kcal_adjust_pct": [
+          -25,
+          -10
+        ],
+        "fibre_g": [
+          25,
+          35
+        ],
+        "carbs_note_pt": "Concentrar hidratos à volta do treino ajuda o rendimento; sem regra de horário."
+      },
+      "recomposition": {
+        "protein_g_per_kg": [
+          2.0,
+          2.4
+        ],
+        "kcal_adjust_pct": [
+          -10,
+          0
+        ],
+        "fibre_g": [
+          25,
+          35
+        ],
+        "carbs_note_pt": "Manutenção ou défice pequeno; proteína em 4 refeições de ~0,4 g/kg."
+      },
+      "strength": {
+        "protein_g_per_kg": [
+          1.6,
+          2.2
+        ],
+        "kcal_adjust_pct": [
+          0,
+          10
+        ],
+        "fibre_g": [
+          25,
+          35
+        ],
+        "carbs_note_pt": "Hidratos suficientes para sessões pesadas (3-5 g/kg/dia)."
+      },
+      "endurance_health": {
+        "protein_g_per_kg": [
+          1.2,
+          1.6
+        ],
+        "kcal_adjust_pct": [
+          0,
+          0
+        ],
+        "fibre_g": [
+          25,
+          30
+        ],
+        "carbs_note_pt": "Hidratos 3-5 g/kg; mais em dias de sessões longas."
+      },
+      "longevity_65plus": {
+        "protein_g_per_kg": [
+          1.2,
+          1.6
+        ],
+        "kcal_adjust_pct": [
+          0,
+          0
+        ],
+        "fibre_g": [
+          25,
+          30
+        ],
+        "carbs_note_pt": "Proteína distribuída em 3-4 refeições de >=25-30 g; défices só com aval."
+      },
+      "pregnancy_maintenance": {
+        "protein_g_per_kg": [
+          1.2,
+          1.5
+        ],
+        "kcal_adjust_pct": [
+          0,
+          15
+        ],
+        "fibre_g": [
+          25,
+          30
+        ],
+        "carbs_note_pt": "Sem défice; não treinar em jejum; hidratar."
+      },
+      "postpartum_return": {
+        "protein_g_per_kg": [
+          1.4,
+          1.8
+        ],
+        "kcal_adjust_pct": [
+          -10,
+          0
+        ],
+        "fibre_g": [
+          25,
+          30
+        ],
+        "carbs_note_pt": "Em amamentação, défice máximo 10 % e após 6 semanas."
+      },
+      "return_after_break": {
+        "protein_g_per_kg": [
+          1.6,
+          2.2
+        ],
+        "kcal_adjust_pct": [
+          0,
+          0
+        ],
+        "fibre_g": [
+          25,
+          35
+        ],
+        "carbs_note_pt": "Manutenção nas primeiras 4 semanas."
+      },
+      "glute_focus": {
+        "protein_g_per_kg": [
+          1.6,
+          2.2
+        ],
+        "kcal_adjust_pct": [
+          -10,
+          10
+        ],
+        "fibre_g": [
+          25,
+          35
+        ],
+        "carbs_note_pt": "Segue o objetivo secundário (défice pequeno ou superávit pequeno)."
+      }
     },
-    "hydration_l_per_day": {"women": 2.0, "men": 2.5, "extra_per_training_hour": [0.4, 0.8]},
+    "hydration_l_per_day": {
+      "women": 2.0,
+      "men": 2.5,
+      "extra_per_training_hour": [
+        0.4,
+        0.8
+      ]
+    },
     "sodium_max_g_per_day_hypertension": 2.0,
-    "vegetarian_note_pt": "Proteina vegetal funciona quando igualada em leucina (~2-3 g por refeicao) e quantidade; combinar leguminosas com cereais e apontar para o topo do intervalo de proteina.",
+    "vegetarian_note_pt": "Proteína vegetal funciona quando igualada em leucina (~2-3 g por refeição) e quantidade; combinar leguminosas com cereais e apontar para o topo do intervalo de proteína.",
     "supplements_with_evidence": [
-      {"name_pt": "Creatina monohidratada", "dose": "3-5 g/dia, qualquer hora", "evidence_pt": "Forca e massa magra em todas as idades; ajuda forca de membros superiores em idosos. Aval medico se doenca renal.", "sources": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC5469049/", "https://link.springer.com/article/10.1186/s11556-025-00392-9"]},
-      {"name_pt": "Cafeina", "dose": "2-6 mg/kg, 30-60 min antes; evitar nas 6 h antes de dormir", "evidence_pt": "Melhora forca, resistencia e potencia; >=9 mg/kg so traz efeitos adversos.", "sources": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7777221/"]},
-      {"name_pt": "Proteina em po (whey, soja, ervilha)", "dose": "20-40 g quando a comida nao chega", "evidence_pt": "So conveniencia; soja igualada em leucina = whey.", "sources": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7312446/"]},
-      {"name_pt": "Vitamina D", "dose": "600-800 UI/dia se pouca exposicao solar; doses maiores so com analise", "evidence_pt": "Sem beneficio para quedas/fraturas em populacao geral; util em deficiencia.", "sources": ["https://www.uspreventiveservicestaskforce.org/uspstf/draft-recommendation/vitamin-d-calcium-combined-supplementation-primary-prevention-falls-fractures-communitydwelling-adults"]}
+      {
+        "name_pt": "Creatina monohidratada",
+        "dose": "3-5 g/dia, qualquer hora",
+        "evidence_pt": "Força e massa magra em todas as idades; ajuda força de membros superiores em idosos. Aval médico se doença renal.",
+        "sources": [
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC5469049/",
+          "https://link.springer.com/article/10.1186/s11556-025-00392-9"
+        ]
+      },
+      {
+        "name_pt": "Cafeína",
+        "dose": "2-6 mg/kg, 30-60 min antes; evitar nas 6 h antes de dormir",
+        "evidence_pt": "Melhora força, resistência e potência; >=9 mg/kg só traz efeitos adversos.",
+        "sources": [
+          "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7777221/"
+        ]
+      },
+      {
+        "name_pt": "Proteína em pó (whey, soja, ervilha)",
+        "dose": "20-40 g quando a comida não chega",
+        "evidence_pt": "Só conveniência; soja igualada em leucina = whey.",
+        "sources": [
+          "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7312446/"
+        ]
+      },
+      {
+        "name_pt": "Vitamina D",
+        "dose": "600-800 UI/dia se pouca exposição solar; doses maiores só com análise",
+        "evidence_pt": "Sem benefício para quedas/fraturas em população geral; útil em deficiência.",
+        "sources": [
+          "https://www.uspreventiveservicestaskforce.org/uspstf/draft-recommendation/vitamin-d-calcium-combined-supplementation-primary-prevention-falls-fractures-communitydwelling-adults"
+        ]
+      }
     ],
     "myths": [
-      {"myth_pt": "Proteina alta faz mal aos rins", "truth_pt": "Sem efeito em rins saudaveis ate 2,2 g/kg ou mais; cuidado apenas com doenca renal."},
-      {"myth_pt": "Hidratos a noite engordam", "truth_pt": "Conta o balanco energetico total e a distribuicao de proteina, nao a hora."},
-      {"myth_pt": "E preciso comer proteina nos 30 min apos o treino", "truth_pt": "A janela anabolica dura horas; o total diario e o que importa."},
-      {"myth_pt": "Jejum intermitente e superior para perder gordura", "truth_pt": "Igual a qualquer defice com calorias e proteina iguais; util so se ajudar a aderencia."},
-      {"myth_pt": "Suplementos 'queimadores de gordura' funcionam", "truth_pt": "Sem evidencia de efeito relevante; cafeina e o unico com efeito pequeno."},
-      {"myth_pt": "Proteina vegetal nao constroi musculo", "truth_pt": "Constroi, desde que a quantidade e a leucina sejam suficientes."}
+      {
+        "myth_pt": "Proteína alta faz mal aos rins",
+        "truth_pt": "Sem efeito em rins saudáveis até 2,2 g/kg ou mais; cuidado apenas com doença renal."
+      },
+      {
+        "myth_pt": "Hidratos à noite engordam",
+        "truth_pt": "Conta o balanço energético total e a distribuição de proteína, não a hora."
+      },
+      {
+        "myth_pt": "É preciso comer proteína nos 30 min após o treino",
+        "truth_pt": "A janela anabólica dura horas; o total diário é o que importa."
+      },
+      {
+        "myth_pt": "Jejum intermitente é superior para perder gordura",
+        "truth_pt": "Igual a qualquer défice com calorias e proteína iguais; útil só se ajudar a aderência."
+      },
+      {
+        "myth_pt": "Suplementos 'queimadores de gordura' funcionam",
+        "truth_pt": "Sem evidência de efeito relevante; cafeína é o único com efeito pequeno."
+      },
+      {
+        "myth_pt": "Proteína vegetal não constrói músculo",
+        "truth_pt": "Constrói, desde que a quantidade e a leucina sejam suficientes."
+      }
     ],
-    "sources": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5596471/", "https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext", "https://pmc.ncbi.nlm.nih.gov/articles/PMC6680710/", "https://www.efsa.europa.eu/en/efsajournal/pub/1459", "https://academic.oup.com/nutritionreviews/article/83/7/e1581/7954494", "https://www.who.int/news-room/fact-sheets/detail/sodium-reduction"]
+    "sources": [
+      "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5596471/",
+      "https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC6680710/",
+      "https://www.efsa.europa.eu/en/efsajournal/pub/1459",
+      "https://academic.oup.com/nutritionreviews/article/83/7/e1581/7954494",
+      "https://www.who.int/news-room/fact-sheets/detail/sodium-reduction"
+    ]
   },
-  "disclaimer_pt": "Esta app da orientacoes gerais de treino e alimentacao baseadas em evidencia cientifica. Nao substitui a avaliacao de um medico, fisioterapeuta ou nutricionista. Se tem uma doenca, esta gravida, teve uma lesao recente ou respondeu sim a alguma pergunta de rastreio, confirme com um profissional de saude antes de comecar ou aumentar a intensidade. Pare imediatamente e procure ajuda medica se sentir dor no peito, falta de ar inexplicada, tonturas, desmaio ou qualquer sinal de alarme listado."
+  "disclaimer_pt": "Esta app dá orientações gerais de treino e alimentação baseadas em evidência científica. Não substitui a avaliação de um médico, fisioterapeuta ou nutricionista. Se tem uma doença, está grávida, teve uma lesão recente ou respondeu sim a alguma pergunta de rastreio, confirme com um profissional de saúde antes de começar ou aumentar a intensidade. Pare imediatamente e procure ajuda médica se sentir dor no peito, falta de ar inexplicada, tonturas, desmaio ou qualquer sinal de alarme listado."
 }
 ```
 
