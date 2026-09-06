@@ -5,6 +5,9 @@ import { PrismaService } from '../../infra/prisma/prisma.service';
 export const userWithProfileInclude = { profile: true } satisfies Prisma.UserInclude;
 export type UserWithProfileRow = Prisma.UserGetPayload<{ include: typeof userWithProfileInclude }>;
 
+/** Campos editáveis do perfil (sem chaves nem timestamps). */
+export type ProfileData = Omit<Prisma.ProfileUncheckedCreateInput, 'id' | 'userId' | 'createdAt' | 'updatedAt'>;
+
 export interface CreateUserData {
   authId: string;
   email: string;
@@ -46,12 +49,8 @@ export class UsersRepository {
   }
 
   /** Cria o perfil se ainda não existir (utilizadores antigos) e aplica as alterações. */
-  upsertProfile(userId: string, data: Prisma.ProfileUncheckedUpdateInput): Promise<Profile> {
-    return this.prisma.profile.upsert({
-      where: { userId },
-      create: { userId, ...(data as Prisma.ProfileUncheckedCreateInput) },
-      update: data,
-    });
+  upsertProfile(userId: string, data: ProfileData): Promise<Profile> {
+    return this.prisma.profile.upsert({ where: { userId }, create: { userId, ...data }, update: data });
   }
 
   softDelete(id: string): Promise<User> {

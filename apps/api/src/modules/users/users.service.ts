@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import type { Prisma, User } from '@tlc/database';
+import type { User } from '@tlc/database';
 import type { CompleteOnboardingInput, Me, UpdateProfileInput, UpdateUserInput } from '@tlc/shared';
 import type { AuthClaims, AuthenticatedUser } from '../../common/auth/authenticated-user';
 import { notFound, unauthorized } from '../../common/errors/api-errors';
 import { fromIsoDate } from '../../common/mapping/primitives';
 import { toAuthenticatedUser, toMe } from './users.mapper';
-import { UsersRepository } from './users.repository';
+import { type ProfileData, UsersRepository } from './users.repository';
 
 const DEFAULT_DISPLAY_NAME = 'Atleta';
 
@@ -92,7 +92,7 @@ export class UsersService {
 }
 
 /** Converte o input Zod (datas como string) em dados Prisma. */
-export function toProfileData(input: UpdateProfileInput): Prisma.ProfileUncheckedUpdateInput {
+export function toProfileData(input: UpdateProfileInput): ProfileData {
   const { birthDate, ...rest } = input;
   return {
     ...rest,
