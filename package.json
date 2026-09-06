@@ -1,0 +1,24 @@
+{
+  "name": "this-little-coach",
+  "private": true,
+  "version": "0.1.0",
+  "description": "This Little Coach — super app de fitness com treino adaptativo por IA",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "pnpm --filter @tlc/database generate",
+    "db:migrate": "pnpm --filter @tlc/database migrate:dev",
+    "db:deploy": "pnpm --filter @tlc/database migrate:deploy",
+    "db:studio": "pnpm --filter @tlc/database studio"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
+}

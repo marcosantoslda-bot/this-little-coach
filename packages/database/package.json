@@ -1,0 +1,27 @@
+{
+  "name": "@tlc/database",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Esquema Prisma, migrações e cliente de base de dados partilhado",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:reset": "prisma migrate reset",
+    "studio": "prisma studio",
+    "seed": "tsx prisma/seed.ts",
+    "format": "prisma format",
+    "validate": "prisma validate"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.16.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "dotenv": "^16.4.0"
+  }
+}

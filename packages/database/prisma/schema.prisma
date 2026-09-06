@@ -1,0 +1,603 @@
+// =============================================================================
+// This Little Coach — Esquema de dados (Fase 1: MVP)
+// -----------------------------------------------------------------------------
+// Domínios cobertos nesta fase:
+//   1. Identidade e perfil        -> User, Profile
+//   2. Catálogo de exercícios      -> Exercise, ExerciseTranslation, ExerciseProgression
+//   3. Treinos (templates)         -> Workout, WorkoutBlock, WorkoutExercise
+//   4. Sessões realizadas          -> WorkoutSession, SessionSet
+//   5. Progresso                   -> PersonalRecord, BodyMeasurement
+//
+// Princípios de desenho:
+//   - Template vs. execução: um Workout é a "receita"; uma WorkoutSession é o
+//     que aconteceu. A sessão guarda um snapshot JSON do treino para que o
+//     histórico nunca mude quando o template evolui.
+//   - Preparado para a Fase 2 (IA adaptativa): cada SessionSet regista alvo vs.
+//     realizado, RPE e motivo do ajuste. Este é o dataset de feedback que o
+//     motor de recomendação vai consumir. As progressões/regressões entre
+//     exercícios (ExerciseProgression) permitem substituições em tempo real.
+//   - Identificadores UUID, datas em UTC, soft-delete no utilizador (RGPD).
+//   - Autenticação delegada no Supabase Auth: User.authId = auth.users.id.
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooler (pgbouncer) — usado pela aplicação
+  directUrl = env("DIRECT_URL") // ligação direta — usada pelo Prisma Migrate
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum UserRole {
+  MEMBER
+  COACH
+  ADMIN
+}
+
+enum Sex {
+  FEMALE
+  MALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum FitnessGoal {
+  LOSE_FAT
+  GAIN_MUSCLE
+  MAINTAIN
+  IMPROVE_ENDURANCE
+  GENERAL_HEALTH
+}
+
+enum FitnessLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  ATHLETE
+}
+
+/// Ênfase preferida do plano (herdado do protótipo: equilibrado / glúteos-pernas / tronco-braços).
+enum TrainingFocus {
+  BALANCED
+  LOWER_BODY_GLUTES
+  UPPER_BODY_ARMS
+  CORE
+  CARDIO
+}
+
+enum TrainingLocation {
+  HOME
+  GYM
+  OUTDOOR
+  ANYWHERE
+}
+
+/// "Modo de vida" ativo. O gerador e (na Fase 2) o motor adaptativo usam isto
+/// para não sugerir progressões em férias, pausa ou doença.
+enum TrainingMode {
+  NORMAL
+  VACATION
+  PAUSED
+  SICK
+  RECOVERING
+}
+
+enum Equipment {
+  NONE
+  MAT
+  PULL_UP_BAR
+  RESISTANCE_BAND
+  DUMBBELLS
+  KETTLEBELL
+  BARBELL
+  BENCH
+  CABLE_MACHINE
+  MACHINE
+  JUMP_ROPE
+  PLYO_BOX
+  TREADMILL
+  BIKE
+  ROWER
+}
+
+enum MuscleGroup {
+  CHEST
+  LATS
+  UPPER_BACK
+  LOWER_BACK
+  SHOULDERS
+  BICEPS
+  TRICEPS
+  FOREARMS
+  CORE
+  OBLIQUES
+  GLUTES
+  QUADS
+  HAMSTRINGS
+  CALVES
+  HIP_FLEXORS
+  ADDUCTORS
+  ABDUCTORS
+  FULL_BODY
+  CARDIOVASCULAR
+}
+
+/// Padrão de movimento — a base do gerador para equilibrar um treino
+/// (ex.: 1 push + 1 pull + 1 squat + 1 hinge + 1 core).
+enum MovementPattern {
+  PUSH_HORIZONTAL
+  PUSH_VERTICAL
+  PULL_HORIZONTAL
+  PULL_VERTICAL
+  SQUAT
+  HINGE
+  LUNGE
+  CARRY
+  ROTATION
+  ANTI_ROTATION
+  LOCOMOTION
+  JUMP
+  ISOMETRIC
+}
+
+enum ExerciseCategory {
+  STRENGTH
+  CARDIO
+  PLYOMETRIC
+  MOBILITY
+  STRETCH
+  CORE
+}
+
+/// Como se mede o exercício.
+enum ExerciseMetric {
+  REPS
+  DURATION
+  DISTANCE
+  CALORIES
+}
+
+enum WorkoutFocus {
+  FULL_BODY
+  UPPER_BODY
+  LOWER_BODY
+  PUSH
+  PULL
+  LEGS
+  CORE
+  CARDIO
+  MOBILITY
+}
+
+enum WorkoutFormat {
+  STRAIGHT_SETS
+  SUPERSET
+  CIRCUIT
+  AMRAP
+  EMOM
+  FOR_TIME
+  TABATA
+  INTERVAL
+}
+
+enum WorkoutSource {
+  SYSTEM // curado pela equipa
+  GENERATED // produzido pelo gerador / IA
+  USER // criado manualmente pelo utilizador
+}
+
+enum BlockType {
+  WARMUP
+  MAIN
+  FINISHER
+  COOLDOWN
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum SessionSource {
+  APP
+  MANUAL
+  IMPORTED // wearables (Fase 2)
+}
+
+/// Motivo pelo qual o utilizador alterou/saltou uma série. Alimenta a IA.
+enum SetAdjustmentReason {
+  NONE
+  TOO_HARD
+  TOO_EASY
+  PAIN
+  OUT_OF_TIME
+  EQUIPMENT_MISSING
+  OTHER
+}
+
+enum RecordMetric {
+  MAX_REPS
+  MAX_DURATION_SEC
+  MAX_LOAD_KG
+  FASTEST_TIME_SEC
+  MAX_DISTANCE_M
+}
+
+enum MeasurementSource {
+  MANUAL
+  IMPORTED
+}
+
+// -----------------------------------------------------------------------------
+// 1. IDENTIDADE E PERFIL
+// -----------------------------------------------------------------------------
+
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  /// Id do utilizador no Supabase Auth (auth.users.id). Fonte da verdade da autenticação.
+  authId      String    @unique @map("auth_id") @db.Uuid
+  email       String    @unique
+  displayName String    @map("display_name")
+  avatarUrl   String?   @map("avatar_url")
+  locale      String    @default("pt-PT")
+  timezone    String    @default("Europe/Lisbon")
+  role        UserRole  @default(MEMBER)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  /// Soft-delete para cumprir RGPD sem partir o histórico agregado.
+  deletedAt   DateTime? @map("deleted_at")
+
+  profile         Profile?
+  createdWorkouts Workout[]         @relation("WorkoutCreatedBy")
+  sessions        WorkoutSession[]
+  personalRecords PersonalRecord[]
+  measurements    BodyMeasurement[]
+
+  @@map("users")
+}
+
+model Profile {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @unique @map("user_id") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Dados biométricos (opcionais — o onboarding pode ser progressivo)
+  sex              Sex?
+  birthDate        DateTime? @map("birth_date") @db.Date
+  heightCm         Int?      @map("height_cm")
+  startingWeightKg Decimal?  @map("starting_weight_kg") @db.Decimal(5, 2)
+  targetWeightKg   Decimal?  @map("target_weight_kg") @db.Decimal(5, 2)
+  bodyFatPct       Decimal?  @map("body_fat_pct") @db.Decimal(4, 1)
+
+  // Objetivos e preferências de treino — inputs do gerador
+  goal                    FitnessGoal      @default(GENERAL_HEALTH)
+  fitnessLevel            FitnessLevel     @default(BEGINNER) @map("fitness_level")
+  focus                   TrainingFocus    @default(BALANCED)
+  trainingDaysPerWeek     Int              @default(3) @map("training_days_per_week")
+  preferredSessionMinutes Int              @default(30) @map("preferred_session_minutes")
+  preferredLocation       TrainingLocation @default(HOME) @map("preferred_location")
+  availableEquipment      Equipment[]      @default([NONE]) @map("available_equipment")
+  activeMode              TrainingMode     @default(NORMAL) @map("active_mode")
+
+  // Limitações — o gerador exclui exercícios que carreguem estes músculos
+  restrictedMuscles MuscleGroup[] @default([]) @map("restricted_muscles")
+  limitationsNote   String?       @map("limitations_note")
+
+  onboardingCompletedAt DateTime? @map("onboarding_completed_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@map("profiles")
+}
+
+// -----------------------------------------------------------------------------
+// 2. CATÁLOGO DE EXERCÍCIOS
+// -----------------------------------------------------------------------------
+
+model Exercise {
+  id   String @id @default(uuid()) @db.Uuid
+  /// Identificador estável e legível (ex.: "push-up", "bulgarian-split-squat").
+  slug String @unique
+  /// Nome canónico em inglês; nomes localizados vivem em ExerciseTranslation.
+  name String
+
+  category         ExerciseCategory
+  movementPattern  MovementPattern  @map("movement_pattern")
+  primaryMuscles   MuscleGroup[]    @map("primary_muscles")
+  secondaryMuscles MuscleGroup[]    @default([]) @map("secondary_muscles")
+  /// Equipamento necessário. [NONE] = peso corporal puro (foco do MVP).
+  equipment        Equipment[]      @default([NONE])
+  /// 1 (muito fácil) a 5 (muito difícil). Usado para escalar o treino ao nível.
+  difficulty       Int              @default(2)
+  metric           ExerciseMetric   @default(REPS)
+  isUnilateral     Boolean          @default(false) @map("is_unilateral")
+  /// MET aproximado para estimar calorias (Compendium of Physical Activities).
+  metValue         Decimal?         @map("met_value") @db.Decimal(4, 1)
+  /// Tempo por defeito "excêntrica-pausa-concêntrica-pausa", ex.: "2-0-1-0".
+  defaultTempo     String?          @map("default_tempo")
+
+  thumbnailUrl String? @map("thumbnail_url")
+  videoUrl     String? @map("video_url")
+
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  translations     ExerciseTranslation[]
+  /// Este exercício é a versão mais fácil de...
+  progressesTo     ExerciseProgression[] @relation("ProgressionEasier")
+  /// Este exercício é a versão mais difícil de...
+  regressesTo      ExerciseProgression[] @relation("ProgressionHarder")
+  workoutExercises WorkoutExercise[]
+  sessionSets      SessionSet[]
+  personalRecords  PersonalRecord[]
+
+  @@index([category])
+  @@index([movementPattern])
+  @@index([difficulty])
+  @@map("exercises")
+}
+
+/// Nome, descrição e "cues" de execução por idioma (pt-PT primeiro, en-US depois).
+model ExerciseTranslation {
+  id         String   @id @default(uuid()) @db.Uuid
+  exerciseId String   @map("exercise_id") @db.Uuid
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  locale      String
+  name        String
+  description String?
+  /// Dicas curtas de execução mostradas durante o treino ("core ativo", "cotovelos junto ao corpo").
+  cues        String[] @default([])
+
+  @@unique([exerciseId, locale])
+  @@map("exercise_translations")
+}
+
+/// Grafo de progressões: easier -> harder. Permite ao motor adaptativo (Fase 2)
+/// trocar um exercício por uma variante mais fácil/difícil em tempo real, e ao
+/// gerador (Fase 1) escolher a variante certa para o nível do utilizador.
+model ExerciseProgression {
+  id       String   @id @default(uuid()) @db.Uuid
+  easierId String   @map("easier_id") @db.Uuid
+  harderId String   @map("harder_id") @db.Uuid
+  easier   Exercise @relation("ProgressionEasier", fields: [easierId], references: [id], onDelete: Cascade)
+  harder   Exercise @relation("ProgressionHarder", fields: [harderId], references: [id], onDelete: Cascade)
+  /// Critério sugerido para avançar (ex.: "3x15 com boa técnica").
+  criteria String?
+
+  @@unique([easierId, harderId])
+  @@map("exercise_progressions")
+}
+
+// -----------------------------------------------------------------------------
+// 3. TREINOS (TEMPLATES)
+// -----------------------------------------------------------------------------
+
+model Workout {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+
+  focus                WorkoutFocus
+  /// 1–5, agregado a partir dos exercícios e do volume.
+  difficulty           Int           @default(2)
+  estimatedDurationMin Int           @map("estimated_duration_min")
+  requiredEquipment    Equipment[]   @default([NONE]) @map("required_equipment")
+  source               WorkoutSource @default(SYSTEM)
+
+  createdById String? @map("created_by_id") @db.Uuid
+  createdBy   User?   @relation("WorkoutCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  /// Inputs que originaram o treino (tempo disponível, equipamento, fadiga, seed…).
+  /// Guardados para reprodutibilidade e para treinar o modelo na Fase 2.
+  generationInput  Json?   @map("generation_input")
+  generatorVersion String? @map("generator_version")
+
+  isPublished Boolean  @default(false) @map("is_published")
+  isArchived  Boolean  @default(false) @map("is_archived")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  blocks   WorkoutBlock[]
+  sessions WorkoutSession[]
+
+  @@index([source, isPublished])
+  @@index([createdById])
+  @@map("workouts")
+}
+
+/// Secção de um treino (aquecimento, bloco principal, finisher, retorno à calma).
+/// Cada bloco tem o seu formato (circuito, AMRAP, EMOM…) e número de rondas.
+model WorkoutBlock {
+  id        String  @id @default(uuid()) @db.Uuid
+  workoutId String  @map("workout_id") @db.Uuid
+  workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  order  Int
+  type   BlockType     @default(MAIN)
+  format WorkoutFormat @default(STRAIGHT_SETS)
+  name   String?
+
+  rounds                  Int     @default(1)
+  /// Limite de tempo do bloco (AMRAP/EMOM/Tabata), em segundos.
+  timeCapSec              Int?    @map("time_cap_sec")
+  restBetweenExercisesSec Int     @default(0) @map("rest_between_exercises_sec")
+  restBetweenRoundsSec    Int     @default(60) @map("rest_between_rounds_sec")
+  notes                   String?
+
+  exercises WorkoutExercise[]
+
+  @@unique([workoutId, order])
+  @@map("workout_blocks")
+}
+
+model WorkoutExercise {
+  id         String       @id @default(uuid()) @db.Uuid
+  blockId    String       @map("block_id") @db.Uuid
+  block      WorkoutBlock @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  exerciseId String       @map("exercise_id") @db.Uuid
+  exercise   Exercise     @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+
+  order Int
+
+  // Alvo — apenas um dos campos costuma estar preenchido, conforme Exercise.metric
+  targetReps        Int?     @map("target_reps")
+  targetDurationSec Int?     @map("target_duration_sec")
+  targetDistanceM   Int?     @map("target_distance_m")
+  /// Carga alvo (kg). Nulo para peso corporal; preparado para ginásio na Fase 2.
+  targetLoadKg      Decimal? @map("target_load_kg") @db.Decimal(6, 2)
+
+  restAfterSec Int?    @map("rest_after_sec")
+  tempo        String?
+  notes        String?
+
+  sessionSets SessionSet[]
+
+  @@unique([blockId, order])
+  @@index([exerciseId])
+  @@map("workout_exercises")
+}
+
+// -----------------------------------------------------------------------------
+// 4. SESSÕES REALIZADAS
+// -----------------------------------------------------------------------------
+
+model WorkoutSession {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Nulo em treinos livres. SetNull para manter o histórico se o template for apagado.
+  workoutId String?  @map("workout_id") @db.Uuid
+  workout   Workout? @relation(fields: [workoutId], references: [id], onDelete: SetNull)
+
+  /// Cópia imutável do treino no momento da execução (nome, blocos, exercícios, alvos).
+  workoutSnapshot Json @map("workout_snapshot")
+
+  status SessionStatus @default(IN_PROGRESS)
+  source SessionSource @default(APP)
+
+  startedAt   DateTime  @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  /// Tempo efetivo de treino (exclui pausas), em segundos.
+  durationSec Int?      @map("duration_sec")
+
+  // Feedback subjetivo — inputs-chave para a IA da Fase 2
+  /// Energia antes de começar (1–5).
+  energyBefore Int?    @map("energy_before")
+  /// Esforço percebido no fim (RPE 1–10).
+  rpe          Int?
+  /// Como se sentiu depois (1–5).
+  moodAfter    Int?    @map("mood_after")
+  /// Gostou do treino? (1–5).
+  rating       Int?
+  notes        String?
+
+  estimatedCalories Int? @map("estimated_calories")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  sets            SessionSet[]
+  personalRecords PersonalRecord[]
+
+  @@index([userId, startedAt(sort: Desc)])
+  @@index([workoutId])
+  @@map("workout_sessions")
+}
+
+/// Uma série efetivamente realizada. Regista alvo vs. real e o motivo de qualquer
+/// desvio — é o "sinal" que o motor adaptativo vai aprender.
+model SessionSet {
+  id        String         @id @default(uuid()) @db.Uuid
+  sessionId String         @map("session_id") @db.Uuid
+  session   WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  exerciseId String   @map("exercise_id") @db.Uuid
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+
+  /// Ligação ao template (pode ser nula em treinos livres ou se o template mudar).
+  workoutExerciseId String?          @map("workout_exercise_id") @db.Uuid
+  workoutExercise   WorkoutExercise? @relation(fields: [workoutExerciseId], references: [id], onDelete: SetNull)
+
+  // Posição na sessão
+  blockOrder Int @map("block_order")
+  round      Int @default(1)
+  order      Int
+
+  // Alvo (copiado do template no momento) vs. realizado
+  targetReps        Int?     @map("target_reps")
+  targetDurationSec Int?     @map("target_duration_sec")
+  repsCompleted     Int?     @map("reps_completed")
+  durationSec       Int?     @map("duration_sec")
+  distanceM         Int?     @map("distance_m")
+  loadKg            Decimal? @map("load_kg") @db.Decimal(6, 2)
+
+  /// RPE da série (1–10), opcional.
+  rpe               Int?
+  skipped           Boolean             @default(false)
+  adjustmentReason  SetAdjustmentReason @default(NONE) @map("adjustment_reason")
+  /// Se o utilizador trocou o exercício a meio, guardamos o original aqui.
+  substitutedFromId String?             @map("substituted_from_id") @db.Uuid
+
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  @@index([sessionId, blockOrder, round, order])
+  @@index([exerciseId, completedAt(sort: Desc)])
+  @@map("session_sets")
+}
+
+// -----------------------------------------------------------------------------
+// 5. PROGRESSO
+// -----------------------------------------------------------------------------
+
+/// Recorde pessoal atual por exercício e métrica (o histórico completo vive em SessionSet).
+model PersonalRecord {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  exerciseId String   @map("exercise_id") @db.Uuid
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  metric RecordMetric
+  value  Decimal      @db.Decimal(10, 2)
+
+  sessionId String?         @map("session_id") @db.Uuid
+  session   WorkoutSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+
+  achievedAt DateTime @map("achieved_at")
+
+  @@unique([userId, exerciseId, metric])
+  @@map("personal_records")
+}
+
+model BodyMeasurement {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  measuredAt DateTime          @map("measured_at") @db.Date
+  source     MeasurementSource @default(MANUAL)
+
+  weightKg   Decimal? @map("weight_kg") @db.Decimal(5, 2)
+  bodyFatPct Decimal? @map("body_fat_pct") @db.Decimal(4, 1)
+  waistCm    Decimal? @map("waist_cm") @db.Decimal(5, 1)
+  hipCm      Decimal? @map("hip_cm") @db.Decimal(5, 1)
+  chestCm    Decimal? @map("chest_cm") @db.Decimal(5, 1)
+  notes      String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, measuredAt, source])
+  @@index([userId, measuredAt(sort: Desc)])
+  @@map("body_measurements")
+}
