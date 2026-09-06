@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Prisma } from '@tlc/database';
 import type { SessionSet } from '@tlc/shared';
 import type { AuthenticatedUser } from '../../common/auth/authenticated-user';
 import { ApiHttpException } from '../../common/errors/api-errors';
@@ -25,9 +26,12 @@ const PUSH_UP_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const PLANK_ID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const SQUAT_ID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 
-const pushUp = { id: PUSH_UP_ID, name: 'Push-up', metValue: 8, translations: [{ id: 't1', exerciseId: PUSH_UP_ID, locale: 'pt-PT', name: 'Flexão', description: null, cues: [] }] };
-const plank = { id: PLANK_ID, name: 'Plank', metValue: 4, translations: [] };
-const squat = { id: SQUAT_ID, name: 'Goblet squat', metValue: 6, translations: [] };
+/** Os mappers aceitam number onde o Prisma devolve Decimal (toNumber). */
+const decimal = (n: number) => n as unknown as Prisma.Decimal;
+
+const pushUp = { id: PUSH_UP_ID, name: 'Push-up', metValue: decimal(8), translations: [{ id: 't1', exerciseId: PUSH_UP_ID, locale: 'pt-PT', name: 'Flexão', description: null, cues: [] }] };
+const plank = { id: PLANK_ID, name: 'Plank', metValue: decimal(4), translations: [] };
+const squat = { id: SQUAT_ID, name: 'Goblet squat', metValue: decimal(6), translations: [] };
 
 function sessionRow(overrides: Partial<SessionRow> = {}): SessionRow {
   return {
@@ -154,7 +158,7 @@ describe('SessionsService', () => {
         setRow({ exercise: pushUp, repsCompleted: 20 }), // 20 reps x 3 s = 60 s -> 8 * 3.5 * 80 / 200 * 1 = 11.2
         setRow({ exercise: pushUp, repsCompleted: 12, order: 1 }), // 36 s -> 6.72
         setRow({ exercise: plank, durationSec: 60, order: 2 }), // 4 * 3.5 * 80 / 200 * 1 = 5.6
-        setRow({ exercise: squat, repsCompleted: 10, loadKg: 10, order: 3 }), // 30 s -> 4.2 ; load 10 < PR 12
+        setRow({ exercise: squat, repsCompleted: 10, loadKg: decimal(10), order: 3 }), // 30 s -> 4.2 ; load 10 < PR 12
         setRow({ exercise: plank, durationSec: 999, skipped: true, order: 4 }), // ignorada
       ]);
       const service = build(repo);

@@ -1,0 +1,244 @@
+### This Little Coach API — exemplos (VS Code REST Client / IntelliJ HTTP Client)
+### Requer AUTH_DEV_BYPASS=true (fora de produção). Com Supabase, troca o cabeçalho
+### x-dev-user-email por: Authorization: Bearer {{token}}
+
+@host = http://localhost:3000
+@devUser = ana@example.com
+# Preenche estes ids a partir das respostas anteriores
+@exerciseId = 00000000-0000-4000-8000-000000000000
+@exerciseId2 = 00000000-0000-4000-8000-000000000001
+@workoutId = 00000000-0000-4000-8000-000000000002
+@sessionId = 00000000-0000-4000-8000-000000000003
+
+### Health (público)
+GET {{host}}/health
+
+### ---------------------------------------------------------------- /me
+
+### Utilizador + perfil (cria o utilizador no primeiro pedido)
+GET {{host}}/me
+x-dev-user-email: {{devUser}}
+
+### Atualizar dados do utilizador
+PATCH {{host}}/me
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{ "displayName": "Ana Silva", "locale": "pt-PT", "timezone": "Europe/Lisbon" }
+
+### Atualizar perfil (parcial)
+PATCH {{host}}/me/profile
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{
+  "sex": "FEMALE",
+  "birthDate": "1990-05-04",
+  "heightCm": 168,
+  "startingWeightKg": 72.5,
+  "targetWeightKg": 68,
+  "restrictedMuscles": ["LOWER_BACK"],
+  "limitationsNote": "Evitar flexão lombar com carga"
+}
+
+### Concluir onboarding
+POST {{host}}/me/onboarding
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{
+  "goal": "LOSE_FAT",
+  "fitnessLevel": "INTERMEDIATE",
+  "availableEquipment": ["MAT", "DUMBBELLS"],
+  "preferredSessionMinutes": 30,
+  "trainingDaysPerWeek": 4,
+  "focus": "LOWER_BODY_GLUTES",
+  "preferredLocation": "HOME"
+}
+
+### Eliminar conta (soft delete) — depois disto, os pedidos respondem 401 ACCOUNT_DELETED
+DELETE {{host}}/me
+x-dev-user-email: apagar@example.com
+
+### --------------------------------------------------------- /exercises
+
+### Catálogo (localizado), paginado por cursor
+GET {{host}}/exercises?limit=20
+x-dev-user-email: {{devUser}}
+
+### Página seguinte
+GET {{host}}/exercises?limit=20&cursor={{exerciseId}}
+x-dev-user-email: {{devUser}}
+
+### Só exercícios exequíveis com este equipamento (NONE está sempre incluído)
+GET {{host}}/exercises?equipment=MAT,DUMBBELLS&maxDifficulty=3&limit=50
+x-dev-user-email: {{devUser}}
+
+### Pesquisa (nome canónico, slug ou tradução) + filtros
+GET {{host}}/exercises?search=agachamento&movementPattern=SQUAT&category=STRENGTH&muscle=GLUTES
+x-dev-user-email: {{devUser}}
+
+### Detalhe (inclui easierIds/harderIds)
+GET {{host}}/exercises/{{exerciseId}}
+x-dev-user-email: {{devUser}}
+
+### ---------------------------------------------------------- /workouts
+
+### Treinos visíveis: SYSTEM publicados + os meus (mais recentes primeiro)
+GET {{host}}/workouts?limit=20
+x-dev-user-email: {{devUser}}
+
+### Filtros
+GET {{host}}/workouts?source=SYSTEM&focus=FULL_BODY&maxDurationMin=30
+x-dev-user-email: {{devUser}}
+
+### Treino completo
+GET {{host}}/workouts/{{workoutId}}
+x-dev-user-email: {{devUser}}
+
+### Criar treino manualmente (source USER)
+POST {{host}}/workouts
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{
+  "name": "O meu circuito",
+  "description": "Corpo inteiro em casa",
+  "focus": "FULL_BODY",
+  "blocks": [
+    {
+      "type": "MAIN",
+      "format": "CIRCUIT",
+      "rounds": 3,
+      "restBetweenExercisesSec": 15,
+      "restBetweenRoundsSec": 60,
+      "exercises": [
+        { "exerciseId": "{{exerciseId}}", "targetReps": 12 },
+        { "exerciseId": "{{exerciseId2}}", "targetDurationSec": 40, "restAfterSec": 20 }
+      ]
+    }
+  ]
+}
+
+### Gerar o "treino de hoje" (source GENERATED; equipamento por defeito = perfil)
+POST {{host}}/workouts/generate
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{ "availableMinutes": 30, "energyLevel": 4, "equipment": ["MAT", "DUMBBELLS"], "focus": "LOWER_BODY", "seed": 42 }
+
+### Arquivar um treino meu (204). Treinos de outros / SYSTEM -> 404
+DELETE {{host}}/workouts/{{workoutId}}
+x-dev-user-email: {{devUser}}
+
+### ---------------------------------------------------------- /sessions
+
+### Iniciar sessão a partir de um treino (guarda snapshot)
+POST {{host}}/sessions
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{ "workoutId": "{{workoutId}}", "energyBefore": 4 }
+
+### Iniciar treino livre
+POST {{host}}/sessions
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{ "workoutId": null, "energyBefore": 3, "startedAt": "2026-09-09T08:00:00.000Z" }
+
+### Registar séries (lote; idempotente por id — reenviar atualiza)
+POST {{host}}/sessions/{{sessionId}}/sets
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{
+  "sets": [
+    {
+      "id": "6f1d2c3e-1111-4a2b-9c3d-000000000001",
+      "exerciseId": "{{exerciseId}}",
+      "blockOrder": 0, "round": 1, "order": 0,
+      "targetReps": 12, "repsCompleted": 10, "rpe": 7,
+      "adjustmentReason": "TOO_HARD",
+      "completedAt": "2026-09-09T08:05:00.000Z"
+    },
+    {
+      "id": "6f1d2c3e-1111-4a2b-9c3d-000000000002",
+      "exerciseId": "{{exerciseId2}}",
+      "blockOrder": 0, "round": 1, "order": 1,
+      "targetDurationSec": 40, "durationSec": 40,
+      "completedAt": "2026-09-09T08:06:00.000Z"
+    }
+  ]
+}
+
+### Concluir (séries pendentes + feedback -> calorias e recordes)
+POST {{host}}/sessions/{{sessionId}}/complete
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{
+  "durationSec": 1500,
+  "rpe": 7,
+  "moodAfter": 4,
+  "rating": 5,
+  "notes": "Boa sessão",
+  "sets": [
+    {
+      "id": "6f1d2c3e-1111-4a2b-9c3d-000000000003",
+      "exerciseId": "{{exerciseId}}",
+      "blockOrder": 0, "round": 2, "order": 0,
+      "repsCompleted": 12, "loadKg": 8.5,
+      "completedAt": "2026-09-09T08:12:00.000Z"
+    }
+  ]
+}
+
+### Abandonar
+POST {{host}}/sessions/{{sessionId}}/abandon
+x-dev-user-email: {{devUser}}
+
+### Histórico (mais recentes primeiro), com filtros
+GET {{host}}/sessions?limit=20&status=COMPLETED&from=2026-09-01T00:00:00Z&to=2026-09-30T23:59:59Z
+x-dev-user-email: {{devUser}}
+
+### Detalhe (snapshot + séries + recordes desta sessão)
+GET {{host}}/sessions/{{sessionId}}
+x-dev-user-email: {{devUser}}
+
+### ---------------------------------------------------------- /progress
+
+### Resumo (semana atual, sequência, peso, recordes recentes)
+GET {{host}}/progress/overview
+x-dev-user-email: {{devUser}}
+
+### Medições dos últimos 90 dias
+GET {{host}}/progress/measurements
+x-dev-user-email: {{devUser}}
+
+### Registar/atualizar a medição de um dia (upsert por utilizador + data + MANUAL)
+PUT {{host}}/progress/measurements
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{ "measuredAt": "2026-09-09", "weightKg": 71.8, "bodyFatPct": 24.5, "waistCm": 80, "notes": "em jejum" }
+
+### Recordes pessoais
+GET {{host}}/progress/records
+x-dev-user-email: {{devUser}}
+
+### ------------------------------------------------------ erros esperados
+
+### Sem autenticação -> 401 MISSING_TOKEN
+GET {{host}}/me
+
+### Corpo inválido -> 400 VALIDATION_ERROR com details[]
+POST {{host}}/workouts/generate
+x-dev-user-email: {{devUser}}
+Content-Type: application/json
+
+{ "availableMinutes": 5, "energyLevel": 9 }
+
+### Recurso de outro utilizador -> 404
+GET {{host}}/sessions/{{sessionId}}
+x-dev-user-email: outra@example.com
