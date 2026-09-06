@@ -183,11 +183,13 @@ var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
 var APPV='v18';
-var CFGDEF = {kcal:2600, prot:195, steps:10000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
+var CFGDEF = {kcal:2600, prot:195, steps:8000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
   for(var ck in CFGDEF){ if(u.cfg[ck]==null) u.cfg[ck]=CFGDEF[ck]; }
-  if(u.cfg.steps===7000||u.cfg.steps===8000) u.cfg.steps=10000;
+  if(u.cfg.steps===7000||u.cfg.steps===10000) u.cfg.steps=8000; // 8 000 = mínimo eficaz (SCIENCE.md)
+  u.cfg.techOk=u.cfg.techOk||{}; // checklist "Técnica primeiro" (jovem), por exercício
+  if(u.cfg.profile&&u.cfg.profile.pelvic==null) u.cfg.profile.pelvic=false;
   return u;
 }
 function loadRoot(){
@@ -209,77 +211,59 @@ function save(){
   if(canStore){ try{ localStorage.setItem('plano1213v2', JSON.stringify(ROOT)); }catch(e){} }
   else MEM = ROOT;
 }
+var USER_IDS=['A','B','C']; // até 3 pessoas (família): A/B antigos continuam a funcionar
 function userName(id){
   var u=ROOT.users[id];
-  return (u&&u.cfg.profile&&u.cfg.profile.name)?u.cfg.profile.name:(id==='A'?'Pessoa A':'Pessoa B');
+  return (u&&u.cfg.profile&&u.cfg.profile.name)?u.cfg.profile.name:('Pessoa '+id);
 }
-function otherId(){ return ROOT.active==='A'?'B':'A'; }
+function otherIds(){ return USER_IDS.filter(function(id){ return ROOT.users[id]&&id!==ROOT.active; }); }
+function otherId(){ return otherIds()[0]||(ROOT.active==='A'?'B':'A'); }
+/* pessoas com quem se partilham refeições (o jovem não conta calorias, por isso fica de fora) */
+function shareIds(){ return otherIds().filter(function(id){ return !isYouth(ROOT.users[id]); }); }
+function shareLabel(){ return shareIds().length>1?'P/ a família':'P/ os dois'; }
+/* ============ GRUPO ETÁRIO (regras do SCIENCE.md) ============ */
+function ageGroup(p){ // 'youth' (<16 anos) · 'woman40' (mulher 40+) · 'adult'
+  if(!p) return 'adult';
+  var a=p.age||30;
+  if(a<16) return 'youth';
+  if(p.sex==='F'&&a>=40) return 'woman40';
+  return 'adult';
+}
+function isYouth(u){ return ageGroup((u||DB).cfg.profile)==='youth'; }
+function isWoman40(u){ return ageGroup((u||DB).cfg.profile)==='woman40'; }
+function isAdultMan(u){ var p=(u||DB).cfg.profile; return !!p&&p.sex==='M'&&ageGroup(p)==='adult'; }
+function ageGroupNote(p){ // linha cinzenta por baixo do perfil: que regras se aplicam
+  var g=ageGroup(p);
+  if(g==='youth') return 'Perfil jovem: técnica antes de carga, sem testes de máximos, sem contagem de calorias. 1–3 séries de 6–15 reps, sempre com 2 na reserva; sono 8–10 h.';
+  if(g==='woman40') return 'Perfil mulher 40+: força pesada progressiva, bloco de impacto para os ossos (2–3×/semana), proteína 1,6–2,0 g/kg, creatina 3–5 g/dia; os alvos nunca mudam pelo dia do ciclo — só pelo esforço e sono reportados.';
+  return 'Perfil adulto: 2–3 sessões de força/semana a RIR 1–3, 1 sessão de intervalos, 8 000 passos/dia, proteína 1,6–2,2 g/kg; a meta conta à semana, não em dias seguidos.';
+}
+function refreshAgeNote(){
+  var el=document.getElementById('ageNote'); if(!el) return;
+  var a=parseInt((document.getElementById('pfAge')||{}).value)||30, sx=(document.getElementById('pfSex')||{}).value||'M';
+  el.textContent=ageGroupNote({age:a,sex:sx});
+}
 function switchUser(id){
   if(!ROOT.users[id]) return;
   ROOT.active=id; DB=ROOT.users[id];
   WK=buildWK(DB.cfg.profile);
   builder=null; curWK=null; save(); renderUsers(); renderNav(); render();
-/* ecrã de entrada (uma vez por abertura) */
-(function(){
-  var hasProfile=!!DB.cfg.profile;
-  var d=document.createElement('div');
-  d.id='splash';
-  d.innerHTML=
-    '<div class="sw">this little coach</div>'+
-    '<div class="ss">crescemos contigo</div>'+
-    (hasProfile
-      ? '<button id="splashGo">Entrar como '+esc(userName(ROOT.active))+'</button>'+
-        (ROOT.users.B?'<button id="splashOther" class="ghost">Sou '+esc(userName(ROOT.active==='A'?'B':'A'))+'</button>':'')
-      : '<button id="splashGo">Começar — criar o meu perfil</button>');
-  document.body.appendChild(d);
-  document.getElementById('splashGo').onclick=function(){
-    d.remove();
-    if(!hasProfile){ DB.cfg.onboardSkip=true; save(); go('guia'); }
-  };
-  var so=document.getElementById('splashOther');
-  if(so) so.onclick=function(){ d.remove(); switchUser(ROOT.active==='A'?'B':'A'); };
-})();
-document.title='This Little Coach · '+APPV;
-/* verificador de atualizações: compara a versão em memória com a do servidor */
-function checkUpdate(){
-  if(location.protocol!=='https:') return;
-  fetch(location.pathname,{cache:'no-store'}).then(function(r){return r.text();}).then(function(txt){
-    var m=txt.match(/APPV='(v\d+)'/);
-    if(m&&m[1]!==APPV){
-      if(document.getElementById('updBar')) return;
-      var d=document.createElement('div');
-      d.id='updBar';
-      d.innerHTML='Nova versão <b>'+m[1]+'</b> disponível — toca aqui para atualizar';
-      d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999;background:#000000;color:#fff;padding:12px 16px;font-size:14px;text-align:center;cursor:pointer';
-      d.onclick=function(){ location.replace(location.pathname+'?u='+m[1]+'-'+Math.floor(Math.random()*1e6)); };
-      document.body.appendChild(d);
-    }
-  }).catch(function(){});
 }
-checkUpdate();
-document.addEventListener('visibilitychange',function(){ if(!document.hidden) checkUpdate(); });
-/* tiiny.host (plano grátis) injeta um banner fixo em baixo que tapa a nav — levantar a nossa barra */
-(function(){
-  if(/tiiny\.site$/.test(location.hostname)){
-    var nav=document.getElementById('nav');
-    nav.style.bottom='86px';
-    document.body.style.paddingBottom='166px';
-  }
-})();
+function addUser(){ // cria a próxima pessoa livre (B, depois C)
+  var free=USER_IDS.filter(function(id){ return !ROOT.users[id]; })[0];
+  if(!free){ alert('Já estão criadas 3 pessoas.'); return; }
+  ROOT.users[free]=initUser({}); save(); switchUser(free); go('guia');
+  setTimeout(function(){ alert('Nova pessoa criada \n\nPreenche o Perfil dela (já aberto em Mais) — sexo, idade, peso e objetivo — e a app aplica as regras certas (jovem, mulher 40+, adulto). Os dados de cada um ficam separados; as refeições podem ser partilhadas.'); },300);
 }
-function addUserB(){
-  if(ROOT.users.B){ switchUser('B'); return; }
-  ROOT.users.B=initUser({}); save(); switchUser('B'); go('guia');
-  setTimeout(function(){ alert('Segunda pessoa criada \n\nPreenche o Perfil dela (já aberto no Guia) — sexo, peso, objetivo e foco — e a app calcula tudo para ela. Os dados de cada um ficam separados; as refeições podem ser partilhadas com "P/ os dois".'); },300);
-}
+function addUserB(){ addUser(); } // compatibilidade
 function renderUsers(){
   var el=document.getElementById('userBar'); if(!el) return;
-  var others=['A','B'].filter(function(id){return ROOT.users[id]&&id!==ROOT.active;});
+  var others=otherIds();
   var h='<div style="position:relative">'+
    '<button class="uchip on" onclick="var m=document.getElementById(\'uMenu\');m.style.display=m.style.display===\'block\'?\'none\':\'block\'">'+esc(userName(ROOT.active))+' <span style="color:var(--muted)">&#9662;</span></button>'+
    '<div id="uMenu" class="umenu" style="display:none">';
   others.forEach(function(id){ h+='<div onclick="switchUser(\''+id+'\')">'+esc(userName(id))+'</div>'; });
-  if(!ROOT.users.B) h+='<div onclick="addUserB()">+ adicionar pessoa</div>';
+  if(USER_IDS.some(function(id){return !ROOT.users[id];})) h+='<div onclick="addUser()">+ adicionar pessoa</div>';
   h+='<div style="color:var(--muted)" onclick="document.getElementById(\'uMenu\').style.display=\'none\';go(\'guia\')">Editar perfil</div>';
   h+='</div></div>';
   el.innerHTML=h;
@@ -340,7 +324,8 @@ var CARDIO={
  eliptica:{lb:'Elíptica',ll:'resistência (1–20)',def:8,met:function(l){return 4+0.35*l;}},
  bicicleta:{lb:'Bicicleta estática',ll:'resistência (1–20)',def:8,met:function(l){return 3.5+0.45*l;}},
  remo:{lb:'Remo',ll:'resistência (1–10)',def:5,met:function(l){return 6+0.4*l;}},
- corrida:{lb:'Corrida',ll:'velocidade km/h',def:9,met:function(l){return 1.0*l;}}
+ corrida:{lb:'Corrida',ll:'velocidade km/h',def:9,met:function(l){return 1.0*l;}},
+ intervalos:{lb:'Intervalos (10×1 / 4×4)',ll:'intensidade (1–10)',def:8,met:function(l){return 4+0.7*l;}}
 };
 var cardioT='passadeira';
 function cardioKcal(t,lvl,min){
@@ -365,7 +350,7 @@ function addCardio(){
 function trainBurn(k){
   return Math.round((WKCAL[k]||280)*((DB.cfg.profile?DB.cfg.profile.w:94)/94));
 }
-var WKCAL = {UA:300,LA:320,UB:300,LB:320,D5:220,MIN:130,FER1:220,FER2:110,PUSH:300,PULL:300,LEGS:320,FBA:310,FBB:310,BA:190,BB:190,SIMA:250,SIMB:250,XPERNA:320,XGLUTE:300,XBRACO:200,XPEITO:250,XCOSTA:260,XOMBRO:200,XCORE:150,REST:0};
+var WKCAL = {UA:300,LA:320,UB:300,LB:320,D5:220,MIN:100,FER1:220,FER2:110,PUSH:300,PULL:300,LEGS:320,FBA:310,FBB:310,BA:190,BB:190,SIMA:250,SIMB:250,XPERNA:320,XGLUTE:300,XBRACO:200,XPEITO:250,XCOSTA:260,XOMBRO:200,XCORE:150,REST:0};
 function tdee(dt){
   var bmr=DB.cfg.bmr||2000;
   var pw=DB.cfg.profile?DB.cfg.profile.w:94;
@@ -442,10 +427,11 @@ var WKBASE = {
   {id:'d53',n:'Tríceps (corda/overhead)',t:'3×10–15',m:'Tríceps',a:['Francês deitado','Dips banco c/ peso']},
   {id:'d54',n:'Face pulls',t:'3×15–20',m:'Ombro post. · saúde do ombro',a:['Reverse fly halteres','Máquina peck-deck invertida']},
   {id:'d55',n:'Cardio leve 20–30 min',t:'—',m:'Passadeira inclinada / bicicleta / remo'}]},
- MIN:{name:'Sessão Mínima (20 min)', ex:[
-  {id:'m1',n:'Empurrar (supino/press)',t:'2 séries RIR 0–1',m:'Peito/ombros'},
-  {id:'m2',n:'Puxar (remada/puxada)',t:'2 séries RIR 0–1',m:'Costas'},
-  {id:'m3',n:'Pernas (prensa/agachamento)',t:'2 séries RIR 0–1',m:'Quadríceps/glúteos'}]},
+ MIN:{name:'Sessão Mínima (12 min)', ex:[
+  {id:'m1',n:'Empurrar (supino/press)',t:'2×8–12',m:'Peito/ombros · superset com o puxar (sem descanso entre os dois)'},
+  {id:'m2',n:'Puxar (remada/puxada)',t:'2×8–12',m:'Costas · 60–90 s de descanso entre pares'},
+  {id:'m3',n:'Pernas (prensa/agachamento)',t:'1×10–15',m:'Quadríceps/glúteos'},
+  {id:'m4',n:'Cardio 3 min (escadas / bicicleta a fundo)',t:'—',m:'Bloco cardio — fecha a sessão'}]},
  FER1:{name:'Sem ginásio — corpo inteiro (30 min)', ex:[
   {id:'f1',n:'Flexões (pés elevados p/ dificultar)',t:'3×máx−1',m:'Peito · ombros · tríceps',a:['Flexões no chão','Flexões c/ mochila às costas','Flexões diamante (tríceps)']},
   {id:'f2',n:'Remada invertida (mesa robusta / toalha na porta)',t:'3×máx−1',m:'Costas · bíceps',a:['Remada c/ mochila pesada (1 braço)','Elástico de viagem','Remada c/ mala']},
@@ -635,6 +621,51 @@ function adaptEx(ex, prof){
   if(prof.exp==='avancado'){ ex.t=ex.t.replace('×8–12','×6–10'); }
   return ex;
 }
+/* Jovem (<16, NSCA/Faigenbaum): 1–3 séries, 6–15 reps, sempre RIR ≥2, sem testes de máximos */
+function youthAdaptEx(ex){
+  var m=ex.t.match(/^(\d+)×(\d+)[–-](\d+)(.*)$/);
+  if(m){
+    var sets=Math.min(3,parseInt(m[1])), lo=Math.max(6,Math.min(15,parseInt(m[2]))), hi=Math.max(lo,Math.min(15,parseInt(m[3])));
+    if(hi===lo) lo=Math.max(6,hi-5);
+    ex.t=sets+'×'+lo+'–'+hi+m[4];
+  } else if(/máx/.test(ex.t)){
+    ex.t=ex.t.replace(/^(\d+)/,function(a){ return String(Math.min(3,parseInt(a))); }).replace(/máx−1/,'8–12');
+  } else {
+    var m2=ex.t.match(/^(\d+)×/); if(m2&&parseInt(m2[1])>3) ex.t=ex.t.replace(/^\d+×/,'3×');
+  }
+  ex.youth=true;
+  return ex;
+}
+/* Bloco de impacto: "Ossos" para a mulher 40+ (LIFTMOR) e pliometria leve para o jovem (máx. 2×/semana) */
+var IMPACT_WOMAN={id:'imp1',n:'Saltos no lugar (aterragem suave)',t:'3×8',m:'Ossos — impacto para densidade óssea',a:['Saltar à corda 3×30 s','Drop jump de um degrau 20–30 cm 3×6'],ossos:true};
+var IMPACT_PELVIC={id:'imp2',n:'Step-up com carga (degrau alto)',t:'3×8/perna',m:'Ossos — carga sem impacto (pavimento pélvico)',a:['Heel drops (sobe aos dedos, deixa cair os calcanhares) 3×10','Prensa pesada 3×6'],ossos:true};
+var IMPACT_YOUTH={id:'imp3',n:'Saltos no lugar (aterragem silenciosa)',t:'2×6',m:'Pliometria leve — aterrar sem barulho é o critério para progredir',a:['Saltar à corda 2×30 s','Saltos para um banco baixo 2×5'],plyo:true};
+var LOWER_KEYS=['LA','LB','LEGS','PULL','FBA','FBB','SIMA','SIMB','BA','BB']; // sessões que recebem o bloco (PULL só para garantir 2/semana em PPL)
+function impactEx(profile){
+  var g=ageGroup(profile);
+  if(g==='woman40') return JSON.parse(JSON.stringify(profile.pelvic?IMPACT_PELVIC:IMPACT_WOMAN));
+  if(g==='youth') return JSON.parse(JSON.stringify(IMPACT_YOUTH));
+  return null;
+}
+function appendImpactBlock(w, profile){
+  var ie=impactEx(profile); if(!ie) return;
+  LOWER_KEYS.forEach(function(k){ if(w[k]) w[k].ex.push(JSON.parse(JSON.stringify(ie))); });
+}
+function impactCap(){ var g=ageGroup(DB.cfg.profile); return g==='youth'?2:(g==='woman40'?3:0); }
+function impactSessionsThisWeek(exceptDt){ // outras sessões desta semana que já tiveram bloco de impacto
+  var wk=weekOf(exceptDt), n=0;
+  for(var dt in DB.workouts){ if(dt===exceptDt||weekOf(dt)!==wk) continue; var t=DB.workouts[dt].type;
+    if(WK[t]&&WK[t].ex.some(function(e){return e.ossos||e.plyo;})) n++; }
+  return n;
+}
+function impactCapReached(dt){ var cap=impactCap(); return !!cap&&impactSessionsThisWeek(dt)>=cap; }
+function sessionExs(wkKey, dt){ // exercícios da sessão, sem o bloco de impacto se o limite semanal já foi atingido
+  var exs=WK[wkKey]?WK[wkKey].ex:[];
+  return impactCapReached(dt)?exs.filter(function(e){return !(e.ossos||e.plyo);}):exs;
+}
+function impactCapNote(dt){
+  return impactCapReached(dt)?'<div class="note">Saltos/impacto já feitos '+impactCap()+'× esta semana — hoje a sessão vai sem esse bloco (limite semanal).</div>':'';
+}
 function buildWK(profile){
   var focus=profile?profile.focus:'geral';
   var prog=progOf(profile);
@@ -662,6 +693,8 @@ function buildWK(profile){
   for(var xk in xt) w[xk]=xt[xk];
   w.MIN=base.MIN; w.FER1=base.FER1; w.FER2=base.FER2;
   if(profile) for(var wk2 in w){ w[wk2].ex=w[wk2].ex.map(function(e){ return adaptEx(e, profile); }); }
+  appendImpactBlock(w, profile);
+  if(ageGroup(profile)==='youth') for(var yk in w){ w[yk].ex=w[yk].ex.map(youthAdaptEx); }
   return w;
 }
 var WK = buildWK(DB.cfg.profile);
@@ -671,8 +704,10 @@ function applyProfile(){
   var p={name:gv('pfName').trim(), sex:gv('pfSex'), age:parseInt(gv('pfAge'))||30, h:parseFloat(gv('pfH'))||170,
          w:parseFloat(gv('pfW'))||70, bf:parseFloat(gv('pfBF'))||null,
          goalWeight:parseFloat(gv('pfGW'))||null, goal:gv('pfGoal'), focus:gv('pfFocus'),
-         days:parseInt(gv('pfDays'))||4, prog:gv('pfProg'), exp:gv('pfExp'), equip:gv('pfEquip')};
+         days:parseInt(gv('pfDays'))||4, prog:gv('pfProg'), exp:gv('pfExp'), equip:gv('pfEquip'),
+         pelvic:!!(document.getElementById('pfPelvic')&&document.getElementById('pfPelvic').checked)};
   DB.cfg.profile=p;
+  var grp=ageGroup(p);
   var bmr = p.bf ? Math.round(370+21.6*(p.w*(1-p.bf/100)))
                  : Math.round(10*p.w+6.25*p.h-5*p.age+(p.sex==='F'?-161:5));
   DB.cfg.bmr=bmr;
@@ -685,14 +720,17 @@ function applyProfile(){
   // proteína: com %MG usa massa magra (Helms 2,3–3,1 g/kg MM); sem %MG usa peso total
   if(p.bf){ var mm=p.w*(1-p.bf/100); DB.cfg.prot=Math.round((p.goal==='ganhar'?2.2:2.6)*mm); }
   else DB.cfg.prot = Math.round((p.goal==='ganhar'?1.8:2.2)*p.w);
+  if(grp==='woman40') DB.cfg.prot=Math.round(1.8*p.w); // mulher 40+: 1,6–2,0 g/kg de peso total
+  if(grp==='youth'){ DB.cfg.kcal=Math.round(estT/50)*50; DB.cfg.prot=Math.round(1.5*p.w); DB.cfg.target=null; } // jovem: sem défice, sem meta de peso (só uso interno)
   DB.cfg.water = Math.round((0.03*p.w+0.7)*4)/4;
-  if(p.goalWeight) DB.cfg.target=p.goalWeight;
+  if(p.goalWeight&&grp!=='youth') DB.cfg.target=p.goalWeight;
   if(!DB.cfg.startW) DB.cfg.startW=p.w; // ponto de partida da jornada (fixa na 1ª vez)
   DB.cfg.progSel=null; // o programa do perfil volta a mandar
   WK = buildWK(p);
   curWK=null;
   DB.cfg.lastTune=null;
   save(); renderUsers();
+  if(grp==='youth'){ alert('Perfil jovem aplicado \n\nRegras: técnica antes de carga, 1–3 séries de 6–15 reps com 2 na reserva, sem testes de máximos, sem contagem de calorias nem balança. Dormir 8–10 h.'); render(); return; }
   alert('Perfil aplicado \n\nGasto base (BMR): '+bmr+' kcal\nAlvo diário: '+DB.cfg.kcal+' kcal\nProteína: '+DB.cfg.prot+' g/dia\nÁgua: '+DB.cfg.water+' L\nPeso alvo: '+(DB.cfg.target||'—')+' kg\nTreino: '+(p.focus==='gluteos'?'ênfase glúteos/pernas':p.focus==='tronco'?'ênfase tronco/braços':'equilibrado')+'\n\nA app recalcula o défice e as sugestões com estes números.');
   render();
 }
@@ -704,9 +742,9 @@ function autoTune(){ // devolve sugestão de ajuste de kcal ou null
   var goal=DB.cfg.profile?DB.cfg.profile.goal:'perder';
   if(goal==='manter') return null;
   if(DB.cfg.mode&&DB.cfg.mode!=='normal') return null; // em férias/pausa/doente não se mexe
-  if(DB.cfg.profile&&DB.cfg.profile.sex==='F'){ // fase lútea = retenção; não ajustar às cegas
-    for(var i=0;i<7;i++){ var dd=DB.days[dateOffset(-i)]; if(dd&&dd.cycle==='lútea') return null; }
-  }
+  if(isYouth()) return null; // jovem: sem calorias, sem auto-ajuste
+  // O dia do ciclo nunca altera alvos (SCIENCE.md b) — o campo fica registado, mas o ajuste olha só para esforço e sono
+  var fat=recentFatigue();
   if(DB.cfg.lastTune && (new Date(today())-new Date(DB.cfg.lastTune))/86400000 < 14) return null;
   var n14=weights().filter(function(x){return x[0]>=dateOffset(-14);}).length;
   if(n14<8) return null; // dados insuficientes
@@ -723,8 +761,17 @@ function autoTune(){ // devolve sugestão de ajuste de kcal ou null
     if(rate<0.05) s={dir:150, why:'Peso estagnado ('+fmt(rate)+' kg/sem) — para ganhar precisas de mais.', lever:'Junta 4 c.s. de arroz ou 1 batido extra.'};
     else if(rate>0.45) s={dir:-150, why:'A ganhar '+fmt(rate)+' kg/sem — demasiado rápido, isso já é gordura.', lever:'Tira 2 c.s. de arroz + 1 fruta.'};
   }
+  if(s&&s.dir<0&&fat) return null; // esforço no limite ou sono curto: não cortar mais — primeiro recuperar
   if(s) s.novo=Math.max(1500, DB.cfg.kcal+s.dir);
   return s;
+}
+function recentFatigue(){ // últimos 7 dias: ≥2 sessões "difícil"/RIR 0 ou sono médio <6,5 h
+  var hard=0, sl=[];
+  for(var i=0;i<7;i++){ var dt=dateOffset(-i), w=DB.workouts[dt], d=DB.days[dt];
+    if(w&&w.type!=='REST'){ var r=sessionRIR(w); if(w.rate==='dificil'||(r!=null&&r<=0)) hard++; }
+    if(d&&d.sleep) sl.push(d.sleep); }
+  var m=null; if(sl.length){ m=0; sl.forEach(function(x){m+=x;}); m/=sl.length; }
+  return hard>=2||(m!=null&&m<6.5);
 }
 function applyTune(novo){ DB.cfg.kcal=novo; DB.cfg.lastTune=today(); save(); render(); }
 function snoozeTune(){ DB.cfg.lastTune=today(); save(); render(); }
@@ -777,6 +824,54 @@ function calcRM(exId){
   openStart[exId]={res:'1RM estimado ≈ '+Math.round(orm)+' kg → trabalha com <b>'+String(work).replace('.',',')+' kg</b> para '+reps+' reps'};
   render();
 }
+/* ============ AUTORREGULAÇÃO (RIR/RPE) & META SEMANAL ============ */
+function sessionRIR(wk){ // RIR médio de uma sessão: séries com rir; senão mapeia a avaliação (fácil 3 · no ponto 2 · difícil 0)
+  var rs=[]; for(var k in (wk.sets||{})){ (wk.sets[k]||[]).forEach(function(x){ if(x.w&&x.r&&x.rir!=null) rs.push(x.rir); }); }
+  if(rs.length){ var t=0; rs.forEach(function(x){t+=x;}); return t/rs.length; }
+  if(wk.rate==='facil') return 3; if(wk.rate==='certo') return 2; if(wk.rate==='dificil') return 0;
+  return null;
+}
+function lastSessions(n){ // últimas n sessões com séries registadas (até hoje)
+  var out=[];
+  Object.keys(DB.workouts).sort().reverse().forEach(function(dt){
+    if(out.length>=n||dt>today()) return;
+    var w=DB.workouts[dt]; if(!w||w.type==='REST') return;
+    var has=false; for(var k in (w.sets||{})){ if((w.sets[k]||[]).some(function(x){return x.w&&x.r;})) has=true; }
+    if(has) out.push({d:dt,w:w});
+  });
+  return out;
+}
+function autoregulate(){ // RIR ≥3 em 2 sessões → sobe; RIR 0/RPE ≥9 em 2 sessões seguidas → semana leve (−20 % volume)
+  var ls=lastSessions(2); if(ls.length<2) return null;
+  var r0=sessionRIR(ls[0].w), r1=sessionRIR(ls[1].w);
+  if(r0==null||r1==null) return null;
+  var hard0=r0<=0||ls[0].w.rate==='dificil', hard1=r1<=0||ls[1].w.rate==='dificil';
+  if(hard0&&hard1) return {t:'light', title:'Semana leve', txt:'Duas sessões seguidas no limite (RIR 0 / RPE ≥9). Próxima semana: −20 % de volume — tira 1 série a cada exercício, mesma carga.'};
+  if((r0+r1)/2>=3) return {t:'up', title:'Progressão: sobe', txt:'Últimas 2 sessões com RIR médio ≥3 — na próxima sessão +1 rep por série ou +2,5 kg'+(isYouth()?' (só se a técnica se manteve limpa)':'')+'.'};
+  return null;
+}
+function autoregCard(){ var a=autoregulate(); if(!a) return '';
+  return '<div class="card" style="border:1.5px solid var(--ink)"><h2>'+a.title+'</h2><div class="note" style="margin:0">'+a.txt+'</div></div>'; }
+function rirHint(){ return isYouth()?'RIR ≥2 · deixa 2 na reserva':'RIR 1–3'; }
+function weekStats(u, wk){ // sessões de força e dias de cardio/passos numa semana ISO, para uma pessoa
+  var str=0, cardio=0;
+  for(var dt in u.workouts){ var t=u.workouts[dt].type; if(t&&t!=='REST'&&weekOf(dt)===wk) str++; }
+  for(var dt2 in u.days){ if(weekOf(dt2)!==wk) continue; var d=u.days[dt2]; if((d.steps||0)>=8000||(d.cardio&&d.cardio.length)) cardio++; }
+  return {str:str, cardio:cardio, done:str>=2&&cardio>=1};
+}
+function weekDone(u, wk){ return weekStats(u||DB, wk||weekOf(today())).done; }
+function weeksDoneStreak(u){ // semanas cumpridas seguidas (a atual conta se já estiver cumprida)
+  u=u||DB; var n=weekDone(u, weekOf(today()))?1:0;
+  for(var i=1;i<=52;i++){ if(weekDone(u, weekOf(dateOffset(-7*i)))) n++; else break; }
+  return n;
+}
+function weekTargetNote(dt){
+  var st=weekStats(DB, weekOf(dt||today())), n=weeksDoneStreak();
+  return '<div class="note" style="margin:0 0 12px">Semana: <b>'+st.str+'</b> força · <b>'+st.cardio+'</b> cardio/passos — '+
+    (st.done?'<b>semana cumprida</b>':'meta: 2 força + 1 cardio/passos')+'. Semanas cumpridas seguidas: <b>'+n+'</b>. Falhar um dia não quebra nada.</div>';
+}
+function saveIntent(v){ DB.cfg.intent=v.trim(); save(); }
+function intentNote(){ return DB.cfg.intent?'<div class="note" style="margin:0 0 10px">Quando treino: <b>'+esc(DB.cfg.intent)+'</b></div>':''; }
 /* ============ COACH SEMANAL & META ============ */
 function coachWeek(){
   var issues=[], avg=function(a){ if(!a.length) return null; var s=0; a.forEach(function(x){s+=x;}); return s/a.length; };
@@ -812,8 +907,15 @@ function coachWeek(){
   }
   if(avg(steps)!=null&&avg(steps)<DB.cfg.steps*0.75) issues.push({e:'Passos: média '+Math.round(avg(steps)).toLocaleString('pt-PT')+' ('+Math.round(avg(steps)/DB.cfg.steps*100)+'% do alvo)',
     s:'Escolhe UMA solução nova do menu esta semana (a mais fácil: 15 min de inclinada no fim de cada treino) e fixa-a.'});
-  if(trainings<4&&DB.cfg.mode==='normal') issues.push({e:'Só '+trainings+' treino'+(trainings===1?'':'s')+' esta semana (alvo 4)',
-    s:'Marca os 4 no calendário à segunda-feira, à mesma hora. Dia mau? Sessão Mínima de 20 min — nunca zero.'});
+  if(trainings<2&&DB.cfg.mode==='normal') issues.push({e:'Só '+trainings+' treino'+(trainings===1?'':'s')+' esta semana (mínimo 2 de força + 1 cardio/passos)',
+    s:'Marca os dias no calendário à segunda-feira, à mesma hora. Dia mau? Sessão Mínima de 12 min — nunca zero.'});
+  var ar=autoregulate();
+  if(ar) issues.push({e:ar.title, s:ar.txt});
+  if(isWoman40()){ // ≥4 semanas com ≥2 sessões: técnica estável → cargas pesadas
+    var okW=0; for(var wi=0;wi<8;wi++){ if(weekStats(DB, weekOf(dateOffset(-7*wi))).str>=2) okW++; }
+    if(okW>=4) issues.push({e:'Técnica estável há '+okW+' semanas com 2+ sessões',
+      s:'Passa a cargas pesadas nos básicos: 5×5 a RIR 1–2 em agachamento, peso morto, press e remada — é o que mais protege osso e músculo depois dos 40 (LIFTMOR).'});
+  }
   if(avg(sleeps)!=null&&avg(sleeps)<6.8) issues.push({e:'Sono médio '+fmt(avg(sleeps))+' h',
     s:'Prioridade nº1 da próxima semana: com pouco sono, o mesmo défice perde 55% menos gordura (Nedeltcheva). Alarme de deitar, não só de acordar.'});
   if(avg(waters)!=null&&avg(waters)<DB.cfg.water*0.7) issues.push({e:'Água: média '+fmt(avg(waters))+' L (alvo '+fmt(DB.cfg.water)+')',
@@ -826,7 +928,7 @@ function coachWeek(){
   if(hard>=3) issues.push({e:hard+' treinos avaliados como "difícil" esta semana',
     s:'Fadiga a acumular: revê o sono, confirma que comes o alvo (não menos), e considera uma semana de Pausa ou deload (metade das séries, mesma carga).'});
   if(easy>=3) issues.push({e:easy+' treinos avaliados como "fácil"',
-    s:'Estás a deixar ganhos na mesa: aproxima as séries da falha (RIR 0–2 a sério) e aceita as subidas de carga que o coach sugere.'});
+    s:'Estás a deixar ganhos na mesa: aproxima as séries da falha (RIR 1–3 a sério) e aceita as subidas de carga que o coach sugere.'});
   // carga vs semana anterior
   var tonPrev=0;
   for(var j=8;j<=14;j++){ var dt2=dateOffset(-j); if(DB.workouts[dt2]) tonPrev+=tonnage(dt2); }
@@ -836,7 +938,7 @@ function coachWeek(){
 }
 function etaGoal(){
   var t=DB.cfg.target, a=avg7(today());
-  if(!t) return null;
+  if(!t||isYouth()) return null;
   var goal=DB.cfg.profile?DB.cfg.profile.goal:'perder';
   if(goal==='manter') return null;
   if(a==null) a=DB.cfg.startW||(DB.cfg.profile?DB.cfg.profile.w:94.2);
@@ -864,7 +966,7 @@ function etaGoal(){
 }
 /* ============ MASCOTE & JORNADA ============ */
 function journeyCard(){
-  var t=DB.cfg.target; if(!t) return '';
+  var t=DB.cfg.target; if(!t||isYouth()) return '';
   var goal=DB.cfg.profile?DB.cfg.profile.goal:'perder';
   var startW=DB.cfg.startW||(weights().length?weights()[0][1]:(DB.cfg.profile?DB.cfg.profile.w:94.2));
   var cur=avg7(today()); if(cur==null) cur=startW;
@@ -1139,7 +1241,7 @@ function ingTotalHTML(){
   if(!n) return '<div class="note" style="margin-top:6px">Toca + nos ingredientes (ex.: 3× ovo + 1× pão centeio + 1× abacate ¼).</div>';
   return '<div class="row" style="margin-top:8px">'+
     '<button style="flex:1" onclick="ingConfirm(false)">Adicionar prato — '+Math.round(tk)+' kcal · '+Math.round(tp)+'g P</button>'+
-    (ROOT.users.B?'<button class="ghost" onclick="ingConfirm(true)">P/ os dois</button>':'')+
+    (shareIds().length?'<button class="ghost" onclick="ingConfirm(true)">'+shareLabel()+'</button>':'')+
     '<button class="ghost" onclick="ingConfirm(false,true)">+ guardar</button>'+
     '<button class="ghost" onclick="ingSel={};refreshIng()">limpar</button></div>'+
     '<div class="note" style="margin-top:4px">"+ guardar" adiciona e guarda o prato em "Os meus alimentos" para a próxima vez.</div>';
@@ -1170,13 +1272,13 @@ function ingConfirm(both, fav){
   if(!tk) return;
   var nm=parts.join(' + ');
   if(fav) DB.custom.push({n:nm,k:Math.round(tk),p:Math.round(tp)});
-  if(both&&ROOT.users.B){
-    var oU=ROOT.users[otherId()];
+  if(both&&shareIds().length){
     function factor(u){ return Math.max(0.5, Math.min(1.3, Math.round((u.cfg.kcal||2600)/2600*100)/100)); }
-    var fMe=factor(DB), fOt=factor(oU);
+    var fMe=factor(DB);
     day(curDate).foods.push({n:nm+(fMe!==1?' ×'+String(fMe).replace('.',','):''),k:Math.round(tk*fMe),p:Math.round(tp*fMe)});
-    oU.days[curDate]=oU.days[curDate]||{foods:[]}; oU.days[curDate].foods=oU.days[curDate].foods||[];
-    oU.days[curDate].foods.push({n:nm+' ×'+String(fOt).replace('.',','),k:Math.round(tk*fOt),p:Math.round(tp*fOt)});
+    shareIds().forEach(function(oid){ var oU=ROOT.users[oid], fOt=factor(oU);
+      oU.days[curDate]=oU.days[curDate]||{foods:[]}; oU.days[curDate].foods=oU.days[curDate].foods||[];
+      oU.days[curDate].foods.push({n:nm+' ×'+String(fOt).replace('.',','),k:Math.round(tk*fOt),p:Math.round(tp*fOt)}); });
   } else {
     day(curDate).foods.push({n:nm,k:Math.round(tk),p:Math.round(tp)});
   }
@@ -1322,12 +1424,12 @@ function render(){
 }
 
 /* ============ MODO GUIADO (player estilo coach) ============ */
-var PL={wk:null,idx:0,rest:0,timer:null};
+var PL={wk:null,idx:0,rest:0,timer:null,rir:null};
 function startSession(wkKey){
   if(!WK[wkKey]) return;
   DB.workouts[curDate]=DB.workouts[curDate]||{type:wkKey,sets:{}};
   DB.workouts[curDate].type=wkKey; save();
-  PL={wk:wkKey,idx:0,rest:0,timer:null};
+  PL={wk:wkKey,idx:0,rest:0,timer:null,rir:null};
   var d=document.createElement('div'); d.className='player'; d.id='player';
   document.body.appendChild(d);
   renderPlayer();
@@ -1337,7 +1439,24 @@ function endSession(){
   var p=document.getElementById('player'); if(p) p.remove();
   PL.wk=null; render();
 }
-function plExs(){ return WK[PL.wk].ex.filter(function(e){return e.t!=='—';}); }
+function plExs(){ return sessionExs(PL.wk, curDate).filter(function(e){return e.t!=='—';}); }
+function plSetRIR(v){ PL.rir=v; renderPlayer(); }
+function rirStepper(cur){ // seletor RIR 0–4 por série (0 = falha · 4 = muito fácil)
+  var h='<div class="psets" style="align-items:center"><span style="font-size:12px;color:var(--muted)">RIR</span>';
+  for(var i=0;i<=4;i++) h+='<button class="mini'+(cur===i?'':' ghost')+'" style="min-width:40px;padding:6px 0" onclick="plSetRIR('+i+')">'+i+'</button>';
+  return h+'</div>';
+}
+/* "Técnica primeiro" (jovem): checklist antes da 1.ª sessão de cada exercício novo */
+function techCardHTML(ex, inPlayer){
+  return '<div class="card" style="border:1.5px solid var(--ink);text-align:left;max-width:360px;margin:8px auto"><h2>Técnica primeiro</h2>'+
+    '<div class="note" style="margin:0">Antes da 1.ª série de <b>'+esc(ex.n)+'</b>:</div>'+
+    '<div class="note" style="margin:4px 0 0">1 · Faz 5–8 reps sem carga (ou muito leve) e pede a um adulto para ver.</div>'+
+    '<div class="note" style="margin:2px 0 0">2 · Movimento controlado: 2 s a descer, sem ressaltos, sem prender a respiração.</div>'+
+    '<div class="note" style="margin:2px 0 0">3 · Termina a série com 2 reps na reserva — se a técnica se perde, a série acabou.</div>'+
+    '<button class="mini" style="margin-top:8px" onclick="techOk(\''+ex.id+'\','+(inPlayer?'true':'false')+')">Técnica validada — continuar</button></div>';
+}
+function techOk(exId, inPlayer){ DB.cfg.techOk=DB.cfg.techOk||{}; DB.cfg.techOk[exId]=today(); save(); if(inPlayer) renderPlayer(); else render(); }
+function needsTech(ex){ return isYouth()&&!lastPerf(ex.id)&&!(DB.cfg.techOk&&DB.cfg.techOk[ex.id]); }
 function renderPlayer(){
   var p=document.getElementById('player'); if(!p) return;
   var exs=plExs();
@@ -1348,14 +1467,14 @@ function renderPlayer(){
     var rate=DB.workouts[curDate].rate;
     p.innerHTML='<div class="pmain">'+
       '<div class="pname">Treino feito!</div>'+
-      '<div style="margin:14px 0;font-size:15px;color:var(--ink2)">'+WK[PL.wk].name+'<br><b style="color:var(--ink)">'+ns+' séries · '+tn.toLocaleString('pt-PT')+' kg movidos · ~'+trainBurn(PL.wk)+' kcal</b></div>'+
+      '<div style="margin:14px 0;font-size:15px;color:var(--ink2)">'+WK[PL.wk].name+'<br><b style="color:var(--ink)">'+ns+' séries · '+tn.toLocaleString('pt-PT')+' kg movidos'+(isYouth()?'':' · ~'+trainBurn(PL.wk)+' kcal')+'</b></div>'+
       (rate?'<div style="font-size:15px;margin-bottom:6px">'+(rate==='facil'?'Fácil — para a próxima o coach aperta':rate==='dificil'?'Difícil — anotado, vou vigiar a fadiga':'No ponto — é assim mesmo')+'</div>'
            :'<div style="font-size:14px;color:var(--ink2);margin-bottom:6px">Como foi o treino?</div>'+
             '<div style="display:flex;gap:8px;justify-content:center">'+
             '<button class="pgo" style="margin-top:0;padding:0 14px;background:#FFFFFF;color:#000000" onclick="plRate(\'facil\')">fácil</button>'+
             '<button class="pgo" style="margin-top:0;padding:0 14px" onclick="plRate(\'certo\')">no ponto</button>'+
             '<button class="pgo" style="margin-top:0;padding:0 14px;background:#FFFFFF;color:#000000" onclick="plRate(\'dificil\')">difícil</button></div>')+
-      '<div style="font-size:13px;color:var(--muted);margin-top:8px">Já está contado no teu défice e na semana.</div>'+
+      '<div style="font-size:13px;color:var(--muted);margin-top:8px">'+(isYouth()?'Contou para a semana. Agora: comer bem e dormir 8–10 h.':'Já está contado no teu défice e na semana.')+'</div>'+
       '<button class="pgo" onclick="endSession()">Terminar</button></div>';
     buzz(); return;
   }
@@ -1363,7 +1482,7 @@ function renderPlayer(){
   var mySets=(DB.workouts[curDate].sets[ex.id]||[]).filter(function(x){return x.w&&x.r;});
   var last=lastPerf(ex.id);
   var sug=suggest(ex.id,ex.t);
-  var st0=(!last&&STDW[ex.id])?stdStart(ex.id):null;
+  var st0=(!last&&STDW[ex.id]&&!isYouth())?stdStart(ex.id):null; // jovem: sem sugestão de carga inicial
   var preW=(PL.rec&&PL.recEx===ex.id)?PL.rec.w:(sug?sug.w:(mySets.length?mySets[mySets.length-1].w:(st0?st0.inter:'')));
   var body='';
   if(PL.rest>0){
@@ -1378,14 +1497,19 @@ function renderPlayer(){
     body='<div class="pmain">'+
       (exPic(ex.id)?exPic(ex.id).replace('class="pict"','class="ppict"'):'')+
       '<div class="pname">'+esc(ex.n)+'</div>'+
-      '<div class="ptarget">'+ex.t+' · RIR 0–2</div>'+
+      '<div class="ptarget">'+ex.t+' · '+rirHint()+'</div>'+
+      (PL.idx===0&&!mySets.length?'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Aquecimento: 1 série leve deste exercício antes da 1.ª a sério.</div>':'')+
+      (ex.ossos?'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Porquê: impacto + carga = densidade óssea (LIFTMOR).</div>':'')+
+      (ex.plyo?'<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Aterra em silêncio; máx. 2 sessões com saltos por semana.</div>':'')+
       '<div class="pmusc">'+ex.m+(last?'<br>última vez: '+last.s.map(function(x){return x.w+'kg×'+x.r;}).join(' · '):'')+
       (function(){var xs=exStats(ex.id);return xs?'<br>recorde: '+String(xs.best.w).replace('.',',')+' kg × '+xs.best.r+' ('+fmtDataPt(xs.best.d)+')':'';})()+
       (sug?'<br>'+sug.txt.replace(/<[^>]+>/g,''):'')+'</div>'+
-      '<div class="psets">'+mySets.map(function(x){return '<span class="pset">'+x.w+' kg × '+x.r+'</span>';}).join('')+'</div>'+
+      '<div class="psets">'+mySets.map(function(x){return '<span class="pset">'+x.w+' kg × '+x.r+(x.rir!=null?' · RIR '+x.rir:'')+'</span>';}).join('')+'</div>'+
+      (needsTech(ex)?techCardHTML(ex,true):
       '<div class="pin"><input id="plW" type="number" step="0.5" inputmode="decimal" placeholder="kg" value="'+preW+'">'+
       '<span style="color:var(--muted)">×</span><input id="plR" type="number" inputmode="numeric" placeholder="reps"></div>'+
-      '<button class="pgo" onclick="plLogSet()">Série feita</button></div>';
+      rirStepper(PL.rir)+
+      '<button class="pgo" onclick="plLogSet()">Série feita</button>')+'</div>';
   }
   p.innerHTML='<div class="ptop"><span>'+WK[PL.wk].name+'</span><span>'+(PL.idx+1)+' / '+exs.length+'</span>'+
     '<span style="cursor:pointer;text-decoration:underline" onclick="endSession()">sair</span></div>'+
@@ -1402,14 +1526,16 @@ function plLogSet(){
   if(!w||!r) return;
   var ex=plExs()[PL.idx];
   var wk=DB.workouts[curDate]; wk.sets[ex.id]=wk.sets[ex.id]||[];
-  wk.sets[ex.id].push({w:w,r:r}); buzz(); save();
+  var setObj={w:w,r:r}; if(PL.rir!=null) setObj.rir=PL.rir;
+  wk.sets[ex.id].push(setObj); buzz(); save();
   // autorregulação: recomendar a carga da PRÓXIMA série com base na que acabaste
   PL.rec=null; PL.recEx=ex.id;
   var mm=ex.t.match(/×(\d+)–(\d+)/);
   if(mm){
     var lo=parseInt(mm[1]), hi=parseInt(mm[2]);
     var inc=w>=60?2.5:(w>=20?2:1);
-    if(r>=hi+3)      PL.rec={w:roundW(Math.max(w+inc*2,w*1.05)), a:'↑↑', txt:r+' reps — demasiado fácil, sobe a sério'};
+    if(isYouth()&&r>hi) PL.rec={w:roundW(Math.max(w+inc,w*1.05)), a:'↑', txt:r+' reps — sobe pouco (≤5 %) e só se a técnica se manteve; deixa 2 na reserva'};
+    else if(r>=hi+3) PL.rec={w:roundW(Math.max(w+inc*2,w*1.05)), a:'↑↑', txt:r+' reps — demasiado fácil, sobe a sério'};
     else if(r>hi)    PL.rec={w:roundW(Math.max(w+inc,w*1.025)), a:'↑', txt:r+' reps — passaste o alvo ('+lo+'–'+hi+'), sobe'};
     else if(r<lo)    PL.rec={w:Math.max(1,roundW(w*0.92)), a:'↓', txt:'só '+r+' reps (alvo '+lo+'–'+hi+') — baixa e salva a próxima'};
     else             PL.rec={w:w, a:'→', txt:r+' reps — em cheio no alvo, repete o peso'};
@@ -1742,10 +1868,10 @@ function vComida(){
     });
     h+='<div class="row" style="margin-top:10px">'+
        '<button style="flex:1" onclick="confirmBuilder()">Adicionar — '+Math.round(tk)+' kcal · '+Math.round(tp)+'g P</button>'+
-       (ROOT.users.B?'<button class="ghost" style="flex:1" onclick="confirmBuilderBoth()">P/ os dois</button>':'')+
+       (shareIds().length?'<button class="ghost" style="flex:1" onclick="confirmBuilderBoth()">'+shareLabel()+'</button>':'')+
        '<button class="ghost" onclick="builder=null;render()">Cancelar</button></div>'+
        '<div class="note">Toca num ingrediente para o tirar/pôr (ex.: sem azeite, sem pão). O total ajusta na hora.'+
-       (ROOT.users.B?' <b>"P/ os dois"</b> regista nos dois perfis com a dose de cada um.':'')+'</div></div>';
+       (shareIds().length?' <b>"'+shareLabel()+'"</b> regista em cada perfil com a dose de cada um.':'')+'</div></div>';
   }
   h+='<div class="card"><h2>'+(curDate===today()?'Hoje':curDate)+' — '+Math.round(s.k)+' kcal · '+Math.round(s.p)+' g proteína</h2>';
   if(d.foods.length){
@@ -1899,21 +2025,22 @@ function confirmBuilderBoth(){
   it.c.forEach(function(c,ci){ if(builder.sel[ci]){tk+=c.k;tp+=c.p;} else out.push(c.n.split('(')[0].trim()); });
   if(!tk){ builder=null; render(); return; }
   var nm=it.n+(out.length?' (sem '+out.join(', sem ')+')':'');
-  var me=ROOT.active, other=otherId(), oU=ROOT.users[other];
+  var me=ROOT.active, others=shareIds();
+  if(!others.length){ confirmBuilder(); return; }
   // fator de cada um: alvo próprio ÷ 2600 (as refeições-tipo foram construídas para 2600 kcal)
   function factor(u){ var kc=(u.cfg.mode&&u.cfg.mode!=='normal')?null:u.cfg.kcal; kc=kc||u.cfg.kcal||2600;
     return Math.max(0.5, Math.min(1.3, Math.round(kc/2600*100)/100)); }
-  var fMe=factor(DB), fOt=factor(oU);
+  var fMe=factor(DB), fSum=fMe, msg='Registado \n\n'+userName(me)+': '+Math.round(tk*fMe)+' kcal · '+Math.round(tp*fMe)+'g P (×'+fMe+')';
   day(curDate).foods.push({n:nm+(fMe!==1?' ×'+String(fMe).replace('.',','):''),k:Math.round(tk*fMe),p:Math.round(tp*fMe)});
-  oU.days[curDate]=oU.days[curDate]||{foods:[]}; oU.days[curDate].foods=oU.days[curDate].foods||[];
-  oU.days[curDate].foods.push({n:nm+(fOt!==1?' ×'+String(fOt).replace('.',','):''),k:Math.round(tk*fOt),p:Math.round(tp*fOt)});
+  others.forEach(function(other){
+    var oU=ROOT.users[other], fOt=factor(oU); fSum+=fOt;
+    oU.days[curDate]=oU.days[curDate]||{foods:[]}; oU.days[curDate].foods=oU.days[curDate].foods||[];
+    oU.days[curDate].foods.push({n:nm+(fOt!==1?' ×'+String(fOt).replace('.',','):''),k:Math.round(tk*fOt),p:Math.round(tp*fOt)});
+    msg+='\n'+userName(other)+': '+Math.round(tk*fOt)+' kcal · '+Math.round(tp*fOt)+'g P (×'+fOt+') — ≈ '+Math.round(fOt/fMe*100)+'% da dose de '+userName(me)+
+      ' (6 c.s. de arroz → '+Math.max(1,Math.round(6*fOt/fMe))+' c.s. · 200 g de proteína → '+Math.round(200*fOt/fMe/10)*10+' g)';
+  });
   builder=null; save(); render();
-  var pct=Math.round(fOt/fMe*100);
-  alert('Registado nos dois \n\n'+userName(me)+': '+Math.round(tk*fMe)+' kcal · '+Math.round(tp*fMe)+'g P (×'+fMe+')\n'+
-    userName(other)+': '+Math.round(tk*fOt)+' kcal · '+Math.round(tp*fOt)+'g P (×'+fOt+')\n\n'+
-    'Na prática, a dose de '+userName(other)+' ≈ '+pct+'% da de '+userName(me)+'.\n'+
-    'Exemplo: 6 c.s. de arroz → '+Math.max(1,Math.round(6*fOt/fMe))+' c.s. · 200 g de proteína → '+Math.round(200*fOt/fMe/10)*10+' g.\n'+
-    'Cozinha a receita ×'+(Math.round((fMe+fOt)*10)/10)+' e divide nessa proporção.');
+  alert(msg+'\n\nCozinha a receita ×'+(Math.round(fSum*10)/10)+' e divide nessa proporção.');
 }
 function addCustom(){
   var n=document.getElementById('cfN').value.trim();
@@ -1937,12 +2064,23 @@ function todayWKCard(){
   }
   if(!(nextWK&&WK[nextWK])) return '';
   if(wkToday&&seqP.indexOf(wkToday.type)>=0)
-    return '<div class="card journey"><div style="font-size:15px">Treino de hoje: <b>'+WK[wkToday.type].name+'</b> — bora lá.</div>'+
+    return '<div class="card journey"><div style="font-size:15px">Treino de hoje: <b>'+WK[wkToday.type].name+'</b> — bora lá.</div>'+intentNote()+
       (curTab!=='treino'?'<button class="ghost" style="width:100%;margin-top:10px" onclick="curWK=\''+wkToday.type+'\';go(\'treino\')">Ver treino</button>':'')+'</div>';
   if(isRest) return '';
+  if(lowSleepToday()) // sono <6 h: sessão mínima e sem HIIT (SCIENCE.md a)
+    return '<div class="card journey"><div style="font-size:15px">Hoje toca: <b>Sessão mínima (12 min)</b></div>'+
+      '<div style="font-size:12px;color:var(--ink2);margin:2px 0 10px">Dormiste '+fmt(day(curDate).sleep)+' h — sessão curta, sem intervalos intensos; o treino a sério fica para amanhã.</div>'+intentNote()+
+      '<button style="width:100%" onclick="startSession(\'MIN\')">Começar</button></div>';
   return '<div class="card journey"><div style="font-size:15px">Hoje toca: <b>'+WK[nextWK].name+'</b></div>'+
-    '<div style="font-size:12px;color:var(--ink2);margin:2px 0 10px">~'+trainBurn(nextWK)+' kcal · pela rotação do teu programa</div>'+
+    '<div style="font-size:12px;color:var(--ink2);margin:2px 0 10px">'+(isYouth()?'~30 min · técnica primeiro':'~'+trainBurn(nextWK)+' kcal')+' · pela rotação do teu programa</div>'+intentNote()+
     '<button style="width:100%" onclick="startSession(\''+nextWK+'\')">Começar</button></div>';
+}
+function lowSleepToday(){ var sl=day(curDate).sleep; return !!sl&&sl<6; }
+function pelvicHintCard(){ // mulher 40+ com sintomas: sugerir fisioterapia (uma vez)
+  if(!(isWoman40()&&DB.cfg.profile.pelvic)||DB.cfg.pelvicHintSeen) return '';
+  return '<div class="card" style="border:1.5px solid var(--ink)"><h2>Pavimento pélvico</h2><div class="note" style="margin:0">Trocámos os saltos por step-ups com carga e heel drops — os ossos continuam a receber carga. '+
+    'Vale a pena 2–3 sessões de <b>fisioterapia do pavimento pélvico</b>: as perdas com saltos tratam-se bem e depois o impacto volta a entrar.</div>'+
+    '<button class="mini ghost" style="margin-top:8px" onclick="DB.cfg.pelvicHintSeen=true;save();render()">Entendido</button></div>';
 }
 /* ============ VIEW: TREINO ============ */
 var curWK = null;
@@ -1960,11 +2098,15 @@ function vTreino(){
     if(w===thisWk){ if(t){tonThis+=t;nThis++;} }
     else if(w===prevWk){ if(t){tonPrev+=t;nPrev++;} }
   }
+  var wst=weekStats(DB, thisWk), wstreak=weeksDoneStreak();
   var semanaCard='<div class="card"><h2>Semana</h2><div class="grid3">'+
-   '<div class="stat"><span class="lb">Treinos</span><span class="vl">'+nThis+'</span><span class="dl">alvo 4–5</span></div>'+
-   '<div class="stat"><span class="lb">Carga da semana</span><span class="vl" style="font-size:17px">'+(tonThis?tonThis.toLocaleString('pt-PT'):'—')+'</span><span class="dl">kg×reps somados</span></div>'+
-   '<div class="stat"><span class="lb">vs anterior</span><span class="vl" style="font-size:17px;color:'+(tonPrev&&tonThis>=tonPrev?'var(--good)':'var(--ink)')+'">'+(tonPrev?((tonThis>=tonPrev?'+':'')+Math.round((tonThis-tonPrev)/tonPrev*100)+'%'):'—')+'</span><span class="dl">manter ou subir = bom</span></div>'+
-   '</div></div>';
+   '<div class="stat"><span class="lb">Força</span><span class="vl">'+wst.str+'</span><span class="dl">alvo 2–3 sessões</span></div>'+
+   '<div class="stat"><span class="lb">Cardio/passos</span><span class="vl">'+wst.cardio+'</span><span class="dl">dias (≥8 000 ou cardio)</span></div>'+
+   '<div class="stat"><span class="lb">Carga</span><span class="vl" style="font-size:17px">'+(tonThis?tonThis.toLocaleString('pt-PT'):'—')+'</span><span class="dl">'+(tonPrev?((tonThis>=tonPrev?'+':'')+Math.round((tonThis-tonPrev)/tonPrev*100)+'% vs anterior'):'kg×reps')+'</span></div>'+
+   '</div>'+
+   '<div class="note"><b>'+(wst.done?'Semana cumprida':'Semana cumprida quando: 2 força + 1 cardio/passos')+'</b> · Semanas cumpridas seguidas: <b>'+wstreak+'</b>. Conta-se à semana — falhar um dia não quebra nada.</div>'+
+   '<label style="margin-top:8px">Quando treino? (ex.: seg/qua/sex às 7h)</label><input id="intentIn" value="'+esc(DB.cfg.intent||'')+'" placeholder="seg/qua/sex às 7h" onchange="saveIntent(this.value)" onblur="toastSave();render()">'+
+   '</div>';
   // seletor de programa — sempre visível
   var PROGS={SIM:'Simples',UL:'Upper/Lower',PPL:'Push/Pull/Legs',FB:'Full Body',ELA:'Elásticos'};
   var curProg=progOf(DB.cfg.profile);
@@ -1979,7 +2121,7 @@ function vTreino(){
      ' Os treinos sem ginásio e a Sessão Mínima estão sempre disponíveis no fim.</div></div></details>';
   var isFem=DB.cfg.profile&&DB.cfg.profile.sex==='F';
   var isRest=wkToday&&wkToday.type==='REST';
-  var h=todayWKCard();
+  var h=todayWKCard()+pelvicHintCard();
   h+='<div class="card"><h2>Treino de '+(curDate===today()?'hoje':curDate)+'</h2>';
   if(isRest){
     h+='<div class="note" style="margin:0 0 8px"><b>Dia de descanso marcado</b> — é no descanso que o músculo cresce. '+
@@ -1996,16 +2138,17 @@ function vTreino(){
   ['MIN','FER1','FER2'].forEach(function(mk){
     h+='<button class="chip'+(curWK===mk?' on':'')+'" onclick="curWK=\''+mk+'\';render()">'+WK[mk].name+'</button>'; });
   h+='<button class="chip" style="border-style:dashed" onclick="DB.workouts[curDate]={type:\'REST\',sets:{}};curWK=null;save();render()">Sem treino hoje</button>';
-  h+='</div>'+(curWK&&curWK!=='REST'?'<div class="note" style="margin-top:6px">Gasto estimado deste treino: <b>~'+trainBurn(curWK)+' kcal</b> — entra no teu défice ao marcares o treino.'+(WKNOTES[curWK]?'<br>'+WKNOTES[curWK]:'')+'</div>':'')+'</div>';
+  h+='</div>'+(curWK&&curWK!=='REST'?'<div class="note" style="margin-top:6px">'+(isYouth()?'Sessão de ~30 min: técnica primeiro, 1–3 séries por exercício, sempre com 2 na reserva.':'Gasto estimado deste treino: <b>~'+trainBurn(curWK)+' kcal</b> — entra no teu défice ao marcares o treino.')+(WKNOTES[curWK]?'<br>'+WKNOTES[curWK]:'')+'</div>':'')+'</div>';
   // cartão de cardio
   var cds=day(curDate).cardio||[];
   var wkMin=0; for(var ci7=0;ci7<7;ci7++){ var dc=DB.days[dateOffset(-ci7)]; if(dc&&dc.cardio) dc.cardio.forEach(function(c){wkMin+=c.min;}); }
   var goalC2=DB.cfg.profile?DB.cfg.profile.goal:'perder';
   var tgtLo=goalC2==='ganhar'?30:60, tgtHi=goalC2==='ganhar'?60:(goalC2==='manter'?90:120);
-  var cardioCard='<details'+(cds.length?' open':'')+'><summary>Cardio'+(cds.length?' — '+cardioSum(curDate)+' kcal hoje':'')+'</summary><div style="margin-top:6px">';
+  var yo=isYouth();
+  var cardioCard='<details'+(cds.length?' open':'')+'><summary>Cardio'+(cds.length?' — '+(yo?cds.reduce(function(a,c){return a+c.min;},0)+' min hoje':cardioSum(curDate)+' kcal hoje'):'')+'</summary><div style="margin-top:6px">'+intervalBlock();
   cds.forEach(function(c,ci){
-    cardioCard+='<div class="foodline"><span class="fi">'+CARDIO[c.t].lb+' · nível '+String(c.lvl).replace('.',',')+' · '+c.min+' min</span>'+
-       '<span class="fk"><b>'+c.k+' kcal</b></span>'+
+    cardioCard+='<div class="foodline"><span class="fi">'+(CARDIO[c.t]||{lb:c.t}).lb+' · nível '+String(c.lvl).replace('.',',')+' · '+c.min+' min'+(c.fam?' · família':'')+'</span>'+
+       '<span class="fk"><b>'+(yo?c.min+' min':c.k+' kcal')+'</b></span>'+
        '<button class="mini danger" onclick="day(curDate).cardio.splice('+ci+',1);save();render()">×</button></div>';
   });
   cardioCard+='<div class="grid3" style="margin-top:6px">'+
@@ -2015,11 +2158,13 @@ function vTreino(){
    '<div style="grid-column:span 2"><label>'+CARDIO[cardioT].ll+'</label><input id="cdL" type="number" step="0.5" inputmode="decimal" value="'+CARDIO[cardioT].def+'"></div>'+
    '<div><label>Minutos</label><input id="cdM" type="number" inputmode="numeric" placeholder="15"></div>'+
    '</div><button class="ghost" style="width:100%;margin-top:8px" onclick="addCardio()">+ Adicionar cardio</button>'+
+   (yo?'<div class="note">Esta semana: <b>'+wkMin+' min</b>. Meta OMS aos 13–15: 60 min/dia de atividade — o treino da app conta 2–3 dias, o resto é desporto, jogo e bicicleta.</div>':
    '<div class="note">Esta semana: <b>'+wkMin+' min</b> · alvo para o teu objetivo: '+tgtLo+'–'+tgtHi+' min. '+
    (wkMin<tgtLo?'Sobe: acrescenta 1–2 sessões de 15–20 min (a inclinada pós-treino é a mais barata em tempo).':
     wkMin>tgtHi?'Chega: mais cardio que isto começa a roubar recuperação ao músculo — investe em passos e sono.':
     'Na zona certa — mantém.')+
-   ' Estimativa standard (MET × peso × tempo); a passadeira a 10–12% de inclinação vale quase o dobro da caminhada plana.</div></div></details>';
+   ' Estimativa standard (MET × peso × tempo); a passadeira a 10–12% de inclinação vale quase o dobro da caminhada plana.'+
+   (isWoman40()?' Cardio regular também ajuda a reduzir afrontamentos.':'')+'</div>')+'</div></details>';
   if(curWK){
     var w=WK[curWK];
     h+='<button class="big" style="width:100%;margin-bottom:10px" onclick="startSession(\''+curWK+'\')">Modo guiado (estilo coach)</button>';
@@ -2027,14 +2172,18 @@ function vTreino(){
     DB.workouts[curDate].type=curWK;
     var sets=DB.workouts[curDate].sets;
     var altn=DB.workouts[curDate].altn||{};
-    w.ex.forEach(function(ex){
+    h+=impactCapNote(curDate);
+    sessionExs(curWK, curDate).forEach(function(ex){
       var last=lastPerf(ex.id);
       var mySets=sets[ex.id]||[];
       var shown=altn[ex.id]||ex.n;
       var yt='https://www.youtube.com/results?search_query='+encodeURIComponent(shown+' como fazer técnica');
       h+='<div class="ex"><div style="display:flex;gap:10px;align-items:flex-start">'+
          '<div style="flex:1"><div class="xh"><span class="xn">'+shown+(altn[ex.id]?' <span class="pill g">alt</span>':'')+'</span><span class="xt">'+ex.t+'</span></div>'+
-         '<div class="xm">'+ex.m+'</div></div>'+
+         '<div class="xm">'+ex.m+'</div>'+
+         (ex.ossos?'<div class="xm">Porquê: impacto + carga = densidade óssea (LIFTMOR). 2–3×/semana chega.</div>':'')+
+         (ex.plyo?'<div class="xm">Aterra em silêncio · máx. 2 sessões com saltos por semana.</div>':'')+
+         (ex.youth?'<div class="xm">'+rirHint()+'</div>':'')+'</div>'+
          (exPic(ex.id)?'<div style="text-align:center">'+exPic(ex.id)+
            '<a href="'+yt+'" target="_blank" style="display:block;font-size:10.5px;color:var(--ink2);text-decoration:underline;margin-top:2px">vídeo</a></div>':'')+
          '</div>';
@@ -2052,7 +2201,8 @@ function vTreino(){
           (xst?' · recorde '+String(xst.best.w).replace('.',',')+' kg':'')+'</span>':'');
       var sug=suggest(ex.id, ex.t);
       if(sug) h+='<div class="note" style="margin:0 0 6px;color:'+(sug.t==='up'?'var(--good)':'var(--ink2)')+'">'+sug.txt+'</div>';
-      if(!last && STDW[ex.id]){
+      if(needsTech(ex)) h+=techCardHTML(ex,false);
+      if(!last && STDW[ex.id] && !isYouth()){ // jovem: sem sugestões de carga nem 1RM
         h+='<div style="margin-bottom:6px"><button class="mini ghost" onclick="toggleStart(\''+ex.id+'\')">com que peso começo?</button>';
         if(openStart[ex.id]){
           var st=stdStart(ex.id);
@@ -2069,14 +2219,33 @@ function vTreino(){
       mySets.forEach(function(st,si){
         h+='<div class="setrow"><input type="number" step="0.5" inputmode="decimal" value="'+(st.w||'')+'" placeholder="kg" onchange="setVal(\''+ex.id+'\','+si+',\'w\',this.value)"><span class="x">×</span>'+
            '<input type="number" inputmode="numeric" value="'+(st.r||'')+'" placeholder="reps" onchange="setVal(\''+ex.id+'\','+si+',\'r\',this.value)">'+
+           '<select style="width:76px;padding:6px 4px" onchange="setVal(\''+ex.id+'\','+si+',\'rir\',this.value)"><option value="">RIR</option>'+
+           [0,1,2,3,4].map(function(rv){ return '<option value="'+rv+'"'+(st.rir===rv?' selected':'')+'>RIR '+rv+'</option>'; }).join('')+'</select>'+
            '<button class="mini danger" onclick="delSet(\''+ex.id+'\','+si+')">×</button></div>';
       });
       h+='<button class="mini ghost" onclick="addSet(\''+ex.id+'\')">+ série</button></div>';
     });
-    h+='<div class="note">Regra: RIR 0–2 (0–2 reps da falha). Topo do intervalo em todas as séries? Próxima sessão: +2,5% carga.</div>';
+    h+='<div class="note">'+(isYouth()?'Regra: deixa sempre 2 reps na reserva (RIR ≥2). Sobe carga só quando a técnica se mantém limpa em todas as séries — nunca testes de máximos.':
+      'Regra: RIR 1–3 (1–3 reps da falha) em cada série. RIR ≥3 em todas as séries? Próxima sessão: +1 rep ou +2,5 kg. Duas sessões no limite (RIR 0)? Semana leve, −20 % de volume.')+'</div>';
   }
   h+=cardioCard+semanaCard+progCard;
   return h;
+}
+/* Sessão de intervalos semanal: 10×1 por defeito; 4×4 (norueguês) após 4 semanas com cardio registado */
+function intervalWeeks(){ var n=0; for(var i=0;i<8;i++){ var wk=weekOf(dateOffset(-7*i)); for(var dt in DB.days){ if(weekOf(dt)===wk&&DB.days[dt].cardio&&DB.days[dt].cardio.length){ n++; break; } } } return n; }
+function logInterval(kind){
+  var d=day(curDate); d.cardio=d.cardio||[];
+  var min=kind==='4x4'?25:10, lvl=kind==='4x4'?9:8;
+  d.cardio.push({t:'intervalos',lvl:lvl,min:min,k:cardioKcal('intervalos',lvl,min),kind:kind});
+  buzz(); save(); render();
+}
+function intervalBlock(){
+  if(lowSleepToday()) return '<div class="note" style="margin:0 0 6px">Sono curto hoje — sem intervalos intensos; caminhada ou bicicleta leve.</div>';
+  var adv=intervalWeeks()>=4;
+  return '<div class="note" style="margin:0 0 6px">Sessão de intervalos da semana (1×/semana): '+
+    (adv?'<b>4×4 (norueguês, 25 min)</b> — 4 min forte / 3 min leve ×4. Já tens 4+ semanas de cardio: podes progredir.':'<b>10×1 (10 min)</b> — 1 min forte / 1 min leve ×10. Após 4 semanas passa ao 4×4 (norueguês, 25 min).')+
+    (isYouth()?' Forte = ainda consegues dizer frases curtas.':'')+'</div>'+
+    '<div class="row" style="margin-bottom:6px"><button class="mini ghost" onclick="logInterval(\'10x1\')">+ 10×1 feito</button>'+(adv?'<button class="mini ghost" onclick="logInterval(\'4x4\')">+ 4×4 feito</button>':'')+'</div>';
 }
 /* identidade canónica: o mesmo movimento partilha histórico entre todos os programas/avulsos */
 var CANON=[
@@ -2157,6 +2326,7 @@ function addSet(exId){
   wk.sets[exId].push({w:w0,r:null}); buzz(); save(); render();
 }
 function setVal(exId,si,f,v){
+  if(f==='rir'){ var n=parseInt(v); DB.workouts[curDate].sets[exId][si].rir=isNaN(n)?null:n; save(); return; } // 0 é válido
   DB.workouts[curDate].sets[exId][si][f]=parseFloat(v)||null; save();
 }
 function delSet(exId,si){ DB.workouts[curDate].sets[exId].splice(si,1); save(); render(); }
@@ -2556,15 +2726,16 @@ renderUsers(); renderNav(); render();
     '<div class="ss">crescemos contigo</div>'+
     (hasProfile
       ? '<button id="splashGo">Entrar como '+esc(userName(ROOT.active))+'</button>'+
-        (ROOT.users.B?'<button id="splashOther" class="ghost">Sou '+esc(userName(ROOT.active==='A'?'B':'A'))+'</button>':'')
+        otherIds().map(function(id){ return '<button class="ghost splashOther" data-id="'+id+'">Sou '+esc(userName(id))+'</button>'; }).join('')
       : '<button id="splashGo">Começar — criar o meu perfil</button>');
   document.body.appendChild(d);
   document.getElementById('splashGo').onclick=function(){
     d.remove();
     if(!hasProfile){ DB.cfg.onboardSkip=true; save(); go('guia'); }
   };
-  var so=document.getElementById('splashOther');
-  if(so) so.onclick=function(){ d.remove(); switchUser(ROOT.active==='A'?'B':'A'); };
+  Array.prototype.forEach.call(d.querySelectorAll('.splashOther'),function(so){
+    so.onclick=function(){ d.remove(); switchUser(so.getAttribute('data-id')); };
+  });
 })();
 document.title='This Little Coach · '+APPV;
 /* verificador de atualizações: compara a versão em memória com a do servidor */
