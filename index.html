@@ -158,6 +158,10 @@ details details{margin-top:8px}
 #splash .ss{font-size:13px;color:var(--muted);margin:8px 0 36px}
 #splash button{width:100%;max-width:360px;font-size:16px}
 #splash button.ghost{margin-top:10px}
+label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{text-align:left}
+.ex button.mini.ghost{border-color:var(--axis);font-weight:500;color:var(--ink2)}
+.ex .setrow input{min-height:40px}
 </style>
 </head>
 <body>
@@ -1511,10 +1515,10 @@ function vHoje(){
     '<div class="row" style="margin-top:8px"><button onclick="applyTune('+tune.novo+')">Aplicar '+tune.novo+' kcal</button>'+
     '<button class="ghost" onclick="snoozeTune()">Manter 2 semanas</button></div></div>';
   h+=pauseCard;
-  if(!DB.cfg.profile) h+='<div class="card" style="border:1px dashed var(--axis)"><h2>Personalizar</h2>'+
+  if(!DB.cfg.profile) h+='<details><summary>Personalizar — criar o teu perfil</summary>'+
     '<div class="note" style="margin:0">Esta app adapta-se a qualquer pessoa (sexo, peso, objetivo, foco muscular — ex.: glúteos). '+
     'Os valores atuais são os do plano original (94,2 kg → 86,5). Para ti ou para outra pessoa: <b>Guia → Perfil</b>.</div>'+
-    '<div class="row" style="margin-top:8px"><button class="ghost mini" onclick="go(\'guia\')">Abrir o Guia</button></div></div>';
+    '<div class="row" style="margin:10px 0 4px"><button class="ghost mini" onclick="go(\'guia\')">Abrir o perfil</button></div></details>';
   h+='<details><summary>O dia num relance — '+Math.round(s.k)+' kcal · '+Math.round(s.p)+' g P</summary><div class="grid2" style="margin-top:10px">'+
    '<div class="stat"><span class="lb">Calorias'+(mode!=='normal'?' (manutenção)':'')+'</span><span class="vl" style="color:'+kCol+'">'+Math.round(s.k)+'</span><span class="dl">de '+KT+' kcal</span><div class="meter"><i class="'+(s.k>KT*1.05?'over':'')+'" style="width:'+kcalPct+'%"></i></div></div>'+
    '<div class="stat"><span class="lb">Proteína</span><span class="vl" style="color:'+pCol+'">'+Math.round(s.p)+' g</span><span class="dl">de '+DB.cfg.prot+' g</span><div class="meter"><i style="width:'+protPct+'%"></i></div></div>'+
@@ -1973,10 +1977,9 @@ function vTreino(){
       curProg==='ELA'?'Elásticos: alterna A e B, em casa ou de férias. Guia de compra no separador Guia.':
       'Upper/Lower: U-L-U-L, 4 dias.')+
      ' Os treinos sem ginásio e a Sessão Mínima estão sempre disponíveis no fim.</div></div></details>';
-  var h=todayCard;
   var isFem=DB.cfg.profile&&DB.cfg.profile.sex==='F';
   var isRest=wkToday&&wkToday.type==='REST';
-  var todayCard=todayWKCard();
+  var h=todayWKCard();
   h+='<div class="card"><h2>Treino de '+(curDate===today()?'hoje':curDate)+'</h2>';
   if(isRest){
     h+='<div class="note" style="margin:0 0 8px"><b>Dia de descanso marcado</b> — é no descanso que o músculo cresce. '+
