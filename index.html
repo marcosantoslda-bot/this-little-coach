@@ -182,7 +182,7 @@ var MEM = {};
 var canStore = false;
 try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); canStore = true; }
 catch(e){ document.getElementById('storageBanner').style.display='block'; }
-var APPV='v18';
+var APPV='v19';
 var CFGDEF = {kcal:2600, prot:195, steps:8000, target:86.5, water:3.0, waterRem:false, mode:'normal'};
 function initUser(u){
   u.days=u.days||{}; u.workouts=u.workouts||{}; u.custom=u.custom||[]; u.photos=u.photos||[]; u.cfg=u.cfg||{};
@@ -874,6 +874,7 @@ function saveIntent(v){ DB.cfg.intent=v.trim(); save(); }
 function intentNote(){ return DB.cfg.intent?'<div class="note" style="margin:0 0 10px">Quando treino: <b>'+esc(DB.cfg.intent)+'</b></div>':''; }
 /* ============ COACH SEMANAL & META ============ */
 function coachWeek(){
+  if(isYouth()) return coachWeekYouth();
   var issues=[], avg=function(a){ if(!a.length) return null; var s=0; a.forEach(function(x){s+=x;}); return s/a.length; };
   var kAll=[],kWknd=[],kWkd=[],prots=[],steps=[],sleeps=[],waters=[],weighs=0,logged=0,trainings=0,ton=0;
   for(var i=1;i<=7;i++){
@@ -1404,7 +1405,7 @@ function render(){
     document.getElementById('view').innerHTML=
       '<div class="card" style="text-align:center;padding:26px 18px">'+
       '<div style="font-size:22px;font-weight:700;margin:6px 0 2px">Bem-vindo à This Little Coach</div>'+
-      '<div style="font-size:13.5px;color:var(--ink2);margin-bottom:14px">O treinador de bolso do casal — treino, alimentação e progresso, feito para pais com pouco tempo.</div>'+
+      '<div style="font-size:13.5px;color:var(--ink2);margin-bottom:14px">O treinador de bolso da família — treino, alimentação e progresso, com regras próprias para adulto, mulher 40+ e jovem.</div>'+
       '<button class="big" style="width:100%" onclick="DB.cfg.onboardSkip=true;save();go(\'guia\')">Criar o meu perfil (2 min)</button>'+
       '<button class="ghost" style="width:100%;margin-top:8px" onclick="DB.cfg.onboardSkip=true;save();render()">Espreitar primeiro com dados de exemplo</button>'+
       '</div>'+
@@ -1412,9 +1413,10 @@ function render(){
       'Os teus dados ficam só neste telemóvel — privacidade total.</div></div>';
     renderNav(); return;
   }
-  document.getElementById('hSub').textContent =
-    (p ? (String(p.w).replace('.',',')+' kg → '+String(DB.cfg.target||'?').replace('.',',')+' kg') : '94,2 kg → 86–87 kg')+
-    ' · '+DB.cfg.kcal+' kcal · '+DB.cfg.prot+' g proteína';
+  document.getElementById('hSub').textContent = isYouth()
+    ? (p.name||'Jovem')+' · perfil jovem · técnica primeiro, 2 na reserva'
+    : (p ? (String(p.w).replace('.',',')+' kg → '+String(DB.cfg.target||'?').replace('.',',')+' kg') : '94,2 kg → 86–87 kg')+
+      ' · '+DB.cfg.kcal+' kcal · '+DB.cfg.prot+' g proteína';
   var v=document.getElementById('view');
   if(curTab==='hoje') v.innerHTML=vHoje();
   else if(curTab==='comida') v.innerHTML=vComida();
@@ -1448,6 +1450,12 @@ function rirStepper(cur){ // seletor RIR 0–4 por série (0 = falha · 4 = muit
 }
 /* "Técnica primeiro" (jovem): checklist antes da 1.ª sessão de cada exercício novo */
 function techCardHTML(ex, inPlayer){
+  if(!inPlayer) // na lista: versão compacta (dobrável); no player aparece completa antes da 1.ª série
+    return '<details style="margin:0 0 8px"><summary style="font-size:13.5px;padding:10px 0">Técnica primeiro — checklist</summary>'+
+      '<div class="note" style="margin:0">1 · 5–8 reps sem carga (ou muito leve), com um adulto a ver.</div>'+
+      '<div class="note" style="margin:2px 0 0">2 · Controlado: 2 s a descer, sem ressaltos, sem prender a respiração.</div>'+
+      '<div class="note" style="margin:2px 0 0">3 · Acaba com 2 reps na reserva — se a técnica se perde, a série acabou.</div>'+
+      '<button class="mini" style="margin:8px 0 10px" onclick="techOk(\''+ex.id+'\',false)">Técnica validada</button></details>';
   return '<div class="card" style="border:1.5px solid var(--ink);text-align:left;max-width:360px;margin:8px auto"><h2>Técnica primeiro</h2>'+
     '<div class="note" style="margin:0">Antes da 1.ª série de <b>'+esc(ex.n)+'</b>:</div>'+
     '<div class="note" style="margin:4px 0 0">1 · Faz 5–8 reps sem carga (ou muito leve) e pede a um adulto para ver.</div>'+
@@ -1551,6 +1559,7 @@ function plLogSet(){
 }
 /* ============ VIEW: HOJE ============ */
 function vHoje(){
+  if(isYouth()) return vHojeYouth();
   var d=day(curDate), s=sumFoods(curDate), a7=avg7(curDate);
   var KT=effKcal();
   var kcalPct=Math.min(100, s.k/KT*100), protPct=Math.min(100, s.p/DB.cfg.prot*100);
@@ -1584,12 +1593,8 @@ function vHoje(){
   else if(mode==='doente') modo+='<div class="note">Prioridade: recuperar. Manutenção (<b>'+KT+' kcal</b>), proteína alta, sem treino até estares 24h sem sintomas. '+
     'Défice + doença = perder músculo.</div>';
   modo+='</div></details>';
-  // Streak + aviso de pausa
-  var streak=0, di=0;
-  while(di<60){ var dd=dateOffset(-di); var dy=DB.days[dd];
-    if(dy&&((dy.foods&&dy.foods.length)||dy.w||DB.workouts[dd])) streak++; else if(di>0) break;
-    di++; }
-  var streakNote=streak>=3?'<div class="note" style="margin:0 0 12px"><b>'+streak+' dias seguidos</b> com registos — a consistência é o plano.</div>':'';
+  // Meta semanal (2 força + 1 cardio/passos) em vez de streak diário — falhar um dia não quebra nada
+  var streakNote=weekTargetNote(curDate);
   var pauseCard='';
   if(mode==='normal' && (!DB.cfg.profile||DB.cfg.profile.goal==='perder')){
     var lb=DB.cfg.lastBreak; var wks=lb?Math.floor((new Date(today())-new Date(lb))/(7*86400000)):null;
@@ -1609,7 +1614,7 @@ function vHoje(){
      '</select></div>':'')+
    '</div>'+
    (isF&&d.cycle==='lútea'?'<div class="note" style="color:var(--warn)">Fase lútea: retenção de +0,5–1,5 kg é normal e <b>não é gordura</b>. '+
-     'A balança mente esta semana — não cortes calorias; o auto-ajuste fica em espera.</div>':'')+
+     'A balança mente esta semana — não cortes calorias. Os alvos nunca mudam pelo dia do ciclo: só pelo esforço (RIR) e sono que reportas.</div>':'')+
    '<div class="note">Peso: de manhã, em jejum. Passos e sono: copia da Samsung Health (30 seg). Cintura: ao nível do umbigo, relaxado.</div></div>';
   h+=quick+streakNote;
   var df=deficit(curDate), td=tdee(curDate);
@@ -1640,7 +1645,7 @@ function vHoje(){
     '<div class="note"><b>Novo alvo: '+tune.novo+' kcal/dia</b> (era '+DB.cfg.kcal+'). '+tune.lever+'</div>'+
     '<div class="row" style="margin-top:8px"><button onclick="applyTune('+tune.novo+')">Aplicar '+tune.novo+' kcal</button>'+
     '<button class="ghost" onclick="snoozeTune()">Manter 2 semanas</button></div></div>';
-  h+=pauseCard;
+  h+=autoregCard()+pauseCard;
   if(!DB.cfg.profile) h+='<details><summary>Personalizar — criar o teu perfil</summary>'+
     '<div class="note" style="margin:0">Esta app adapta-se a qualquer pessoa (sexo, peso, objetivo, foco muscular — ex.: glúteos). '+
     'Os valores atuais são os do plano original (94,2 kg → 86,5). Para ti ou para outra pessoa: <b>Guia → Perfil</b>.</div>'+
@@ -1683,7 +1688,11 @@ function vHoje(){
     h+='<div class="note" style="margin-top:8px"><span style="text-decoration:underline;cursor:pointer" onclick="day(curDate).closed=false;save();render()">reabrir o dia</span></div></div>';
   }
   h+=journey+modo;
-  h+='<details><summary>Água — '+fmt(d.water||0,2).replace(',00','')+' de '+fmt(DB.cfg.water)+' L</summary><div class="row" style="margin-top:8px">'+
+  h+=waterCard(d)+stepsCard();
+  return h;
+}
+function waterCard(d){
+  return '<details><summary>Água — '+fmt(d.water||0,2).replace(',00','')+' de '+fmt(DB.cfg.water)+' L</summary><div class="row" style="margin-top:8px">'+
    '<button class="ghost" onclick="addWater(0.25)">+ copo 250ml</button>'+
    '<button class="ghost" onclick="addWater(0.5)">+ garrafa 500ml</button>'+
    '<button class="ghost" onclick="addWater(0.33)">+ 33cl</button>'+
@@ -1692,8 +1701,10 @@ function vHoje(){
    '<button class="mini '+(DB.cfg.waterRem?'':'ghost')+'" onclick="toggleWaterRem()">'+(DB.cfg.waterRem?'Lembrete ligado (app aberta)':'Ligar lembrete de água')+'</button>'+
    '</div><div class="note">Alvo científico: <b>3–3,5 L/dia</b> (EFSA + treino + creatina) — 5 L é mito, sem benefício extra. '+
    'Truque com evidência: 500 ml antes de cada refeição principal aumenta a saciedade. Para lembretes fiáveis, cria alarmes de água no Galaxy Watch (Samsung Health → Water).</div></details>';
-  h+='<details><summary>Passos — chegar aos 10 000</summary>'+
-   '<div class="note" style="margin:10px 0 8px">Base atual ~3 000; faltam ~7 000. Menu de soluções — combina até fechar o dia:</div>'+
+}
+function stepsCard(){
+  return '<details><summary>Passos — 8 000 (mínimo eficaz) · 10 000 (ótimo)</summary>'+
+   '<div class="note" style="margin:10px 0 8px">8 000 é o mínimo com efeito na saúde; 10 000 é o ótimo. 2–5 min a andar depois de cada refeição já contam. Menu de soluções — combina até fechar o dia:</div>'+
    '<details><summary style="font-size:13.5px">Menu de soluções + receitas de dia</summary>'+
    '<table class="tbl"><tr><th>Solução</th><th>Passos</th><th>Tempo</th></tr>'+
    '<tr><td>15 min passadeira inclinada 10–12% no fim do treino</td><td>+1 700</td><td>já estás lá</td></tr>'+
@@ -1712,7 +1723,7 @@ function vHoje(){
    '<b>Dia sem treino:</b> base 3 000 + pós-refeições 2 400 + chamadas a andar 1 500 + pausas por hora 2 000 + estacionar longe 1 200 = <b>≈ 10 100</b><br>'+
    '<b>Fim de semana:</b> base 3 000 + caminhada 60 min 6 500 + resto do dia = <b>≈ 10 500</b><br><br>'+
    'O truque não é "arranjar 70 min" — é converter tempo que já gastas (chamadas, estacionar, descansos entre séries) em passos. '+
-   'Se um dia falhares, conta à semana: alvo 70 000.</div></details>'+
+   'Se um dia falhares, conta à semana: alvo 56 000 (mínimo) a 70 000.</div></details>'+
    '<h3 class="sec">Volta ao bairro à medida (ida-e-volta)</h3>'+
    '<div class="row">'+
    '<button class="chip" onclick="walkRoute(1000)">1 000 passos · ~8 min</button>'+
@@ -1731,6 +1742,98 @@ function vHoje(){
    '<a href="https://www.google.com/maps/search/parques+e+trilhos+para+caminhar/" target="_blank" style="flex:1;text-decoration:none"><button class="ghost" style="width:100%">Percursos perto</button></a>'+
    '<a href="https://www.google.com/maps/dir/?api=1&travelmode=walking" target="_blank" style="flex:1;text-decoration:none"><button class="ghost" style="width:100%">Rota livre</button></a>'+
    '</div></details>';
+}
+/* ============ HOJE — JOVEM (<16): sem balança, sem calorias ============ */
+function vHojeYouth(){
+  var d=day(curDate), p=DB.cfg.profile, mode=DB.cfg.mode||'normal';
+  var h='<div class="datebar"><input type="date" value="'+curDate+'" onchange="curDate=this.value;render()">'+
+     (curDate!==today()?'<button class="mini ghost" onclick="curDate=today();render()">Hoje</button>':'')+'</div>';
+  h+=todayWKCard();
+  if(d.sleep&&d.sleep<8) h+='<div class="note" style="margin:0 0 12px">Dormiste '+fmt(d.sleep)+' h. Aos '+p.age+', 8–10 h faz mais pelos resultados do que qualquer treino.</div>';
+  h+='<div class="card"><h2>Registo rápido</h2><div class="grid2">'+
+   '<div><label>Passos</label><input type="number" inputmode="numeric" value="'+(d.steps||'')+'" oninput="day(curDate).steps=parseInt(this.value)||null;save()" onblur="toastSave();render()"></div>'+
+   '<div><label>Sono (h)</label><input type="number" step="0.1" inputmode="decimal" value="'+(d.sleep||'')+'" oninput="day(curDate).sleep=parseFloat(this.value)||null;save()" onblur="toastSave();render()"></div>'+
+   '</div><div class="note">Passos e sono: copia do relógio. Sem balança nem contas: aqui o progresso mede-se em habilidades e sessões. Ecrãs desligados 60 min antes de deitar.</div></div>';
+  h+='<div class="quick">'+
+   '<button class="ghost" onclick="go(\'treino\')">Treino</button>'+
+   '<button class="ghost" onclick="addWater(0.25)">+250 ml</button>'+
+   '<button class="ghost" onclick="go(\'comida\')">Comida</button>'+
+   '<button class="ghost" onclick="go(\'prog\')">Progresso</button></div>';
+  h+=weekTargetNote(curDate)+autoregCard();
+  var MODES_Y={normal:'Normal',ferias:'Férias / sem ginásio',doente:'Doente'};
+  if(!MODES_Y[mode]) mode='normal';
+  h+='<details'+(mode!=='normal'?' open':'')+'><summary>Modo: '+MODES_Y[mode]+'</summary><div style="margin-top:8px">';
+  for(var mk in MODES_Y) h+='<button class="modechip'+(mode===mk?' on':'')+'" onclick="setMode(\''+mk+'\')">'+MODES_Y[mk]+'</button>';
+  h+='</div>'+(mode==='ferias'?'<div class="note">Treinos "Sem ginásio" no separador Treino, 2×/semana, e muito jogo, bicicleta e praia — conta tudo.</div>':
+     mode==='doente'?'<div class="note">Prioridade: recuperar. Sem treino até estares 24 h sem sintomas; dormir e comer bem.</div>':'')+'</details>';
+  h+=waterCard(d)+stepsCard();
+  return h;
+}
+function youthComidaCard(){
+  var p=DB.cfg.profile, d=day(curDate);
+  return '<div class="card"><h2>Comer bem, sem contar</h2>'+
+   '<div class="note" style="margin:0">Aos '+p.age+' não se contam calorias nem se pesa comida. Cinco hábitos chegam:</div>'+
+   '<div class="note" style="margin-top:6px">1 · <b>Proteína em cada refeição</b> — ovos, leite, iogurte, carne, peixe, leguminosas.</div>'+
+   '<div class="note" style="margin:2px 0 0">2 · <b>Fruta e legumes</b> todos os dias — metade do prato ao almoço e ao jantar.</div>'+
+   '<div class="note" style="margin:2px 0 0">3 · <b>Água</b> como bebida principal; refrigerantes e energéticos são exceção.</div>'+
+   '<div class="note" style="margin:2px 0 0">4 · <b>Pequeno-almoço</b> a sério antes das aulas e um lanche antes do treino.</div>'+
+   '<div class="note" style="margin:2px 0 0">5 · <b>Dormir 8–10 h</b> — é a dormir que o corpo cresce e fica mais forte.</div>'+
+   '<div class="note" style="margin-top:8px">Cansaço que não passa, irritabilidade ou rendimento a cair na escola/desporto? Fala com os pais ou com o médico.</div>'+
+   '</div>'+waterCard(d);
+}
+var YOUTH_SKILLS=[
+  {id:'push1',n:'1.ª flexão completa'},{id:'push10',n:'10 flexões seguidas'},{id:'pull1',n:'1.ª elevação na barra'},
+  {id:'hang30',n:'Dead hang 30 s'},{id:'hang60',n:'Dead hang 60 s'},{id:'squat20',n:'20 agachamentos com técnica limpa'},
+  {id:'plank60',n:'Prancha 60 s'},{id:'land',n:'Aterragem silenciosa nos saltos'}];
+function toggleSkill(id){ DB.cfg.skills=DB.cfg.skills||{}; if(DB.cfg.skills[id]) delete DB.cfg.skills[id]; else DB.cfg.skills[id]=today(); buzz(); save(); render(); }
+function coachWeekYouth(){ // sem calorias: sessões, sono, passos, esforço
+  var issues=[], tr=0, hard=0, sl=[], st=[];
+  for(var i=1;i<=7;i++){ var dt=dateOffset(-i), w=DB.workouts[dt], d=DB.days[dt];
+    if(w&&w.type!=='REST'){ tr++; if(w.rate==='dificil') hard++; }
+    if(d&&d.sleep) sl.push(d.sleep); if(d&&d.steps) st.push(d.steps); }
+  function avg(a){ if(!a.length) return null; var t=0; a.forEach(function(x){t+=x;}); return t/a.length; }
+  if(tr<2) issues.push({e:'Só '+tr+' sessão'+(tr===1?'':'ões')+' esta semana (alvo 2–3)', s:'Marca 2 dias fixos, não seguidos — 30 min chegam. O resto da atividade vem do desporto e do jogo.'});
+  if(tr>3) issues.push({e:tr+' sessões esta semana', s:'Mais do que 3 não ajuda a crescer: o descanso também é treino. Horas de treino organizado por semana ≤ idade.'});
+  if(hard>=2) issues.push({e:hard+' treinos avaliados como "difícil"', s:'Aos '+DB.cfg.profile.age+' as séries acabam com 2 na reserva. Baixa um pouco a carga e cuida da técnica.'});
+  if(avg(sl)!=null&&avg(sl)<8) issues.push({e:'Sono médio '+fmt(avg(sl))+' h (alvo 8–10)', s:'Ecrãs desligados 60 min antes de deitar; a hora de deitar é o que mais faz pelos resultados.'});
+  if(avg(st)!=null&&avg(st)<8000) issues.push({e:'Passos: média '+Math.round(avg(st)).toLocaleString('pt-PT'), s:'Ir a pé para a escola, bicicleta ou 20 min de jogo lá fora — 60 min/dia de movimento é a meta.'});
+  var ar=autoregulate(); if(ar) issues.push({e:ar.title, s:ar.txt});
+  return issues;
+}
+function vProgYouth(){
+  var wk=weekOf(today()), st=weekStats(DB,wk), streak=weeksDoneStreak(), total=0;
+  for(var dt in DB.workouts){ if(DB.workouts[dt].type&&DB.workouts[dt].type!=='REST') total++; }
+  var h='<div class="card"><h2>Sessões</h2><div class="grid3">'+
+   '<div class="stat"><span class="lb">Esta semana</span><span class="vl">'+st.str+'</span><span class="dl">alvo 2–3</span></div>'+
+   '<div class="stat"><span class="lb">Semanas seguidas</span><span class="vl">'+streak+'</span><span class="dl">cumpridas</span></div>'+
+   '<div class="stat"><span class="lb">Total</span><span class="vl">'+total+'</span><span class="dl">sessões feitas</span></div></div>'+
+   '<div class="note">Aos 13–15: 2–3 sessões/semana, não consecutivas, com técnica validada antes de subir carga. Sem testes de máximos até aos 16.</div></div>';
+  var sk=DB.cfg.skills||{};
+  h+='<div class="card"><h2>Habilidades desbloqueadas</h2>';
+  YOUTH_SKILLS.forEach(function(k){
+    h+='<div class="note" style="margin:2px 0;display:flex;justify-content:space-between;gap:8px;cursor:pointer" onclick="toggleSkill(\''+k.id+'\')"><span>'+k.n+'</span><b>'+(sk[k.id]?'feito · '+fmtDataPt(sk[k.id]):'—')+'</b></div>';
+  });
+  h+='<div class="note" style="margin-top:8px">Toca para marcar. O progresso mede-se aqui e nas sessões — em habilidades, não em quilos.</div></div>';
+  var seen={}, prs=[];
+  for(var k in WK){ WK[k].ex.forEach(function(e){ if(e.t==='—') return; var key=canonList(e.id)[0]; if(seen[key]) return; seen[key]=true;
+    var xs=exStats(e.id); if(xs) prs.push({n:e.n, b:xs.best, n2:xs.nSes}); }); }
+  h+='<div class="card"><h2>Recordes pessoais (melhor série)</h2>';
+  if(prs.length) prs.slice(0,12).forEach(function(r){ h+='<div class="note" style="margin:2px 0;display:flex;justify-content:space-between;gap:8px"><span>'+esc(r.n)+'</span><b>'+String(r.b.w).replace('.',',')+' kg × '+r.b.r+'</b></div>'; });
+  else h+='<div class="note" style="margin:0">Regista séries no treino e os recordes aparecem aqui.</div>';
+  h+='</div>';
+  var issues=coachWeekYouth();
+  h+='<div class="card"><h2>Coach — a semana</h2>';
+  if(issues.length) issues.forEach(function(is){ h+='<div style="margin-bottom:10px"><div style="font-weight:700;font-size:13.5px">'+is.e+'</div><div class="note" style="margin:2px 0 0">→ '+is.s+'</div></div>'; });
+  else h+='<div class="note" style="margin:0">Semana limpa: sessões, sono e movimento no sítio. Repete.</div>';
+  h+='</div>';
+  var ws=weeklySummary(8);
+  h+='<div class="card"><h2>Resumo semanal</h2>';
+  if(ws.length){
+    h+='<div style="overflow-x:auto"><table class="tbl"><tr><th>Sem.</th><th>Passos</th><th>Sessões</th><th>Carga total</th></tr>';
+    ws.forEach(function(r){ h+='<tr><td>'+r.wk.split('-')[1]+'</td><td>'+(r.steps?Math.round(r.steps).toLocaleString('pt-PT'):'—')+'</td><td>'+r.treinos+'</td><td>'+(r.ton?r.ton.toLocaleString('pt-PT')+' kg':'—')+'</td></tr>'; });
+    h+='</table></div>';
+  } else h+='<div class="note">Preenche alguns dias e a tabela constrói-se sozinha.</div>';
+  h+='</div>';
   return h;
 }
 function saveHome(){
@@ -1853,7 +1956,17 @@ function protSuggest(){
 }
 /* ============ VIEW: COMIDA ============ */
 var builder=null; // {gi, ii, sel:[bool...]}
+function nutritionRulesCard(){ // adultos: proteína por refeição, fibra, caminhada pós-refeição, notas por grupo
+  var p=DB.cfg.profile, w=p?p.w:94;
+  var h='<div class="card"><h2>Regras do prato</h2>';
+  h+='<div class="note" style="margin:0">Proteína: <b>~'+Math.round(0.4*w)+' g por refeição</b> (0,4 g/kg) em 4 refeições · fibra <b>25–30 g/dia</b> (legumes, fruta, leguminosas, aveia).</div>';
+  h+='<div class="note">2–5 min a andar depois das refeições baixam o pico de glicose — dá a volta ao quarteirão.</div>';
+  if(isWoman40()) h+='<div class="note">Creatina 3–5 g/dia é segura e útil (evidência para mulheres 40+).</div>';
+  h+='<div class="note"><b>Bebidas:</b> água primeiro; 1 copo de água entre bebidas.'+(isAdultMan()?' Álcool no dia de treino corta a síntese proteica ~24 % — copos e treino em dias diferentes, e nunca "compensar" com treino extra.':'')+'</div>';
+  return h+'</div>';
+}
 function vComida(){
+  if(isYouth()) return youthComidaCard();
   var d=day(curDate), s=sumFoods(curDate);
   var h='';
   if(builder){
@@ -1883,7 +1996,7 @@ function vComida(){
   var ps=protSuggest();
   if(ps) h+='<div class="note" style="color:var(--warn)">Faltam <b>'+ps.miss+' g de proteína</b>. Fecho rápido: <b>'+ps.txt+'</b> (≈ +'+ps.p+' g · '+ps.k+' kcal).</div>';
   else if(s.p>=DB.cfg.prot*0.95&&s.k) h+='<div class="note" style="color:var(--good)">Proteína do dia fechada.</div>';
-  h+='</div>';
+  h+='</div>'+nutritionRulesCard();
   var hrNow=new Date().getHours();
   var openG=hrNow<11?0:(hrNow>=21?2:1);
   FOODS.forEach(function(g,gi){
@@ -2333,6 +2446,7 @@ function delSet(exId,si){ DB.workouts[curDate].sets[exId].splice(si,1); save(); 
 
 /* ============ VIEW: PROGRESSO ============ */
 function vProg(){
+  if(isYouth()) return vProgYouth();
   var wl=weights();
   var lastW=wl.length?wl[wl.length-1][1]:null;
   var a7=avg7(today());
@@ -2602,8 +2716,8 @@ function vGuia(){
   h+='<details '+(DB.cfg.profile?'':'open')+'><summary>Perfil — adapta a app a qualquer pessoa</summary><div class="in">'+
    '<div class="grid2">'+
    '<div><label>Nome</label><input id="pfName" value="'+esc(p.name||'')+'" placeholder="ex.: João / Ana"></div>'+
-   '<div><label>Sexo</label><select id="pfSex"><option value="M"'+(p.sex==='M'?' selected':'')+'>Homem</option><option value="F"'+(p.sex==='F'?' selected':'')+'>Mulher</option></select></div>'+
-   '<div><label>Idade</label><input id="pfAge" type="number" value="'+p.age+'"></div>'+
+   '<div><label>Sexo</label><select id="pfSex" onchange="refreshAgeNote()"><option value="M"'+(p.sex==='M'?' selected':'')+'>Homem</option><option value="F"'+(p.sex==='F'?' selected':'')+'>Mulher</option></select></div>'+
+   '<div><label>Idade</label><input id="pfAge" type="number" value="'+p.age+'" oninput="refreshAgeNote()"></div>'+
    '<div><label>Altura (cm)</label><input id="pfH" type="number" value="'+p.h+'"></div>'+
    '<div><label>Peso atual (kg)</label><input id="pfW" type="number" step="0.1" value="'+p.w+'"></div>'+
    '<div><label>% massa gorda (opcional)</label><input id="pfBF" type="number" step="0.1" value="'+(p.bf||'')+'" placeholder="da balança Tanita"></div>'+
@@ -2633,19 +2747,22 @@ function vGuia(){
      '<option value="PPL"'+(p.prog==='PPL'?' selected':'')+'>Push/Pull/Legs</option>'+
      '<option value="FB"'+(p.prog==='FB'?' selected':'')+'>Full Body</option>'+
      '<option value="ELA"'+(p.prog==='ELA'?' selected':'')+'>Elásticos em casa</option></select></div>'+
+   '<div style="grid-column:span 2"><label style="display:flex;align-items:center;gap:8px;white-space:normal;text-transform:none;font-size:13px"><input type="checkbox" id="pfPelvic"'+(p.pelvic?' checked':'')+'> Sintomas de pavimento pélvico (perdas com saltos) — mulheres 40+</label></div>'+
    '</div><button style="margin-top:10px;width:100%" onclick="applyProfile()">Aplicar perfil — recalcular tudo</button>'+
+   '<div class="note" id="ageNote">'+ageGroupNote(p)+'</div>'+
    '<div class="note">Automático escolhe pelo nº de dias: 3 → Full Body · 4 → Upper/Lower · 5-6 → Push/Pull/Legs. '+
    'Em PPL com 5-6 dias repete o ciclo (P-P-L-P-P ou P-P-L-P-P-L). Sem ginásio ou em viagem: Elásticos.</div>'+
    '<div class="note">Recalcula BMR (Katch-McArdle se houver %MG, senão Mifflin-St Jeor), calorias, proteína (2,2 g/kg a cortar; 1,8 a ganhar), '+
    'água e défice. Foco "Glúteos & pernas" troca os dias de pernas por versões com hip thrust, búlgaro passo longo, abduções e kickbacks — '+
    'ideal para quem quer perder peso com prioridade no rabo. O treino pesado é igual para mulheres: mesmos princípios, mesma evidência. '+
    'Para dares a app a outra pessoa: envia o ficheiro HTML limpo (sem os teus dados) e ela preenche este perfil.</div></div></details>';
+  h+='<h3 class="sec">Família</h3>'+familyCard();
   h+='<h3 class="sec">Definições</h3>';
   h+='<details><summary>Backup dos dados</summary><div style="margin-top:8px"><div class="row">'+
    '<button class="ghost" onclick="expData()">Exportar dados</button>'+
    '<label style="flex:1"><input type="file" accept=".json" style="display:none" id="impF" onchange="impData(this)"><button class="ghost" style="width:100%" onclick="document.getElementById(\'impF\').click()">Importar</button></label>'+
    '</div><div class="note">Exporta 1x/semana. Se limpares os dados do Chrome, o backup é o que te salva.</div></div></details>';
-  h+='<details><summary>Alvos</summary><div class="in"><div class="grid2">'+
+  if(!isYouth()) h+='<details><summary>Alvos</summary><div class="in"><div class="grid2">'+
    '<div><label>kcal/dia</label><input type="number" value="'+DB.cfg.kcal+'" onchange="DB.cfg.kcal=parseInt(this.value)||2600;save();render()"></div>'+
    '<div><label>Proteína g/dia</label><input type="number" value="'+DB.cfg.prot+'" onchange="DB.cfg.prot=parseInt(this.value)||195;save();render()"></div>'+
    '<div><label>Passos (piso)</label><input type="number" value="'+DB.cfg.steps+'" onchange="DB.cfg.steps=parseInt(this.value)||7000;save();render()"></div>'+
@@ -2657,8 +2774,8 @@ function vGuia(){
   h+='<details><summary>As 8 regras</summary><div class="in">'+
    '1 · ~2 600 kcal/dia em média semanal.<br>2 · 4 refeições com 40–50 g proteína (195 g/dia).<br>'+
    '3 · Refeições-tipo repetidas, zero planeamento.<br>4 · Convívios: contas à semana; 2–3 bebidas máx.<br>'+
-   '5 · Upper/Lower 4x, séries a 0–2 da falha.<br>6 · Nunca faltar — encolher (Sessão Mínima 20 min).<br>'+
-   '7 · 10 000 passos/dia (menu de soluções no separador Hoje) + 15 min inclinada pós-treino.<br>'+
+   '5 · 2–3 sessões de força/semana, séries a RIR 1–3 (1–3 reps da falha).<br>6 · Nunca faltar — encolher (Sessão Mínima 12 min).<br>'+
+   '7 · 8 000 passos/dia (mínimo eficaz) · 10 000 (ótimo) + 1 sessão de intervalos/semana.<br>'+
    '8 · Dormir 7–9 h · Água 3–3,5 L (5 L é mito — EFSA: ~2,5 L base; treino+creatina justificam 3–3,5).</div></details>';
   h+='<details><summary>Substituições rápidas</summary><div class="in"><table class="tbl">'+
    '<tr><th>Em vez de…</th><th>Usa…</th></tr>'+
@@ -2675,7 +2792,8 @@ function vGuia(){
    '<b>Top:</b> destilado simples ~90 · G&T tónica zero ~110 · espumante bruto ~90 · vinho verde ~98 · vinho seco ~120<br>'+
    '<b>Meio:</b> imperial 20cl ~80 · 0.0% ~86 · garrafa 33cl ~135<br>'+
    '<b>Evita no corte:</b> Aperol ~170 · porto/licores ~100–160 · sangria ~200 · mojito/caipirinha ~250–300<br><br>'+
-   '<b>Regras:</b> proteína antes de beber · 1 água entre bebidas · última bebida 3–4 h antes de deitar · nunca bebedeira pós-treino.</div></details>';
+   '<b>Regras:</b> proteína antes de beber · 1 água entre bebidas · última bebida 3–4 h antes de deitar · nunca bebedeira pós-treino.'+
+   (isAdultMan()?'<br><b>Álcool no dia de treino corta a síntese proteica ~24 %</b> — copos e treino em dias diferentes.':'')+'</div></details>';
   h+='<details><summary>Cábula de restaurante</summary><div class="in">'+
    '<b>Marisqueira:</b> peixe grelhado, polvo, camarão — à vontade.<br>'+
    '<b>Churrasqueira:</b> frango sem pele + arroz OU batata + salada.<br>'+
@@ -2712,6 +2830,32 @@ function vGuia(){
    '<b>Opcional:</b> Cafeína ~200 mg pré-treino (nunca depois das 15h)<br>'+
    '<b>Parados:</b> Ashwagandha. Zinco — só se comeres pouca carne.</div></details>';
   h+='<div class="note" style="text-align:center">This Little Coach · versão '+APPV+'</div>';
+  return h;
+}
+/* ============ FAMÍLIA ============ */
+function famWalkOn(dt){
+  return USER_IDS.some(function(id){ var u=ROOT.users[id]; return !!(u&&u.days[dt]&&(u.days[dt].cardio||[]).some(function(c){return c.fam;})); });
+}
+function toggleFamWalk(){ // caminhada pós-jantar: cardio leve (20 min) para todas as pessoas
+  var dt=curDate, on=famWalkOn(dt);
+  USER_IDS.forEach(function(id){ var u=ROOT.users[id]; if(!u) return;
+    u.days[dt]=u.days[dt]||{foods:[]}; var d=u.days[dt]; d.cardio=d.cardio||[];
+    if(on) d.cardio=d.cardio.filter(function(c){return !c.fam;});
+    else { var pw=u.cfg.profile?u.cfg.profile.w:70; d.cardio.push({t:'caminhada',lvl:4,min:20,k:Math.round(0.95*4*3.5*pw/200*20),fam:true}); } });
+  buzz(); save(); render();
+}
+function familyCard(){
+  var ids=USER_IDS.filter(function(id){return ROOT.users[id];});
+  var wk=weekOf(today()), done=0, sessions=0, rows='', on=famWalkOn(curDate);
+  ids.forEach(function(id){ var st=weekStats(ROOT.users[id],wk); if(st.done) done++; sessions+=st.str;
+    rows+='<div class="note" style="margin:2px 0;display:flex;justify-content:space-between;gap:8px"><span>'+esc(userName(id))+'</span><span>'+st.str+' força · '+st.cardio+' cardio/passos · <b>'+(st.done?'cumprida':'ainda não')+'</b></span></div>'; });
+  var h='<div class="card"><h2>Família</h2><div class="grid2">'+
+   '<div class="stat"><span class="lb">Semanas cumpridas</span><span class="vl">'+done+' / '+ids.length+'</span><span class="dl">pessoas, esta semana</span></div>'+
+   '<div class="stat"><span class="lb">Sessões somadas</span><span class="vl">'+sessions+' / '+(ids.length*2)+'</span><span class="dl">meta familiar (2 por pessoa)</span></div></div>'+rows;
+  h+='<div class="note" style="margin-top:8px"><b>Sessão espelho:</b> o mesmo treino para todos (superset A/B + bloco cardio), com cargas individuais por perfil; o jovem faz a variante de peso corporal e deixa 2 na reserva. Sem comparar peso ou calorias entre membros.</div>';
+  h+='<button class="'+(on?'':'ghost')+'" style="width:100%;margin-top:8px" onclick="toggleFamWalk()">'+(on?'Caminhada depois do jantar — feita (desmarcar)':'Caminhada depois do jantar (20 min, conta para todos)')+'</button>';
+  h+='<div class="note">O passeio pós-jantar em família conta como cardio leve para cada pessoa, no dia selecionado em Hoje.'+
+     (ids.length<3?' <span style="text-decoration:underline;cursor:pointer" onclick="addUser()">Adicionar pessoa</span>.':'')+'</div></div>';
   return h;
 }
 
