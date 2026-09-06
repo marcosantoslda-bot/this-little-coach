@@ -14,7 +14,8 @@
     "seed": "tsx prisma/seed.ts",
     "format": "prisma format",
     "validate": "prisma validate",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0"
@@ -25,6 +26,7 @@
     "typescript": "^5.9.0",
     "dotenv": "^16.4.0",
     "@tlc/config": "workspace:*",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "vitest": "^3.2.0"
   }
 }
