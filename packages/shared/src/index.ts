@@ -5,3 +5,4 @@ export * from './domain/workout-engine/types';
 export * from './domain/workout-engine/generate-workout';
 export * from './domain/calories/estimate-calories';
 export * from './utils/date';
+export * from './domain/knowledge';
