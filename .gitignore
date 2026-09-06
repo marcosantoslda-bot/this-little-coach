@@ -31,3 +31,6 @@ pnpm-debug.log*
 
 # Worktrees de agentes
 .claude/worktrees/
+
+# Capturas de ecrã de verificação
+/*.png
