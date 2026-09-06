@@ -20,7 +20,7 @@ export const paginatedSchema = <T extends z.ZodTypeAny>(item: T) =>
 
 export const apiErrorSchema = z.object({
   statusCode: z.number(),
-  message: z.string(),
+  message: z.union([z.string(), z.array(z.string())]),
   code: z.string().optional(),
   details: z.unknown().optional(),
 });

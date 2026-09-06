@@ -3,8 +3,8 @@
  * (mensagens). Curtas e sem emoji, de propósito.
  */
 import type {
-  BlockType, Equipment, FitnessGoal, FitnessLevel, MovementPattern, MuscleGroup,
-  SetAdjustmentReason, TrainingFocus, TrainingMode, WorkoutFocus, WorkoutFormat,
+  BlockType, Equipment, FitnessGoal, FitnessLevel, MovementPattern, MuscleGroup, RecordMetric, Sex,
+  SetAdjustmentReason, TrainingFocus, TrainingLocation, TrainingMode, WorkoutFocus, WorkoutFormat,
 } from './enums';
 
 export const FITNESS_GOAL_LABELS: Record<FitnessGoal, string> = {
@@ -132,4 +132,26 @@ export const SET_ADJUSTMENT_REASON_LABELS: Record<SetAdjustmentReason, string> =
   OUT_OF_TIME: 'Sem tempo',
   EQUIPMENT_MISSING: 'Sem equipamento',
   OTHER: 'Outro',
+};
+
+export const SEX_LABELS: Record<Sex, string> = {
+  FEMALE: 'Feminino',
+  MALE: 'Masculino',
+  OTHER: 'Outro',
+  PREFER_NOT_TO_SAY: 'Prefiro não dizer',
+};
+
+export const TRAINING_LOCATION_LABELS: Record<TrainingLocation, string> = {
+  HOME: 'Casa',
+  GYM: 'Ginásio',
+  OUTDOOR: 'Ar livre',
+  ANYWHERE: 'Qualquer sítio',
+};
+
+export const RECORD_METRIC_LABELS: Record<RecordMetric, string> = {
+  MAX_REPS: 'Máximo de repetições',
+  MAX_DURATION_SEC: 'Máximo de tempo',
+  MAX_LOAD_KG: 'Máximo de carga',
+  FASTEST_TIME_SEC: 'Melhor tempo',
+  MAX_DISTANCE_M: 'Máxima distância',
 };
